@@ -1,0 +1,9 @@
+# Ignorar a pasta virtual environment
+venv/
+
+# Ignorar arquivos do sistema
+*.log
+__pycache__/
+
+# Ignorar arquivos de cache do Django
+db.sqlite3

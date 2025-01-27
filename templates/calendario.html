@@ -1,0 +1,405 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <link rel="icon" type="image/x-icon" href="/static/imagens/favicon.ico">
+
+
+
+  <title>Calendário de Reservas</title>
+
+  <!-- Estilos e Scripts externos -->
+  <link href="https://cdn.jsdelivr.net/npm/fullcalendar@5.11.0/main.min.css" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/fullcalendar@5.11.0/main.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/fullcalendar@5.11.0/locales/pt-br.js"></script>
+
+  <!-- Estilo customizado -->
+  <link rel="stylesheet" href="../static/css/styles.css">
+  <style>
+    body {
+      font-family: 'Arial', sans-serif;
+      background-color: #f9f9f9;
+      color: #333;
+      margin: 0;
+      padding: 0;
+    }
+
+    #calendar {
+      max-width: 1000px;
+      margin: 20px auto;
+      padding: 10px;
+      background: #ffffff; /* Fundo branco */
+      border-radius: 10px;
+      border: 2px solid #000000; /* Preto */
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Sombra leve */
+      color: #333;
+    }
+
+    .btn-back {
+      display: inline-block;
+      margin: 20px;
+      padding: 10px 20px;
+      background: #FFD700; /* Amarelo dourado */
+      color: #000000; /* Preto */
+      text-transform: uppercase;
+      text-decoration: none; /* Remove o sublinhado */
+      font-weight: bold;
+      border-radius: 5px; /* Cantos arredondados */
+      border: 2px solid #FFD700; /* Borda do botão */
+      text-align: center;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2); /* Sombra leve */
+      transition: background 0.3s ease, color 0.3s ease; /* Transição suave */
+    }
+
+    .btn-back:hover {
+      background: #FFC000; /* Amarelo mais escuro no hover */
+      color: #FFFFFF; /* Branco no hover */
+      text-decoration: none; /* Garante que o sublinhado não volte */
+    }
+
+    .fc-toolbar {
+      background-color: #ffffff; /* Branco */
+      color: #000000; /* Preto */
+      padding: 10px;
+      border-bottom: 2px solid #FFD700; /* Amarelo dourado */
+    }
+
+    .fc-toolbar-title {
+      color: #000000; /* Preto para o título */
+      font-weight: bold;
+      font-size: 1.2em;
+    }
+
+    .fc-button {
+      background-color: #FFD700; /* Amarelo dourado */
+      color: #000000; /* Texto preto */
+      border: 1px solid #FFD700;
+      font-weight: bold;
+    }
+
+    .fc-button:hover {
+      background-color: #FFC000; /* Amarelo mais escuro */
+      color: #000000;
+    }
+
+    .fc-event {
+      background-color: #FFD700; /* Fundo amarelo */
+      color: #000000; /* Texto preto */
+      border-color: #FFD700; /* Bordas amarelas */
+      font-weight: bold;
+      font-size: 0.9em;
+    }
+
+    #reservaModal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.7);
+      justify-content: center;
+      align-items: center;
+      z-index: 1000;
+    }
+
+    #reservaModal div {
+      background: white;
+      padding: 20px;
+      border-radius: 10px;
+      max-width: 400px;
+      width: 100%;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    }
+
+    #reservaModal h3 {
+      text-align: center;
+      margin-bottom: 20px;
+      color: #FFD700;
+    }
+
+    #reservaModal form input {
+      width: 100%;
+      padding: 10px;
+      margin-bottom: 15px;
+      border: 1px solid #ddd;
+      border-radius: 5px;
+    }
+
+    #reservaModal form button {
+      width: 48%;
+      padding: 10px;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+
+    #reservaModal form button[type="submit"] {
+      background: #FFD700;
+      color: #000000;
+    }
+
+    #reservaModal form button[type="button"] {
+      background: #f44336;
+      color: white;
+    }
+
+    /* Spinner de carregamento */
+    #loading {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.5);
+      color: white;
+      font-size: 1.5em;
+      font-family: Arial, sans-serif;
+      text-align: center;
+      z-index: 1000;
+      justify-content: center;
+      align-items: center;
+    }
+
+    #loading .spinner {
+      border: 5px solid #f3f3f3; /* Light grey */
+      border-top: 5px solid #FFD700; /* Amarelo dourado */
+      border-radius: 50%;
+      width: 50px;
+      height: 50px;
+      animation: spin 1s linear infinite;
+      margin-bottom: 20px;
+    }
+
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+    #mensagem-global {
+      display: none; 
+      text-align: center; 
+      margin: 10px auto; 
+      padding: 10px; 
+      width: 50%; 
+      border-radius: 5px;
+      font-weight: bold; 
+      font-size: 16px; 
+    }
+    
+    #mensagem-global.sucesso {
+      background-color: #28a745; 
+      color: white; 
+    }
+    
+    #mensagem-global.erro {
+      background-color: #dc3545; 
+      color: white; 
+    }
+    
+  </style>
+</head>
+<body>
+  <div style="text-align: left; margin: 10px 20px;">
+    <a href="../templates/index.html" class="btn-back">Voltar à Página Inicial</a>
+  </div>
+  
+  <!-- Div para mensagens globais -->
+  <div id="mensagem-global"></div>
+
+  <h1 style="text-align: center; color: #000000; margin: 20px;">Calendário de Reservas</h1>
+  <div id="calendar"></div>
+
+  <!-- Modal para capturar dados do cliente -->
+  <div id="reservaModal">
+    <div>
+      <h3>Agendar Horário</h3>
+      <!-- Div para mensagens -->
+      <div id="mensagem" style="display: none; color: green; text-align: center; margin-bottom: 10px;"></div>
+      <form id="reservaForm">
+        <label for="nome">Seu Nome:</label>
+        <input type="text" id="nome" name="nome" required>
+
+        <label for="email">Seu E-mail:</label>
+        <input type="email" id="email" name="email" placeholder="seuemail@exemplo.com" required>
+
+        <div style="display: flex; justify-content: space-between;">
+          <button type="submit">Reservar</button>
+          <button type="button" id="cancelarModal">Cancelar</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Spinner -->
+  <div id="loading">
+    <div class="spinner"></div>
+    <p>Aguarde, processando...</p>
+  </div>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', async function () {
+      var calendarEl = document.getElementById('calendar');
+      var modal = document.getElementById("reservaModal");
+      var loading = document.getElementById("loading"); // Spinner
+      let accessToken = "";
+    
+      // Função para autenticar e obter o token JWT
+      async function fetchToken() {
+        try {
+          loading.style.display = "flex"; // Mostra o spinner
+          const response = await fetch('http://127.0.0.1:8000/api/token/', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+              username: 'Barbearia_RD',
+              password: 'barbeariard2025',
+            }),
+          });
+          if (response.ok) {
+            const data = await response.json();
+            accessToken = data.access;
+            console.log('Token obtido:', accessToken);
+          } else {
+            mostrarMensagemGlobal("Erro ao obter o token. Verifique as credenciais.", "erro");
+          }
+        } catch (error) {
+          mostrarMensagemGlobal("Erro de conexão com o servidor.", "erro");
+        } finally {
+          loading.style.display = "none"; // Oculta o spinner
+        }
+      }
+    
+      // Função para exibir mensagens globais (acima do título)
+      function mostrarMensagemGlobal(texto, tipo) {
+        var mensagemGlobal = document.getElementById("mensagem-global"); // Seleciona a div
+        mensagemGlobal.textContent = texto; // Adiciona o texto
+        mensagemGlobal.className = tipo === "sucesso" ? "sucesso" : "erro"; // Define a classe de estilo
+        mensagemGlobal.style.display = "block"; // Exibe a mensagem
+    
+        setTimeout(function () {
+          mensagemGlobal.style.display = "none";
+        }, 4000);
+      }
+    
+      // Obtenha o token JWT ao carregar a página
+      await fetchToken();
+    
+      // Configurar o calendário
+      var calendar = new FullCalendar.Calendar(calendarEl, {
+        initialView: 'timeGridWeek',
+        headerToolbar: {
+          left: 'prev,next today',
+          center: 'title',
+          right: 'timeGridWeek,dayGridMonth'
+        },
+        locale: 'pt-br',
+        timeZone: 'local',
+        slotMinTime: '09:00:00',
+        slotMaxTime: '20:30:00',
+        slotDuration: '00:30:00',
+        slotLabelInterval: '00:30:00',
+        slotLabelFormat: {
+          hour: '2-digit',
+          minute: '2-digit',
+          hour12: false,
+        },
+        allDaySlot: false,
+        dayHeaderFormat: { weekday: 'long' },
+        selectable: true,
+        businessHours: {
+          daysOfWeek: [1, 2, 3, 4, 5, 6],
+          startTime: '09:00',
+          endTime: '20:30'
+        },
+        select: function (info) {
+          modal.style.display = "flex";
+    
+          document.getElementById("reservaForm").onsubmit = async function (e) {
+            e.preventDefault();
+    
+            const nome = document.getElementById("nome").value;
+            const email = document.getElementById("email").value;
+            const dados = {
+              nome_cliente: nome,
+              email_cliente: email,
+              data_horario_reserva: info.startStr
+            };
+    
+            try {
+              loading.style.display = "flex"; // Mostra o spinner
+              const response = await fetch("http://127.0.0.1:8000/api/agendamentos/", {
+                method: "POST",
+                headers: {
+                  "Content-Type": "application/json",
+                  "Authorization": `Bearer ${accessToken}`
+                },
+                body: JSON.stringify(dados),
+              });
+    
+              if (response.ok) {
+                // Exibe a mensagem de sucesso acima do título
+                mostrarMensagemGlobal("Reserva enviada com sucesso!", "sucesso");
+                modal.style.display = "none"; // Fecha o modal
+                calendar.refetchEvents(); // Atualiza o calendário
+              } else {
+                // Exibe a mensagem de erro acima do título
+                mostrarMensagemGlobal("Erro ao enviar a reserva. Tente novamente.", "erro");
+              }
+            } catch (error) {
+              console.error("Erro ao enviar dados:", error);
+              mostrarMensagemGlobal("Erro de conexão com o servidor.", "erro");
+            } finally {
+              loading.style.display = "none"; // Oculta o spinner
+            }
+          };
+    
+          document.getElementById("cancelarModal").onclick = function () {
+            modal.style.display = "none";
+          };
+        },
+        events: async function (fetchInfo, successCallback, failureCallback) {
+          try {
+            loading.style.display = "flex"; // Mostra o spinner
+            const response = await fetch('http://127.0.0.1:8000/api/horarios/', {
+              headers: {
+                "Authorization": `Bearer ${accessToken}`
+              }
+            });
+            if (response.ok) {
+              const data = await response.json();
+              const events = data.map(horario => {
+                const start = new Date(horario.data_horario_reserva);
+                const end = new Date(start.getTime() + 30 * 60 * 1000);
+                return {
+                  title: 'Horário Ocupado',
+                  start: start.toISOString(),
+                  end: end.toISOString(),
+                  allDay: false,
+                  backgroundColor: '#28a745',
+                  borderColor: '#28a745'
+                };
+              });
+              successCallback(events);
+            } else {
+              console.error("Erro ao carregar eventos:", response.statusText);
+            }
+          } catch (error) {
+            console.error('Erro ao carregar eventos:', error);
+            failureCallback(error);
+          } finally {
+            loading.style.display = "none"; // Oculta o spinner
+          }
+        }
+      });
+    
+      calendar.render();
+    });
+    
+  </script>
+</body>
+</html>
