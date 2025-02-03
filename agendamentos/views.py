@@ -8,6 +8,7 @@ from rest_framework.response import Response
 from .models import Agendamento
 from datetime import datetime
 import json
+from django.shortcuts import render
 
 # Endpoint para criar agendamentos
 @api_view(['POST'])
@@ -65,3 +66,6 @@ def horarios_ocupados(request):
         return Response(list(horarios))
     except Exception:
         return Response({'erro': 'Erro inesperado. Tente novamente mais tarde.'}, status=500)
+
+def home (request):
+    return render(request, 'index.html')
