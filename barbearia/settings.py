@@ -8,7 +8,13 @@ SECRET_KEY = os.getenv('DJANGO_SECRET_KEY', 'chave-de-desenvolvimento')
 
 DEBUG = False
 
-ALLOWED_HOSTS = ['127.0.0.1', 'localhost', 'sua-barbearia.com', 'www.sua-barbearia.com', 'barbearia-rd-a3b518df45e1.herokuapp.com']
+ALLOWED_HOSTS = [
+    '127.0.0.1', 
+    'localhost', 
+    'sua-barbearia.com', 
+    'www.sua-barbearia.com',
+    'barbearia-rd-a3b518df45e1.herokuapp.com'  # <- Adicione isso!
+]
 
 INSTALLED_APPS = [
     'django.contrib.admin',
