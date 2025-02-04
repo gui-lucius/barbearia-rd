@@ -60,16 +60,15 @@ def criar_agendamento(request):
         print(f"Erro ao criar agendamento: {e}")  # Log para debug
         return JsonResponse({'erro': f'Erro inesperado: {str(e)}'}, status=500)
 
-# Endpoint para listar horários ocupados e pendentes
 @api_view(['GET'])
 def horarios_ocupados(request):
     try:
-        horarios = Agendamento.objects.all().values('data_horario_reserva', 'status')
-        return Response(list(horarios))  # Agora retorna o status também
+        # Agora filtra apenas os horários "pendente" e "aceito"
+        horarios = Agendamento.objects.filter(status__in=['pendente', 'aceito']).values('data_horario_reserva', 'status')
+        return Response(list(horarios))  # Retorna os horários sem os recusados
     except Exception as e:
         print(f"Erro ao buscar horários ocupados: {e}")
         return Response({'erro': f'Erro inesperado: {str(e)}'}, status=500)
-
 
 # Página inicial
 def home(request):

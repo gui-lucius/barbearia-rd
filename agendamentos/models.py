@@ -24,6 +24,9 @@ class Agendamento(models.Model):
         if self.pk:
             old_status = Agendamento.objects.get(pk=self.pk).status
             if old_status != self.status:
+                if self.status == "recusado":
+                    self.delete()  # 🔴 Se for recusado, deleta o agendamento
+                    return
                 self.enviar_email()
         super().save(*args, **kwargs)
 
@@ -38,7 +41,6 @@ class Agendamento(models.Model):
 
     def __str__(self):
         if self.data_horario_reserva is not None:
-            # Garante que o datetime tenha timezone antes de chamar localtime()
             data_horario_com_tz = make_aware(self.data_horario_reserva) if self.data_horario_reserva.tzinfo is None else self.data_horario_reserva
             return f"{self.nome_cliente} - {localtime(data_horario_com_tz).strftime('%d/%m/%Y %H:%M')}"
         return f"{self.nome_cliente} - (Sem data)"
