@@ -307,20 +307,20 @@
             contentHeight: 'auto',
             aspectRatio: 1.35,
             selectable: true,
+            selectMirror: false,
+            unselectAuto: false,
+            selectOverlap: false,
 
-            longPressDelay: 50,   // 🔹 Reduz tempo para reconhecer toque no mobile
-            eventLongPressDelay: 50, // 🔹 Reduz tempo para abrir evento no mobile
-            selectOverlap: false,  // 🔹 Corrigido erro da opção escrita errada
-            dragScroll: false, // 🔹 Impede que arrastar a tela selecione horários
-            handleWindowResize: false, // 🔹 Evita mudança automática para "month" no mobile
-
-            // 🔴 Evita abrir modal ao arrastar o dedo, apenas clique exato no horário
-            selectAllow: function(selectInfo) {
-                return selectInfo.start === selectInfo.end;
+            selectAllow: function (selectInfo){
+              return selectInfo.start === selectInfo.end;
             },
 
             businessHours: { daysOfWeek: [1, 2, 3, 4, 5, 6], startTime: '09:00', endTime: '20:30' },
 
+            windowResize: function(){
+              calendar.updateSize();
+            },
+            
             select: function (info) {
                 modal.style.display = "flex";
 
@@ -421,6 +421,7 @@
         calendar.render();
     });
   </script>
+
 
 </body>
 </html>
