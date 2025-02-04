@@ -1,6 +1,6 @@
 from django.db import models
 from django.core.mail import send_mail
-from django.utils.timezone import localtime
+from django.utils.timezone import make_aware, localtime
 from django.core.exceptions import ValidationError
 
 class Agendamento(models.Model):
@@ -37,4 +37,8 @@ class Agendamento(models.Model):
                 print(f"Erro ao enviar e-mail: {e}")
 
     def __str__(self):
-        return f"{self.nome_cliente} - {localtime(self.data_horario_reserva).strftime('%d/%m/%Y %H:%M')}"
+        if self.data_horario_reserva is not None:
+            # Garante que o datetime tenha timezone antes de chamar localtime()
+            data_horario_com_tz = make_aware(self.data_horario_reserva) if self.data_horario_reserva.tzinfo is None else self.data_horario_reserva
+            return f"{self.nome_cliente} - {localtime(data_horario_com_tz).strftime('%d/%m/%Y %H:%M')}"
+        return f"{self.nome_cliente} - (Sem data)"
