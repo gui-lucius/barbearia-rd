@@ -64,9 +64,8 @@ def criar_agendamento(request):
 @api_view(['GET'])
 def horarios_ocupados(request):
     try:
-        # Filtra apenas os horários aceitos para exibir no calendário
-        horarios = Agendamento.objects.filter(status='aceito').values('data_horario_reserva', 'status')
-        return Response(list(horarios))  # Agora retorna apenas horários aceitos
+        horarios = Agendamento.objects.all().values('data_horario_reserva', 'status')
+        return Response(list(horarios))  # Agora retorna o status também
     except Exception as e:
         print(f"Erro ao buscar horários ocupados: {e}")
         return Response({'erro': f'Erro inesperado: {str(e)}'}, status=500)

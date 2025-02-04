@@ -366,17 +366,13 @@
                         const events = data.map(horario => {
                           const start = new Date(horario.data_horario_reserva);
                           const end = new Date(start.getTime() + 30 * 60 * 1000);
-                      
-                          // Define a cor do evento conforme o status
-                          let corFundo = horario.status === 'pendente' ? '#ffc107' : '#28a745'; // Amarelo para pendente, Verde para aceito
-                      
                           return {
-                              title: horario.status === 'pendente' ? 'Aguardando Aprovação' : 'Horário Ocupado',
+                              title: 'Horário Ocupado',
                               start: start.toISOString(),
                               end: end.toISOString(),
                               allDay: false,
-                              backgroundColor: corFundo,
-                              borderColor: corFundo
+                              backgroundColor: '#28a745', // Verde
+                              borderColor: '#28a745'
                           };
                       });
                       
