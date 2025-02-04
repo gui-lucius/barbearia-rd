@@ -7,15 +7,15 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from .models import Agendamento
 from datetime import datetime
-import json
 from django.shortcuts import render
 
 # Endpoint para criar agendamentos
 @api_view(['POST'])
-@permission_classes([IsAuthenticated])
+@permission_classes([IsAuthenticated])  # Remova essa linha temporariamente para testar
 def criar_agendamento(request):
     try:
-        dados = json.loads(request.body)
+        dados = request.data  # <-- Correção aqui
+
         nome_cliente = dados.get('nome_cliente')
         email_cliente = dados.get('email_cliente')
         data_horario_reserva = dados.get('data_horario_reserva')
@@ -42,30 +42,37 @@ def criar_agendamento(request):
             status='pendente'
         )
 
-        # Envio de e-mail
-        send_mail(
-            'Novo Agendamento Pendente',
-            f"Você tem uma nova solicitação de agendamento de {nome_cliente} no horário {data_horario_reserva}. "
-            "Por favor, verifique o painel administrativo.",
-            'denisbarbeariard@gmail.com',
-            ['denisbarbeariard@gmail.com'],
-            fail_silently=False,
-        )
+        # Envio de e-mail (Comente para testar)
+        try:
+            send_mail(
+                'Novo Agendamento Pendente',
+                f"Você tem uma nova solicitação de agendamento de {nome_cliente} no horário {data_horario_reserva}. "
+                "Por favor, verifique o painel administrativo.",
+                'denisbarbeariard@gmail.com',
+                ['denisbarbeariard@gmail.com'],
+                fail_silently=True,  # Agora ele não quebra o sistema se der erro no envio
+            )
+        except Exception as e:
+            print(f"Erro ao enviar e-mail: {e}")  # Log para o Heroku
 
         return JsonResponse({'mensagem': 'Agendamento criado com sucesso!', 'id': agendamento.id}, status=201)
-    except Exception:
-        return JsonResponse({'erro': 'Erro inesperado. Tente novamente mais tarde.'}, status=500)
+    
+    except Exception as e:
+        print(f"Erro ao criar agendamento: {e}")  # Log para o Heroku
+        return JsonResponse({'erro': f'Erro inesperado: {str(e)}'}, status=500)
 
 
 # Endpoint para listar horários ocupados
 @api_view(['GET'])
-@permission_classes([IsAuthenticated])
+@permission_classes([IsAuthenticated])  # Remova essa linha temporariamente para testar
 def horarios_ocupados(request):
     try:
         horarios = Agendamento.objects.filter(status='aceito').values('data_horario_reserva')
         return Response(list(horarios))
-    except Exception:
-        return Response({'erro': 'Erro inesperado. Tente novamente mais tarde.'}, status=500)
+    except Exception as e:
+        print(f"Erro ao buscar horários ocupados: {e}")  # Log para o Heroku
+        return Response({'erro': f'Erro inesperado: {str(e)}'}, status=500)
 
-def home (request):
+# Página inicial
+def home(request):
     return render(request, 'index.html')
