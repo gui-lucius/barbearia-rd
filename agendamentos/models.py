@@ -20,23 +20,28 @@ class Agendamento(models.Model):
     )
 
     class Meta:
-        unique_together = ('data_horario_reserva', 'status')  # Evita duplicidade de horários aceitos
+        constraints = [
+            models.UniqueConstraint(fields=['data_horario_reserva', 'status'], name='unique_agendamento_status')
+        ]
         verbose_name = 'Agendamento'
         verbose_name_plural = 'Agendamentos'
 
     def enviar_email(self, assunto, mensagem):
-        if self.email_cliente:  # Enviar apenas se o e-mail for fornecido
-            send_mail(
-                assunto,
-                mensagem,
-                'denisbarbeariard@gmail.com',
-                [self.email_cliente],
-                fail_silently=False,
-            )
+        if self.email_cliente:
+            try:
+                send_mail(
+                    assunto,
+                    mensagem,
+                    'denisbarbeariard@gmail.com',
+                    [self.email_cliente],
+                    fail_silently=True,  # Agora não quebra o sistema se der erro
+                )
+            except Exception as e:
+                print(f"Erro ao enviar e-mail: {e}")  # Log para o Heroku
 
     def clean(self):
-        # Verifica se já existe um horário aceito
-        if Agendamento.objects.filter(data_horario_reserva=self.data_horario_reserva, status='aceito').exists():
+        # Verifica se já existe um horário aceito (ignora o próprio objeto se já existir)
+        if Agendamento.objects.exclude(pk=self.pk).filter(data_horario_reserva=self.data_horario_reserva, status='aceito').exists():
             raise ValidationError('Já existe uma reserva confirmada para este horário.')
 
     def save(self, *args, **kwargs):
