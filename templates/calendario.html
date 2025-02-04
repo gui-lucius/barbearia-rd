@@ -367,26 +367,19 @@
                           const start = new Date(horario.data_horario_reserva);
                           const end = new Date(start.getTime() + 30 * 60 * 1000);
                       
-                          let backgroundColor = '#28a745'; // Verde (aceito)
-                          let borderColor = '#28a745';
-                          let title = 'Horário Confirmado';
-                      
-                          if (horario.status === 'pendente') {
-                              backgroundColor = '#ffc107'; // Amarelo (pendente)
-                              borderColor = '#ffc107';
-                              title = 'Aguardando Confirmação';
-                          }
+                          // Define a cor do evento conforme o status
+                          let corFundo = horario.status === 'pendente' ? '#ffc107' : '#28a745'; // Amarelo para pendente, Verde para aceito
                       
                           return {
-                              title: title,
+                              title: horario.status === 'pendente' ? 'Aguardando Aprovação' : 'Horário Ocupado',
                               start: start.toISOString(),
                               end: end.toISOString(),
                               allDay: false,
-                              backgroundColor: backgroundColor,
-                              borderColor: borderColor
+                              backgroundColor: corFundo,
+                              borderColor: corFundo
                           };
-                      });
-                      
+                        });
+
                         successCallback(events);
                     } else {
                         mostrarMensagemGlobal("Erro ao carregar eventos. Verifique a conexão!", "erro");
