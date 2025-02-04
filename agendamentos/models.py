@@ -20,8 +20,9 @@ class Agendamento(models.Model):
     )
 
     class Meta:
+        # Removemos `unique_together` antigo para evitar conflito
         constraints = [
-            models.UniqueConstraint(fields=['data_horario_reserva', 'status'], name='unique_agendamento_status')
+            models.UniqueConstraint(fields=['data_horario_reserva'], name='unique_agendamento_horario')
         ]
         verbose_name = 'Agendamento'
         verbose_name_plural = 'Agendamentos'
@@ -34,13 +35,13 @@ class Agendamento(models.Model):
                     mensagem,
                     'denisbarbeariard@gmail.com',
                     [self.email_cliente],
-                    fail_silently=True,  # Agora não quebra o sistema se der erro
+                    fail_silently=True,
                 )
             except Exception as e:
-                print(f"Erro ao enviar e-mail: {e}")  # Log para o Heroku
+                print(f"Erro ao enviar e-mail: {e}")
 
     def clean(self):
-        # Verifica se já existe um horário aceito (ignora o próprio objeto se já existir)
+        # Garante que não existe outro agendamento no mesmo horário (exceto ele mesmo)
         if Agendamento.objects.exclude(pk=self.pk).filter(data_horario_reserva=self.data_horario_reserva, status='aceito').exists():
             raise ValidationError('Já existe uma reserva confirmada para este horário.')
 
