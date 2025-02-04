@@ -9,17 +9,11 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # Configuração da chave secreta
 SECRET_KEY = os.getenv('DJANGO_SECRET_KEY', 'chave-de-desenvolvimento')
 
-# Modo de depuração (Ativa em desenvolvimento, desativa em produção)
+# Define se está rodando local ou no Heroku
 DEBUG = os.getenv('DJANGO_DEVELOPMENT', 'False') == 'True'
 
 # Hosts permitidos
-ALLOWED_HOSTS = [
-    '127.0.0.1', 
-    'localhost', 
-    'sua-barbearia.com', 
-    'www.sua-barbearia.com',
-    'barbearia-rd-a3b518df45e1.herokuapp.com'
-]
+ALLOWED_HOSTS = ['127.0.0.1', 'localhost', 'sua-barbearia.com', 'www.sua-barbearia.com', 'barbearia-rd-a3b518df45e1.herokuapp.com']
 
 # Aplicações instaladas
 INSTALLED_APPS = [
@@ -31,13 +25,14 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'agendamentos',
     'corsheaders',
-    'sslserver',
+    'rest_framework',
+    'rest_framework_simplejwt',
 ]
 
 # Middlewares
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
-    'whitenoise.middleware.WhiteNoiseMiddleware',  # Gerenciador de arquivos estáticos no Heroku
+    'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'corsheaders.middleware.CorsMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -99,15 +94,12 @@ USE_TZ = True
 
 # Configuração de arquivos estáticos
 STATIC_URL = '/static/'
-STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static')]  # Para dev
-STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')   # Para produção
+STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static')]
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
-# Configuração do CORS (evita bloqueio de requisições entre frontend e backend)
-CORS_ALLOWED_ORIGINS = [
-    "http://127.0.0.1:5500",
-    "https://sua-barbearia.com",
-]
+# Configuração do CORS
+CORS_ALLOWED_ORIGINS = ["http://127.0.0.1:5500", "https://sua-barbearia.com"]
 
 # Configuração de envio de e-mails
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
@@ -116,7 +108,7 @@ EMAIL_PORT = 587
 EMAIL_USE_TLS = True
 EMAIL_HOST_USER = os.getenv('EMAIL_HOST_USER', '')
 EMAIL_HOST_PASSWORD = os.getenv('EMAIL_HOST_PASSWORD', '')
-EMAIL_FAIL_SILENTLY = True  # Evita que erro no e-mail quebre o site
+EMAIL_FAIL_SILENTLY = True
 
 # Configuração de autenticação JWT
 REST_FRAMEWORK = {
@@ -132,3 +124,11 @@ SIMPLE_JWT = {
     'BLACKLIST_AFTER_ROTATION': True,
 }
 
+# Desativar HTTPS no ambiente local
+if DEBUG:
+    SECURE_SSL_REDIRECT = False
+    SESSION_COOKIE_SECURE = False
+    CSRF_COOKIE_SECURE = False
+    SECURE_HSTS_SECONDS = 0
+    SECURE_HSTS_INCLUDE_SUBDOMAINS = False
+    SECURE_HSTS_PRELOAD = False
