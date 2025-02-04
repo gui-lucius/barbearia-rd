@@ -69,14 +69,16 @@ TEMPLATES = [
 # Configuração do WSGI
 WSGI_APPLICATION = 'barbearia.wsgi.application'
 
-# Configuração do banco de dados (PostgreSQL no Heroku, SQLite localmente)
 DATABASES = {
-    'default': dj_database_url.config(
-        default=f"sqlite:///{os.path.join(BASE_DIR, 'db.sqlite3')}", 
-        conn_max_age=600, 
-        ssl_require=True
-    )
+    'default': {
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': BASE_DIR / "db.sqlite3",
+    }
 }
+
+# Se estiver rodando no Heroku, usar PostgreSQL
+if 'DATABASE_URL' in os.environ:
+    DATABASES['default'] = dj_database_url.config(conn_max_age=600, ssl_require=True)
 
 # Validação de senhas
 AUTH_PASSWORD_VALIDATORS = [
