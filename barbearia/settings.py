@@ -9,8 +9,8 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # Configuração da chave secreta
 SECRET_KEY = os.getenv('DJANGO_SECRET_KEY', 'chave-de-desenvolvimento')
 
-# Modo de depuração
-DEBUG = os.getenv('DEBUG', 'False') == 'True'  # Agora pode ser controlado via Heroku
+# Modo de depuração (Ativa em desenvolvimento, desativa em produção)
+DEBUG = os.getenv('DJANGO_DEVELOPMENT', 'False') == 'True'
 
 # Hosts permitidos
 ALLOWED_HOSTS = [
@@ -18,7 +18,7 @@ ALLOWED_HOSTS = [
     'localhost', 
     'sua-barbearia.com', 
     'www.sua-barbearia.com',
-    'barbearia-rd-a3b518df45e1.herokuapp.com'  
+    'barbearia-rd-a3b518df45e1.herokuapp.com'
 ]
 
 # Aplicações instaladas
@@ -31,6 +31,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'agendamentos',
     'corsheaders',
+    'sslserver',
 ]
 
 # Middlewares
@@ -69,16 +70,18 @@ TEMPLATES = [
 # Configuração do WSGI
 WSGI_APPLICATION = 'barbearia.wsgi.application'
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / "db.sqlite3",
+# Configuração do banco de dados
+if DEBUG:
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.sqlite3',
+            'NAME': BASE_DIR / "db.sqlite3",
+        }
     }
-}
-
-# Se estiver rodando no Heroku, usar PostgreSQL
-if 'DATABASE_URL' in os.environ:
-    DATABASES['default'] = dj_database_url.config(conn_max_age=600, ssl_require=True)
+else:
+    DATABASES = {
+        'default': dj_database_url.config(conn_max_age=600, ssl_require=True)
+    }
 
 # Validação de senhas
 AUTH_PASSWORD_VALIDATORS = [
@@ -96,7 +99,8 @@ USE_TZ = True
 
 # Configuração de arquivos estáticos
 STATIC_URL = '/static/'
-STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')  
+STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static')]  # Para dev
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')   # Para produção
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
 # Configuração do CORS (evita bloqueio de requisições entre frontend e backend)
@@ -105,13 +109,13 @@ CORS_ALLOWED_ORIGINS = [
     "https://sua-barbearia.com",
 ]
 
-# Configuração de envio de e-mails (agora segura)
+# Configuração de envio de e-mails
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
-EMAIL_HOST_USER = os.getenv('EMAIL_HOST_USER')
-EMAIL_HOST_PASSWORD = os.getenv('EMAIL_HOST_PASSWORD')
+EMAIL_HOST_USER = os.getenv('EMAIL_HOST_USER', '')
+EMAIL_HOST_PASSWORD = os.getenv('EMAIL_HOST_PASSWORD', '')
 EMAIL_FAIL_SILENTLY = True  # Evita que erro no e-mail quebre o site
 
 # Configuração de autenticação JWT
@@ -128,10 +132,10 @@ SIMPLE_JWT = {
     'BLACKLIST_AFTER_ROTATION': True,
 }
 
-# Segurança extra para produção (SSL)
-SECURE_SSL_REDIRECT = not DEBUG  # Só força HTTPS se estiver em produção
-SESSION_COOKIE_SECURE = True
-CSRF_COOKIE_SECURE = True
-SECURE_HSTS_SECONDS = 31536000
-SECURE_HSTS_INCLUDE_SUBDOMAINS = True
-SECURE_HSTS_PRELOAD = True
+# Configurações de segurança para HTTPS (forçado apenas em produção)
+SECURE_SSL_REDIRECT = not DEBUG
+SESSION_COOKIE_SECURE = not DEBUG
+CSRF_COOKIE_SECURE = not DEBUG
+SECURE_HSTS_SECONDS = 31536000 if not DEBUG else 0
+SECURE_HSTS_INCLUDE_SUBDOMAINS = not DEBUG
+SECURE_HSTS_PRELOAD = not DEBUG

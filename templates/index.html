@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
+  {% load static %}
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="description" content="A Barbearia RD oferece cortes de cabelo, design de barba, descoloração e mais. Agende já seu horário conosco!">
@@ -10,55 +11,6 @@
   <title>Barbearia RD</title>
   <link rel="stylesheet" href="{% static 'css/styles.css' %}">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-  <style>
-    /* Ajustes de responsividade para o rodapé */
-    .footer {
-      text-align: center;
-      padding: 20px;
-      background-color: #333; /* Cor do fundo */
-      color: white;
-    }
-
-    .footer p, .footer .social-links {
-      margin: 10px 0;
-    }
-
-    .footer .btn-whatsapp {
-      display: inline-block;
-      margin-top: 15px;
-      padding: 10px 20px;
-      background-color: #ffcc00; /* Cor amarela */
-      color: black;
-      text-transform: uppercase;
-      font-weight: bold;
-      text-decoration: none;
-      border-radius: 5px;
-      transition: background 0.3s ease;
-    }
-
-    .footer .btn-whatsapp:hover {
-      background-color: #ff9900; /* Cor mais escura ao passar o mouse */
-    }
-
-    /* Responsividade para telas menores */
-    @media (max-width: 768px) {
-      .footer {
-        padding: 15px;
-        font-size: 14px;
-      }
-
-      .footer .btn-whatsapp {
-        width: 100%; /* O botão ocupa toda a largura */
-        padding: 12px 0; /* Ajusta o espaçamento vertical */
-        font-size: 16px; /* Tamanho do texto */
-      }
-
-      .footer .social-links a {
-        display: block; /* Links sociais em coluna no mobile */
-        margin: 5px 0;
-      }
-    }
-  </style>
 </head>
 <body>
   <!-- Cabeçalho -->
@@ -72,7 +24,7 @@
         <a href="https://maps.app.goo.gl/VoDQMjCG7vgZorPX7" target="_blank" class="btn-location">
           <span class="icon">📍</span> Nos encontramos aqui
         </a>
-        <a href="calendario.html" class="btn-whatsapp">Agende seu horário</a>
+        <a href="{% url 'home' %}" class="btn-whatsapp">Agende seu horário</a>
       </div>
     </div>
   </header>
@@ -82,35 +34,30 @@
     <div class="container">
       <h2>Nossos Serviços</h2>
       <div class="service-items">
-        <!-- Serviço 1 -->
         <div class="service-item">
           <img src="{% static 'imagens/cortes.jpg' %}" alt="Cortes">
           <h3>Cortes</h3>
           <p>Social, Degradê, Navalhado.</p>
         </div>
 
-        <!-- Serviço 2 -->
         <div class="service-item">
           <img src="{% static 'imagens/sobrancelha.jpeg' %}" alt="Sobrancelha">
           <h3>Sobrancelha</h3>
           <p>Design e modelagem profissional.</p>
         </div>
 
-        <!-- Serviço 3 -->
         <div class="service-item">
           <img src="{% static 'imagens/pigmentação.jpeg' %}" alt="Pigmentação">
           <h3>Pigmentação</h3>
           <p>Cobertura de cabelos brancos ou mudança de cor.</p>
         </div>
 
-        <!-- Serviço 4 -->
         <div class="service-item">
           <img src="{% static 'imagens/barba.jpeg' %}" alt="Barba">
           <h3>Barba</h3>
           <p>Tratamento e design exclusivo para sua barba.</p>
         </div>
 
-        <!-- Serviço 5 -->
         <div class="service-item">
           <img src="{% static 'imagens/nevou.jpg' %}" alt="Descoloração">
           <h3>Descoloração</h3>
@@ -134,38 +81,14 @@
     <div class="container">
       <h2>Preços de Alguns de Nossos Serviços</h2>
       <ul class="price-list">
-        <li>
-          <span class="service-name">Cortes</span>
-          <span class="price">R$ 35</span>
-        </li>
-        <li>
-          <span class="service-name">Barba</span>
-          <span class="price">R$ 30</span>
-        </li>
-        <li>
-          <span class="service-name">Descoloração</span>
-          <span class="price">R$ 150</span>
-        </li>
-        <li>
-          <span class="service-name">Luzes</span>
-          <span class="price">R$ 30</span>
-        </li>
-        <li>
-          <span class="service-name">Sobrancelha</span>
-          <span class="price">R$ 10</span>
-        </li>
-        <li>
-          <span class="service-name">Pigmentação</span>
-          <span class="price">R$ 60</span>
-        </li>
-        <li>
-          <span class="service-name">Plano Mensal (4 Cortes)</span>
-          <span class="price">R$ 100</span>
-        </li>
-        <li>
-          <span class="service-name">Plano Mensal (4 Cortes e Barba)</span>
-          <span class="price">R$ 180</span>
-        </li>
+        <li><span class="service-name">Cortes</span> <span class="price">R$ 35</span></li>
+        <li><span class="service-name">Barba</span> <span class="price">R$ 30</span></li>
+        <li><span class="service-name">Descoloração</span> <span class="price">R$ 150</span></li>
+        <li><span class="service-name">Luzes</span> <span class="price">R$ 30</span></li>
+        <li><span class="service-name">Sobrancelha</span> <span class="price">R$ 10</span></li>
+        <li><span class="service-name">Pigmentação</span> <span class="price">R$ 60</span></li>
+        <li><span class="service-name">Plano Mensal (4 Cortes)</span> <span class="price">R$ 100</span></li>
+        <li><span class="service-name">Plano Mensal (4 Cortes e Barba)</span> <span class="price">R$ 180</span></li>
       </ul>
     </div>
   </section>
