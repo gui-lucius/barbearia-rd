@@ -307,9 +307,10 @@
             contentHeight: 'auto',
             aspectRatio: 1.35,
             selectable: true,
-            longPressDelay: 50,   // 🔹 Reduz tempo para reconhecer toque no mobile
-            eventLongPressDelay: 50, // 🔹 Reduz tempo para abrir evento no mobile
+            longPressDelay: 0,   // 🔹 Reduz tempo para reconhecer toque no mobile
+            eventLongPressDelay: 0, // 🔹 Reduz tempo para abrir evento no mobile
             selectOverlap: false,  // 🔹 Corrigido erro da opção escrita errada
+            dragScroll: false,
             handleWindowResize: false, // 🔹 Evita mudança automática para "month" no mobile
 
             businessHours: { daysOfWeek: [1, 2, 3, 4, 5, 6], startTime: '09:00', endTime: '20:30' },
