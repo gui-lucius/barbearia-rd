@@ -2,8 +2,7 @@ from django.http import JsonResponse
 from django.core.mail import send_mail
 from django.core.validators import validate_email
 from django.core.exceptions import ValidationError
-from rest_framework.decorators import api_view, permission_classes
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from .models import Agendamento
 from datetime import datetime
@@ -11,16 +10,15 @@ from django.shortcuts import render
 
 # Endpoint para criar agendamentos
 @api_view(['POST'])
-@permission_classes([IsAuthenticated])  # Remova essa linha temporariamente para testar
 def criar_agendamento(request):
     try:
-        dados = request.data  # <-- Correção aqui
+        dados = request.data  # Correto para pegar os dados do JSON enviado
 
         nome_cliente = dados.get('nome_cliente')
         email_cliente = dados.get('email_cliente')
         data_horario_reserva = dados.get('data_horario_reserva')
 
-        # Validações
+        # Validações básicas
         if not nome_cliente or not email_cliente or not data_horario_reserva:
             return JsonResponse({'erro': 'Todos os campos são obrigatórios.'}, status=400)
 
@@ -34,7 +32,7 @@ def criar_agendamento(request):
         except ValueError:
             return JsonResponse({'erro': 'Data/Horário inválido.'}, status=400)
 
-        # Criação do agendamento
+        # Criando o agendamento
         agendamento = Agendamento.objects.create(
             nome_cliente=nome_cliente,
             email_cliente=email_cliente,
@@ -42,7 +40,7 @@ def criar_agendamento(request):
             status='pendente'
         )
 
-        # Envio de e-mail (Comente para testar)
+        # Tentativa de envio de e-mail (não quebra o código se falhar)
         try:
             send_mail(
                 'Novo Agendamento Pendente',
@@ -50,28 +48,28 @@ def criar_agendamento(request):
                 "Por favor, verifique o painel administrativo.",
                 'denisbarbeariard@gmail.com',
                 ['denisbarbeariard@gmail.com'],
-                fail_silently=True,  # Agora ele não quebra o sistema se der erro no envio
+                fail_silently=True,  # Se der erro, não interrompe a aplicação
             )
         except Exception as e:
-            print(f"Erro ao enviar e-mail: {e}")  # Log para o Heroku
+            print(f"Erro ao enviar e-mail: {e}")  # Log para debug
 
         return JsonResponse({'mensagem': 'Agendamento criado com sucesso!', 'id': agendamento.id}, status=201)
     
     except Exception as e:
-        print(f"Erro ao criar agendamento: {e}")  # Log para o Heroku
+        print(f"Erro ao criar agendamento: {e}")  # Log para debug
         return JsonResponse({'erro': f'Erro inesperado: {str(e)}'}, status=500)
 
 
 # Endpoint para listar horários ocupados
 @api_view(['GET'])
-@permission_classes([IsAuthenticated])  # Remova essa linha temporariamente para testar
 def horarios_ocupados(request):
     try:
         horarios = Agendamento.objects.filter(status='aceito').values('data_horario_reserva')
         return Response(list(horarios))
     except Exception as e:
-        print(f"Erro ao buscar horários ocupados: {e}")  # Log para o Heroku
+        print(f"Erro ao buscar horários ocupados: {e}")  # Log para debug
         return Response({'erro': f'Erro inesperado: {str(e)}'}, status=500)
+
 
 # Página inicial
 def home(request):
