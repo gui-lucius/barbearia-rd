@@ -49,7 +49,7 @@ def criar_agendamento(request):
                 "Por favor, verifique o painel administrativo.",
                 'denisbarbeariard@gmail.com',
                 ['denisbarbeariard@gmail.com'],
-                fail_silently=True,  # Se der erro, não interrompe a aplicação
+                fail_silently=False,  # Se der erro, não interrompe a aplicação
             )
         except Exception as e:
             print(f"Erro ao enviar e-mail: {e}")  # Log para debug
@@ -60,15 +60,16 @@ def criar_agendamento(request):
         print(f"Erro ao criar agendamento: {e}")  # Log para debug
         return JsonResponse({'erro': f'Erro inesperado: {str(e)}'}, status=500)
 
-# Endpoint para listar horários ocupados
+# Endpoint para listar horários ocupados e pendentes
 @api_view(['GET'])
 def horarios_ocupados(request):
     try:
-        horarios = Agendamento.objects.filter(status='aceito').values('data_horario_reserva')
-        return Response(list(horarios))
+        horarios = Agendamento.objects.all().values('data_horario_reserva', 'status')
+        return Response(list(horarios))  # Agora retorna o status também
     except Exception as e:
-        print(f"Erro ao buscar horários ocupados: {e}")  # Log para debug
+        print(f"Erro ao buscar horários ocupados: {e}")
         return Response({'erro': f'Erro inesperado: {str(e)}'}, status=500)
+
 
 # Página inicial
 def home(request):
