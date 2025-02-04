@@ -5,8 +5,9 @@ from django.core.exceptions import ValidationError
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from .models import Agendamento
-from dateutil import parser  # Import necessário para parsear datas com fuso horário
+from datetime import datetime
 from django.shortcuts import render
+from dateutil import parser
 
 # Endpoint para criar agendamentos
 @api_view(['POST'])
@@ -28,7 +29,6 @@ def criar_agendamento(request):
             return JsonResponse({'erro': 'E-mail inválido.'}, status=400)
 
         try:
-            # Usando dateutil.parser para lidar com diferentes formatos de data
             data_horario_reserva = parser.parse(data_horario_reserva)
         except ValueError:
             return JsonResponse({'erro': 'Data/Horário inválido.'}, status=400)
@@ -60,6 +60,7 @@ def criar_agendamento(request):
         print(f"Erro ao criar agendamento: {e}")  # Log para debug
         return JsonResponse({'erro': f'Erro inesperado: {str(e)}'}, status=500)
 
+
 # Endpoint para listar horários ocupados
 @api_view(['GET'])
 def horarios_ocupados(request):
@@ -69,6 +70,7 @@ def horarios_ocupados(request):
     except Exception as e:
         print(f"Erro ao buscar horários ocupados: {e}")  # Log para debug
         return Response({'erro': f'Erro inesperado: {str(e)}'}, status=500)
+
 
 # Página inicial
 def home(request):
