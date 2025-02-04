@@ -311,9 +311,14 @@
             unselectAuto: false,
             selectOverlap: false,
 
-            selectAllow: function (selectInfo){
-              return selectInfo.start === selectInfo.end;
-            },
+            // 🔹 Ajuste para impedir seleção ao arrastar e garantir clique imediato
+            longPressDelay: 0,   // Reduz tempo para reconhecer toque no mobile
+            eventLongPressDelay: 0, // Reduz tempo para abrir evento no mobile
+            selectOverlap: false,  // Evita selecionar horários já ocupados
+            dragScroll: false, // 🔹 Impede que arrastar a tela selecione horários
+            handleWindowResize: false, // 🔹 Evita mudança automática para "month" no mobile
+
+            // 🔴 Removeu selectAllow, pois estava impedindo o clique no horário
 
             businessHours: { daysOfWeek: [1, 2, 3, 4, 5, 6], startTime: '09:00', endTime: '20:30' },
 
@@ -421,7 +426,6 @@
         calendar.render();
     });
   </script>
-
 
 </body>
 </html>
