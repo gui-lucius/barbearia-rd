@@ -310,7 +310,7 @@
   
           businessHours: { daysOfWeek: [1, 2, 3, 4, 5, 6], startTime: '09:00', endTime: '20:30' },
   
-          // 🔥 Clicou num horário livre? Abre o modal!
+          // 🔥 Captura cliques em horários livres
           select: function (info) {
               modal.style.display = "flex";
   
@@ -412,7 +412,19 @@
       });
   
       calendar.render();
+  
+      // 🔥 Captura clique no mobile nos horários livres
+      calendarEl.addEventListener("touchend", function (event) {
+          var target = event.target;
+          if (target.classList.contains("fc-daygrid-day") || target.classList.contains("fc-timegrid-slot")) {
+              let cellDate = target.getAttribute("data-date");
+              if (cellDate) {
+                  calendar.select(new Date(cellDate));
+              }
+          }
+      });
     });
+  
   
   </script>
 
