@@ -417,15 +417,26 @@
       document.addEventListener('DOMContentLoaded', function () {
         let calendarContainer = document.querySelector('#calendar');
     
-        calendarContainer.addEventListener('click', function (event) {
-            // Verifica se o clique foi num horário vazio (não em eventos já existentes)
+        calendarContainer.addEventListener('touchend', function (event) {
             let target = event.target;
-            
+    
+            if (!target.closest('.fc-event')) {  
+                event.preventDefault(); // Evita o delay do toque
+                setTimeout(() => {
+                    modal.style.display = "flex";
+                }, 0); // Delay zero para simular um clique instantâneo
+            }
+        });
+    
+        calendarContainer.addEventListener('click', function (event) {
+            let target = event.target;
+    
             if (!target.closest('.fc-event')) {  
                 modal.style.display = "flex";  
             }
         });
-    });
+      });
+    
     
     });
   
