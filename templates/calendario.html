@@ -374,6 +374,11 @@
     
         function abrirModal(startStr) {
             modal.style.display = "flex";
+
+            function submitForm(){
+              console.log("Tentando enviar a reserva...");
+              document.getElementById("reservaForm").dispatchEvent(new Event("submit"));
+            }
     
             document.getElementById("reservaForm").onsubmit = async function (e) {
               e.preventDefault();
@@ -381,13 +386,12 @@
               const nome = document.getElementById("nome").value;
               const email = document.getElementById("email").value;
               
-              // 🔥 Converte a data para o formato correto (ISO 8601)
-              let dataISO = new Date(startStr).toISOString().split(".")[0] + "Z";
-          
               if (!nome || !email) {
                   mostrarMensagemGlobal("Preencha todos os campos!", "erro");
                   return;
               }
+              // 🔥 Converte a data para o formato correto (ISO 8601)
+              let dataISO = new Date(startStr).toISOString().split(".")[0] + "Z";
           
               const dados = {
                   nome_cliente: nome,
