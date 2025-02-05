@@ -341,8 +341,9 @@
                     return;
                 }
 
-                // Se o usuário tocou e soltou rapidamente, é um clique
-                modal.style.display = "flex";
+                setTimeout(() => {
+                    modal.style.display = "flex"
+                }, 0);
 
                 document.getElementById("reservaForm").onsubmit = async function (e) {
                     e.preventDefault();
