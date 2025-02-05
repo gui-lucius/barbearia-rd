@@ -327,12 +327,17 @@
 
             businessHours: { daysOfWeek: [1, 2, 3, 4, 5, 6], startTime: '09:00', endTime: '20:30' },
 
+            longPressDelay: 0,
+            eventLongPressDelay: 0,
+
             windowResize: function () {
                 calendar.updateSize();
             },
 
             // 🔥 Corrigido: modal abre com clique único no mobile
             select: function (info) {
+
+                modal.style.display = "flex";
                 let deslocamentoY = Math.abs(touchEndY - touchStartY);
                 let deslocamentoX = Math.abs(touchEndX - touchStartX);
 
@@ -340,10 +345,7 @@
                 if (deslocamentoY > 10 || deslocamentoX > 10) {
                     return;
                 }
-
-                setTimeout(() => {
-                    modal.style.display = "flex"
-                }, 0);
+                
 
                 document.getElementById("reservaForm").onsubmit = async function (e) {
                     e.preventDefault();
