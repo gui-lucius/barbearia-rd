@@ -226,7 +226,7 @@
         <input type="email" id="email" name="email" placeholder="seuemail@exemplo.com" required>
 
         <div style="display: flex; justify-content: space-between;">
-          <button type="button" id="btnReservar"> Reservar</button>
+          <button type="submit" id="btnReservar"> Reservar</button>
           <button type="button" id="cancelarModal">Cancelar</button>
         </div>
       </form>
@@ -249,7 +249,9 @@
     
         let touchStartY = 0;
         let touchEndY = 0;
-    
+
+        document.getElementById("btnReservar").addEventListener("click", submitForm);
+
         async function fetchToken() {
             try {
                 loading.style.display = "flex";
@@ -314,8 +316,7 @@
             businessHours: { daysOfWeek: [1, 2, 3, 4, 5, 6], startTime: '09:00', endTime: '20:30' },
     
             select: function (info) {
-              selectedDate = info.startStr;
-              abrirModal();
+              abrirModal(info.startStr);
             },
     
             eventClick: function (info) {
@@ -374,11 +375,14 @@
     
         calendar.render();
     
-        function abrirModal() {
+        function abrirModal(startStr) {
+          selectedDate = startStr;
           modal.style.display = "flex";
         }
       
-        async function submitForm(){
+        async function submitForm(event){
+          if (event) event.preventDefault();
+
           console.log("Tentando enviar a reserva...");
           if(!selectedDate){
             mostrarMensagemGlobal("Erro: Data não selecionada!", "erro");
@@ -394,7 +398,7 @@
           }
 
           // 🔥 Converte a data para o formato correto (ISO 8601)
-          let dataISO = new Date(startStr).toISOString().split(".")[0] + "Z";
+          let dataISO = new Date(selectedDate).toISOString().split(".")[0] + "Z";
           
           const dados = {
             nome_cliente: nome,
@@ -480,7 +484,6 @@
       });
     });
   </script>
-    
-
+  
 </body>
 </html>
