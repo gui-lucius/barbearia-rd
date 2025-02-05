@@ -377,6 +377,7 @@
     
         function abrirModal(startStr) {
           selectedDate = startStr;
+          console.log("Data selecionada:", selectedDate);
           modal.style.display = "flex";
         }
       
@@ -456,7 +457,6 @@
           }
       };
           
-    
       document.getElementById("cancelarModal").onclick = function () {
           modal.style.display = "none";
       };
@@ -472,7 +472,9 @@
               let target = event.target;
     
               if (!target.closest('.fc-event') && target.closest('#calendar')) {
-                  abrirModal();
+                let dataClicked = calendar.getDate().toISOString();
+                console.log("Data tocada:", dataClicked);
+                abrirModal(dataClicked);
               }
           }
       });
