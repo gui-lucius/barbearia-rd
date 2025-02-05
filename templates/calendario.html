@@ -417,23 +417,36 @@
       document.addEventListener('DOMContentLoaded', function () {
         let calendarContainer = document.querySelector('#calendar');
     
-        calendarContainer.addEventListener('touchend', function (event) {
-            let target = event.target;
+        function ativarCliques() {
+            calendarContainer.addEventListener('touchend', function (event) {
+                let target = event.target;
     
-            if (!target.closest('.fc-event')) {  
-                event.preventDefault(); // Evita o delay do toque
-                setTimeout(() => {
-                    modal.style.display = "flex";
-                }, 0); // Delay zero para simular um clique instantâneo
-            }
-        });
+                if (!target.closest('.fc-event')) {  
+                    event.preventDefault(); // Evita delay do toque
+                    setTimeout(() => {
+                        modal.style.display = "flex";
+                    }, 0); // Delay zero para simular um clique instantâneo
+                }
+            });
     
-        calendarContainer.addEventListener('click', function (event) {
-            let target = event.target;
+            calendarContainer.addEventListener('click', function (event) {
+                let target = event.target;
     
-            if (!target.closest('.fc-event')) {  
-                modal.style.display = "flex";  
-            }
+                if (!target.closest('.fc-event')) {  
+                    modal.style.display = "flex";  
+                }
+            });
+    
+            console.log("Eventos de clique ativados!");
+        }
+    
+        // 🔥 Ativa os cliques normalmente
+        ativarCliques();
+    
+        // 🛠 Se der zoom ou mudar o tamanho da tela, reativa os cliques!
+        window.addEventListener('resize', function () {
+            console.log("Tela redimensionada! Reativando cliques...");
+            ativarCliques();
         });
       });
     
