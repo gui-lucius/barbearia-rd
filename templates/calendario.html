@@ -414,15 +414,19 @@
       calendar.render();
   
       // 🔥 Captura toque nos horários livres no mobile e forçar clique
-      calendarEl.addEventListener("touchend", function (event) {
-          var target = event.target;
-          let cellDate = target.getAttribute("data-date");
-  
-          if (cellDate && !target.classList.contains("fc-event")) {
-              let selectedDate = new Date(cellDate);
-              calendar.select(selectedDate);
-          }
+      document.addEventListener('DOMContentLoaded', function () {
+        let calendarContainer = document.querySelector('#calendar');
+    
+        calendarContainer.addEventListener('click', function (event) {
+            // Verifica se o clique foi num horário vazio (não em eventos já existentes)
+            let target = event.target;
+            
+            if (!target.closest('.fc-event')) {  
+                modal.style.display = "flex";  
+            }
+        });
       });
+    
     });
   
   
