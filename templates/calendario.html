@@ -303,8 +303,15 @@
           contentHeight: 'auto',
           aspectRatio: 1.35,
   
-          selectable: false, // 🔥 Remove "select" e usa "eventClick"
-          eventClick: function (info) {
+          selectable: true, // 🔥 Agora os horários livres podem ser clicados
+          unselectAuto: false,
+          selectOverlap: false,
+          dragScroll: false,
+  
+          businessHours: { daysOfWeek: [1, 2, 3, 4, 5, 6], startTime: '09:00', endTime: '20:30' },
+  
+          // 🔥 Clicou num horário livre? Abre o modal!
+          select: function (info) {
               modal.style.display = "flex";
   
               document.getElementById("reservaForm").onsubmit = async function (e) {
@@ -315,7 +322,7 @@
                   const dados = {
                       nome_cliente: nome,
                       email_cliente: email,
-                      data_horario_reserva: info.event.startStr
+                      data_horario_reserva: info.startStr
                   };
   
                   try {
@@ -347,6 +354,11 @@
               document.getElementById("cancelarModal").onclick = function () {
                   modal.style.display = "none";
               };
+          },
+  
+          // 🔥 Bloqueia o clique nos eventos ocupados
+          eventClick: function (info) {
+              return false; // Não faz nada ao clicar num evento
           },
   
           events: async function (fetchInfo, successCallback, failureCallback) {
