@@ -303,13 +303,13 @@
           contentHeight: 'auto',
           aspectRatio: 1.35,
   
-          selectable: false,  // 🔥 Desativamos o select para evitar delay
+          selectable: false, // 🔥 Removemos select e usamos eventClick
           selectMirror: false,
           unselectAuto: false,
           selectOverlap: false,
           dragScroll: false,
   
-          longPressDelay: 0, // 🔥 Remove o atraso no clique no mobile
+          longPressDelay: 0, // 🔥 Remove qualquer delay no clique no mobile
           eventLongPressDelay: 0,
   
           businessHours: { daysOfWeek: [1, 2, 3, 4, 5, 6], startTime: '09:00', endTime: '20:30' },
@@ -318,6 +318,7 @@
               calendar.updateSize();
           },
   
+          // 🔥 DETECÇÃO DE CLIQUE INSTANTÂNEO NO MOBILE E DESKTOP
           eventClick: function (info) {
               modal.style.display = "flex";
   
@@ -414,8 +415,7 @@
       });
   
       calendar.render();
-  });
-  
+    });
   
   </script>
 
