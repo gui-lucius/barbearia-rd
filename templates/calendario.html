@@ -474,6 +474,8 @@
             let target = event.target;
     
             if (!target.closest('.fc-event') && target.closest('#calendar')) {
+              let dateClicked = calendar.getDate().toISOString();
+              console.log("Data tocada:", dateClicked);
               abrirModal(dateClicked);
             }
         }
