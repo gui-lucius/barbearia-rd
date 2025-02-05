@@ -392,7 +392,9 @@
                     email_cliente: email,
                     data_horario_reserva: dataISO,
                 };
-    
+                console.log("📌 Dados a serem enviados:", dados);
+                console.log("🔑 Token Atual:", accessToken);  // 🔥 Agora mostramos o token para ver se ele existe no mobile
+
                 try {
                     loading.style.display = "flex";
 
@@ -409,12 +411,14 @@
                             "Authorization": `Bearer ${accessToken}`
                         },
                         body: JSON.stringify(dados),
+                        mode: "cors"
                     });
+                    console.log("📡 Resposta da API:", response);
     
                     if (!response.ok) {
                       const erroTexto = await response.text();
                       console.error("Erro ao enviar reserva:", erroTexto)
-                      mostrarMensagemGlobal("Reserva enviada com sucesso!", "sucesso");
+                      mostrarMensagemGlobal("Erro ao enviar a reserva ${erroTexto}", "erro");
                     } else {
                         mostrarMensagemGlobal("Reserva enviada com sucesso!", "sucesso");
                         modal.style.display = "none";
