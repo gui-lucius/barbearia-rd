@@ -377,7 +377,7 @@
     
         function abrirModal(startStr) {
           selectedDate = startStr;
-          console.log("Data selecionada:", selectedDate);
+          console.log("Horário selecionado corretamente:", selectedDate);
           modal.style.display = "flex";
         }
       
@@ -385,6 +385,7 @@
           if (event) event.preventDefault();
 
           console.log("Tentando enviar a reserva...");
+
           if(!selectedDate){
             mostrarMensagemGlobal("Erro: Data não selecionada!", "erro");
             return;
@@ -400,6 +401,7 @@
 
           // 🔥 Converte a data para o formato correto (ISO 8601)
           let dataISO = new Date(selectedDate).toISOString().split(".")[0] + "Z";
+          console.log("Data enviada para API:", dataISO);
           
           const dados = {
             nome_cliente: nome,
@@ -468,15 +470,15 @@
       document.addEventListener("touchend", function (event) {
         touchEndY = event.changedTouches[0].clientY;
     
-          if (Math.abs(touchStartY - touchEndY) < 10) {
-              let target = event.target;
+        if (Math.abs(touchStartY - touchEndY) < 10) {
+            let target = event.target;
     
-              if (!target.closest('.fc-event') && target.closest('#calendar')) {
-                let dataClicked = calendar.getDate().toISOString();
-                console.log("Data tocada:", dataClicked);
-                abrirModal(dataClicked);
-              }
-          }
+            if (!target.closest('.fc-event') && target.closest('#calendar')) {
+              let dateClicked = calendar.getDate().toISOString();
+              console.log("Data tocada:", dateClicked);
+              abrirModal(dateClicked);
+            }
+        }
       });
     
       modal.addEventListener("click", function (event) {
