@@ -413,14 +413,14 @@
   
       calendar.render();
   
-      // 🔥 Captura clique no mobile nos horários livres
+      // 🔥 Captura toque nos horários livres no mobile e forçar clique
       calendarEl.addEventListener("touchend", function (event) {
           var target = event.target;
-          if (target.classList.contains("fc-daygrid-day") || target.classList.contains("fc-timegrid-slot")) {
-              let cellDate = target.getAttribute("data-date");
-              if (cellDate) {
-                  calendar.select(new Date(cellDate));
-              }
+          let cellDate = target.getAttribute("data-date");
+  
+          if (cellDate && !target.classList.contains("fc-event")) {
+              let selectedDate = new Date(cellDate);
+              calendar.select(selectedDate);
           }
       });
     });
