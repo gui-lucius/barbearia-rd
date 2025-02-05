@@ -246,6 +246,9 @@
         var loading = document.getElementById("loading");
         let accessToken = "";
     
+        let touchStartY = 0;
+        let touchEndY = 0;
+    
         async function fetchToken() {
             try {
                 loading.style.display = "flex";
@@ -301,8 +304,8 @@
             slotLabelFormat: { hour: '2-digit', minute: '2-digit', hour12: false },
             allDaySlot: false,
             dayHeaderFormat: { weekday: 'short' },
-            contentHeight: 'auto',  // 🔥 Ajuste automático da altura
-            selectable: true, // 🔥 Permite selecionar horários vagos
+            contentHeight: 'auto',  
+            selectable: true,  
             unselectAuto: false,
             selectOverlap: false,
             dragScroll: false,
@@ -314,7 +317,7 @@
             },
     
             eventClick: function (info) {
-                return false; // 🔥 Bloqueia a edição de eventos já agendados
+                return false; 
             },
     
             events: async function (fetchInfo, successCallback, failureCallback) {
@@ -414,11 +417,25 @@
             };
         }
     
-        // 🔥 Captura eventos de toque no mobile
+        document.addEventListener("touchstart", function (event) {
+            touchStartY = event.touches[0].clientY;
+        });
+    
         document.addEventListener("touchend", function (event) {
-            if (event.target.closest('.fc-event') === null) {
-                event.preventDefault();
-                setTimeout(() => modal.style.display = "flex", 0);
+            touchEndY = event.changedTouches[0].clientY;
+    
+            if (Math.abs(touchStartY - touchEndY) < 10) {
+                let target = event.target;
+    
+                if (!target.closest('.fc-event') && target.closest('#calendar')) {
+                    abrirModal();
+                }
+            }
+        });
+    
+        modal.addEventListener("click", function (event) {
+            if (event.target === modal) {
+                event.stopPropagation();  
             }
         });
     });
