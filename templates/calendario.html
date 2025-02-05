@@ -303,22 +303,7 @@
           contentHeight: 'auto',
           aspectRatio: 1.35,
   
-          selectable: false, // 🔥 Removemos select e usamos eventClick
-          selectMirror: false,
-          unselectAuto: false,
-          selectOverlap: false,
-          dragScroll: false,
-  
-          longPressDelay: 0, // 🔥 Remove qualquer delay no clique no mobile
-          eventLongPressDelay: 0,
-  
-          businessHours: { daysOfWeek: [1, 2, 3, 4, 5, 6], startTime: '09:00', endTime: '20:30' },
-  
-          windowResize: function () {
-              calendar.updateSize();
-          },
-  
-          // 🔥 DETECÇÃO DE CLIQUE INSTANTÂNEO NO MOBILE E DESKTOP
+          selectable: false, // 🔥 Remove "select" e usa "eventClick"
           eventClick: function (info) {
               modal.style.display = "flex";
   
