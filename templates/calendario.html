@@ -246,6 +246,18 @@
       var loading = document.getElementById("loading");
       let accessToken = "";
   
+      // Variáveis para toque no mobile
+      let touchStartY = 0;
+      let touchEndY = 0;
+  
+      document.addEventListener('touchstart', function (event) {
+          touchStartY = event.touches[0].clientY;
+      });
+  
+      document.addEventListener('touchend', function (event) {
+          touchEndY = event.changedTouches[0].clientY;
+      });
+  
       async function fetchToken() {
           try {
               loading.style.display = "flex";
@@ -262,7 +274,7 @@
                   accessToken = data.access;
                   console.log('Token obtido:', accessToken);
               } else {
-                  mostrarMensagemGlobal("Erro ao obter o token.", "erro");
+                  mostrarMensagemGlobal("Erro ao obter o token. Verifique as credenciais.", "erro");
               }
           } catch (error) {
               mostrarMensagemGlobal("Erro de conexão com o servidor.", "erro");
@@ -309,7 +321,7 @@
           selectOverlap: false,
           dragScroll: false,
   
-          longPressDelay: 0,  // 🔥 Remove qualquer delay no clique
+          longPressDelay: 0, // 🔥 Remove o atraso no clique no mobile
           eventLongPressDelay: 0,
   
           businessHours: { daysOfWeek: [1, 2, 3, 4, 5, 6], startTime: '09:00', endTime: '20:30' },
@@ -319,6 +331,13 @@
           },
   
           select: function (info) {
+              let deslocamento = Math.abs(touchEndY - touchStartY);
+  
+              // 🔹 Se o usuário deslizou para cima/baixo, não abre o modal
+              if (deslocamento > 10) {
+                  return;
+              }
+  
               modal.style.display = "flex";
   
               document.getElementById("reservaForm").onsubmit = async function (e) {
@@ -346,9 +365,9 @@
                       if (response.ok) {
                           mostrarMensagemGlobal("Reserva enviada com sucesso!", "sucesso");
                           modal.style.display = "none";
-                          calendar.refetchEvents();  // 🔥 Atualiza o calendário imediatamente
+                          calendar.refetchEvents();
                       } else {
-                          mostrarMensagemGlobal("Erro ao enviar a reserva.", "erro");
+                          mostrarMensagemGlobal("Erro ao enviar a reserva. Tente novamente.", "erro");
                       }
                   } catch (error) {
                       console.error("Erro ao enviar dados:", error);
@@ -402,7 +421,7 @@
   
                       successCallback(events);
                   } else {
-                      mostrarMensagemGlobal("Erro ao carregar eventos.", "erro");
+                      mostrarMensagemGlobal("Erro ao carregar eventos. Verifique a conexão!", "erro");
                   }
               } catch (error) {
                   console.error('Erro ao carregar eventos:', error);
@@ -414,15 +433,6 @@
       });
   
       calendar.render();
-  
-      // 🔥 Garantir que no mobile o clique único abre o modal
-      document.addEventListener("click", function (event) {
-          let cell = event.target.closest(".fc-timegrid-slot"); // Pega apenas os horários disponíveis
-          if (cell) {
-              cell.dispatchEvent(new Event("mousedown")); // Dispara o evento de clique no FullCalendar
-          }
-      });
-  
     });
   
   </script>
