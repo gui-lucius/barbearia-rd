@@ -247,23 +247,22 @@
         let accessToken = "";
 
         // Variáveis para detectar toque no mobile
+        let touchStartTime = 0;
         let touchStartY = 0;
         let touchEndY = 0;
 
-        // Captura o toque inicial
         document.addEventListener('touchstart', function (event) {
+            touchStartTime = new Date().getTime(); // Tempo do toque inicial
             touchStartY = event.touches[0].clientY;
         });
 
-        // Captura o toque final
         document.addEventListener('touchend', function (event) {
             touchEndY = event.changedTouches[0].clientY;
         });
 
-        // Função para autenticar e obter o token JWT
         async function fetchToken() {
             try {
-                loading.style.display = "flex"; // Mostra o spinner
+                loading.style.display = "flex";
                 const response = await fetch('https://barbearia-rd-a3b518df45e1.herokuapp.com/api/token/', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
@@ -282,11 +281,10 @@
             } catch (error) {
                 mostrarMensagemGlobal("Erro de conexão com o servidor.", "erro");
             } finally {
-                loading.style.display = "none"; // Oculta o spinner
+                loading.style.display = "none";
             }
         }
 
-        // Função para exibir mensagens globais
         function mostrarMensagemGlobal(texto, tipo) {
             var mensagemGlobal = document.getElementById("mensagem-global");
             mensagemGlobal.textContent = texto;
@@ -298,10 +296,8 @@
             }, 4000);
         }
 
-        // Obtenha o token JWT ao carregar a página
         await fetchToken();
 
-        // Configurar o calendário
         var calendar = new FullCalendar.Calendar(calendarEl, {
             initialView: 'timeGridWeek',
             headerToolbar: {
@@ -324,7 +320,6 @@
             selectable: true,
             selectMirror: false,
             unselectAuto: false,
-
             selectOverlap: false,
             dragScroll: false,
 
@@ -334,16 +329,15 @@
                 calendar.updateSize();
             },
 
-            // 🔥 Evento corrigido para detectar clique real e evitar arrasto
             select: function (info) {
+                let touchEndTime = new Date().getTime(); 
+                let tempoToque = touchEndTime - touchStartTime;
                 let deslocamento = Math.abs(touchEndY - touchStartY);
 
-                // Se o deslocamento for muito grande, significa que o usuário arrastou, então não abre o modal
-                if (deslocamento > 10) {
-                    return;
+                // 🔥 Abre o modal apenas se for um toque rápido e sem movimento significativo
+                if (tempoToque < 300 && deslocamento < 10) {
+                    modal.style.display = "flex";
                 }
-
-                modal.style.display = "flex";
 
                 document.getElementById("reservaForm").onsubmit = async function (e) {
                     e.preventDefault();
@@ -357,7 +351,7 @@
                     };
 
                     try {
-                        loading.style.display = "flex"; // Mostra o spinner
+                        loading.style.display = "flex";
                         const response = await fetch("https://barbearia-rd-a3b518df45e1.herokuapp.com/api/agendamentos/", {
                             method: "POST",
                             headers: {
@@ -370,7 +364,7 @@
                         if (response.ok) {
                             mostrarMensagemGlobal("Reserva enviada com sucesso!", "sucesso");
                             modal.style.display = "none";
-                            calendar.refetchEvents(); // Atualiza o calendário
+                            calendar.refetchEvents();
                         } else {
                             mostrarMensagemGlobal("Erro ao enviar a reserva. Tente novamente.", "erro");
                         }
@@ -389,7 +383,7 @@
 
             events: async function (fetchInfo, successCallback, failureCallback) {
                 try {
-                    loading.style.display = "flex"; // Mostra o spinner
+                    loading.style.display = "flex";
                     const response = await fetch('https://barbearia-rd-a3b518df45e1.herokuapp.com/api/horarios/', {
                         headers: {
                             "Authorization": `Bearer ${accessToken}`
@@ -399,7 +393,6 @@
                     if (response.ok) {
                         const data = await response.json();
 
-                        // 🔴 Filtra apenas horários que NÃO são recusados
                         const filteredData = data.filter(horario => horario.status !== 'recusado');
 
                         const events = filteredData.map(horario => {
@@ -434,7 +427,7 @@
                     console.error('Erro ao carregar eventos:', error);
                     failureCallback(error);
                 } finally {
-                    loading.style.display = "none"; // Oculta o spinner
+                    loading.style.display = "none";
                 }
             }
         });
@@ -442,6 +435,7 @@
         calendar.render();
     });
   </script>
+
 
 
 </body>
