@@ -380,14 +380,28 @@
     
                 const nome = document.getElementById("nome").value;
                 const email = document.getElementById("email").value;
+                
+                let dataISO = new Date(startStr).toISOString().split(".")[0] + "Z";
+
+                if (!nome || !email){
+                  mostrarMensagemGlobal("Preencha todos os campos!", "erro");
+                }
+
                 const dados = {
                     nome_cliente: nome,
                     email_cliente: email,
-                    data_horario_reserva: startStr
+                    data_horario_reserva: dataISO,
                 };
     
                 try {
                     loading.style.display = "flex";
+
+                    if(!accessToken){
+                      mostrarMensagemGlobal("Erro: Token não carregado!", "erro");
+                      loading.style.display = "none";
+                      return;
+                    }
+
                     const response = await fetch("https://barbearia-rd-a3b518df45e1.herokuapp.com/api/agendamentos/", {
                         method: "POST",
                         headers: {
@@ -397,16 +411,19 @@
                         body: JSON.stringify(dados),
                     });
     
-                    if (response.ok) {
+                    if (!response.ok) {
+                      const erroTexto = await response.text();
+                      console.error("Erro ao enviar reserva:", erroTexto)
+                      mostrarMensagemGlobal("Reserva enviada com sucesso!", "sucesso");
+                    } else {
                         mostrarMensagemGlobal("Reserva enviada com sucesso!", "sucesso");
                         modal.style.display = "none";
                         calendar.refetchEvents();
-                    } else {
-                        mostrarMensagemGlobal("Erro ao enviar a reserva!", "erro");
                     }
+
                 } catch (error) {
-                    console.error("Erro ao enviar dados:", error);
-                    mostrarMensagemGlobal("Erro de conexão!", "erro");
+                    console.error("Erro na conexão", error);
+                    mostrarMensagemGlobal("Erro de conexão com o servidor!", "erro");
                 } finally {
                     loading.style.display = "none";
                 }
