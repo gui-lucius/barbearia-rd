@@ -416,15 +416,16 @@
       calendar.render();
   
       // 🔥 Garantir que no mobile o clique único abre o modal
-      document.addEventListener("touchstart", function (event) {
-          if (event.target.closest(".fc-timegrid-slot")) { 
-              event.target.click();
+      document.addEventListener("click", function (event) {
+          let cell = event.target.closest(".fc-timegrid-slot"); // Pega apenas os horários disponíveis
+          if (cell) {
+              cell.dispatchEvent(new Event("mousedown")); // Dispara o evento de clique no FullCalendar
           }
-      }, { passive: true });
+      });
+  
     });
+  
   </script>
-
-
 
 </body>
 </html>
