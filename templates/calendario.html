@@ -246,18 +246,6 @@
       var loading = document.getElementById("loading");
       let accessToken = "";
   
-      // Variáveis para toque no mobile
-      let touchStartY = 0;
-      let touchEndY = 0;
-  
-      document.addEventListener('touchstart', function (event) {
-          touchStartY = event.touches[0].clientY;
-      });
-  
-      document.addEventListener('touchend', function (event) {
-          touchEndY = event.changedTouches[0].clientY;
-      });
-  
       async function fetchToken() {
           try {
               loading.style.display = "flex";
@@ -315,7 +303,7 @@
           contentHeight: 'auto',
           aspectRatio: 1.35,
   
-          selectable: true,
+          selectable: false,  // 🔥 Desativamos o select para evitar delay
           selectMirror: false,
           unselectAuto: false,
           selectOverlap: false,
@@ -330,14 +318,7 @@
               calendar.updateSize();
           },
   
-          select: function (info) {
-              let deslocamento = Math.abs(touchEndY - touchStartY);
-  
-              // 🔹 Se o usuário deslizou para cima/baixo, não abre o modal
-              if (deslocamento > 10) {
-                  return;
-              }
-  
+          eventClick: function (info) {
               modal.style.display = "flex";
   
               document.getElementById("reservaForm").onsubmit = async function (e) {
@@ -348,7 +329,7 @@
                   const dados = {
                       nome_cliente: nome,
                       email_cliente: email,
-                      data_horario_reserva: info.startStr
+                      data_horario_reserva: info.event.startStr
                   };
   
                   try {
@@ -433,7 +414,8 @@
       });
   
       calendar.render();
-    });
+  });
+  
   
   </script>
 
