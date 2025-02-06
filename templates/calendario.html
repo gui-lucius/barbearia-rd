@@ -376,6 +376,20 @@
         });
     
         calendar.render();
+
+        calendarEl.addEventListener("click", function (event) {
+          let slot = document.elementFromPoint(event.clientX, event.clientY);
+          
+          if (slot && slot.closest(".fc-timegrid-slot")) { // Garante que é um horário clicável
+              let dateAttr = slot.getAttribute("data-time"); 
+              if (dateAttr) {
+                  selectedDate = dateAttr;
+                  console.log("Horário selecionado no mobile:", selectedDate);
+                  abrirModal(selectedDate);
+              }
+          }
+        });
+      
     
         function abrirModal(startStr) {
           if (startStr){
