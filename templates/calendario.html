@@ -479,13 +479,13 @@
             let target = event.target;
 
             if (!target.closest ('.fc-event') && target.closest('#calendar')){
-              let cell = target.closest(".fc-timegrid-slot");
-              if (call){
-                let dateClicked = call.getAttribute("data-time");
-                if (dateClicked){
-                  selectedDate = dateClicked;
-                  console.log ("Data ajustada pelo touch:", selectedDate);
-                  abrirModal (selectedDate);
+              let slot = document.elementFromPoint(event.changedTouches[0].clientX, event.changedTouches[0].clientY);
+              if (slot){
+                let dataSlot = slot.getAttribute("data-time");
+                if (dataSlot){
+                  selectedDate = dataSlot;
+                  console.log ("Data tocada:", selectedDate);
+                  abrirModal ();
 
                 }
               }
