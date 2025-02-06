@@ -396,13 +396,6 @@
         submitForm(event);
       });
 
-      document.getElementById("btnReservar").addEventListener("touchend", function (event) {
-        event.preventDefault();
-        event.stopPropagation();
-        console.log("touch no botão reservar");
-        setTimeout(()=> {submitForm(event); },100);
-      });
-
       calendar.render();
 
       function abrirModal(startStr) {
