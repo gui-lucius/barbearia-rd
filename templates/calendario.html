@@ -103,6 +103,7 @@
       justify-content: center;
       align-items: center;
       z-index: 1000;
+      pointer-events:auto;
     }
 
     #reservaModal div {
@@ -377,10 +378,19 @@
     
         calendar.render();
 
+        document.getElementById("reservaForm").addEventListener("submit", function (event) {
+          event.preventDefault();
+          console.log("🚀 Formulário foi submetido!");
+          submitForm(event);
+        });
+      
+
         document.getElementById("btnReservar").addEventListener("click", function (event) {
           event.preventDefault();
+          event.stopPropagation();
           console.log("✅ Botão Reservar foi clicado!");
           submitForm(event);
+          document.getElementById ("reservaForm"). dispatchEvent(new Event("submit"));
         });
       
         document.getElementById("btnReservar").addEventListener("touchend", function (event) {
