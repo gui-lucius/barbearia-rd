@@ -389,6 +389,20 @@
         }
       });
 
+      document.getElementById("btnReservar").addEventListener("click", function (event) {
+        event.preventDefault();
+        event.stopPropagation();
+        console.log("✅ Botão Reservar foi clicado!");
+        submitForm(event);
+      });
+
+      document.getElementById("btnReservar").addEventListener("touchend", function (event) {
+        event.preventDefault();
+        event.stopPropagation();
+        console.log("touch no botão reservar");
+        setTimeout(()=> {submitForm(event); },100);
+      });
+
       calendar.render();
 
       function abrirModal(startStr) {
@@ -472,12 +486,7 @@
           }
       }
   
-      document.getElementById("btnReservar").addEventListener("click", function (event) {
-          event.preventDefault();
-          event.stopPropagation();
-          console.log("✅ Botão Reservar foi clicado!");
-          submitForm(event);
-      });
+      
   
       document.getElementById("cancelarModal").onclick = function () {
           modal.style.display = "none";
