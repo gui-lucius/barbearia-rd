@@ -379,9 +379,8 @@
 
         document.getElementById("btnReservar").addEventListener("click", function (event) {
           event.preventDefault();
-          event.stopPropagation(); 
           console.log("✅ Botão Reservar foi clicado!");
-          setTimeout(() => { submitForm(event); }, 100); // 🔥 Pequeno delay para evitar conflitos no mobile
+          submitForm(event);
         });
       
         document.getElementById("btnReservar").addEventListener("touchend", function (event) {
