@@ -316,10 +316,8 @@
             businessHours: { daysOfWeek: [1, 2, 3, 4, 5, 6], startTime: '09:00', endTime: '20:30' },
     
             select: function (info) {
-              selectedDate = info.startStr;
-              console.log("Horário selecionado (mobile):", selectedDate);
-              abrirModal();
-            },
+             abrirModal(info.startStr); 
+            }
     
             eventClick: function (info) {
                 return false; 
@@ -378,15 +376,18 @@
         calendar.render();
     
         function abrirModal(startStr) {
-          selectedDate = startStr;
-          console.log("Horário selecionado corretamente:", selectedDate);
+          if (startStr){
+            selectedDate = startStr;
+            console.log ("Horário selecionado corretamente:", selectedDate);
+          }
           modal.style.display = "flex";
-        }
+        }  
       
         async function submitForm(event){
           if (event) event.preventDefault();
 
           console.log("Tentando enviar a reserva...");
+          console.log("Data selecionada antes do envio:", selectedDate);
 
           if(!selectedDate){
             mostrarMensagemGlobal("Erro: Data não selecionada!", "erro");
@@ -485,7 +486,7 @@
                 if (dataSlot){
                   selectedDate = dataSlot;
                   console.log ("Data tocada:", selectedDate);
-                  abrirModal ();
+                  abrirModal (selectedDate);
 
                 }
               }
