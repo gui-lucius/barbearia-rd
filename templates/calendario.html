@@ -361,6 +361,27 @@
               }
           }
       });
+      // 🔥 Adiciona suporte a toque no mobile
+      calendarEl.addEventListener("touchstart", function (event) {
+        let target = event.target;
+
+        // Verifica se tocou em um horário válido no calendário
+        if (!target.closest('.fc-event') && target.closest('#calendar')) {
+          let slot = document.elementFromPoint(event.touches[0].clientX, event.touches[0].clientY);
+
+          if (slot) {
+            let dateAttr = slot.getAttribute("data-time");
+            if (dateAttr) {
+              selectedDate = dateAttr;
+              console.log("📆 Horário selecionado no mobile:", selectedDate);
+              abrirModal(selectedDate);
+            } else {
+              console.log("⚠️ Nenhuma data encontrada no slot.");
+            }
+          }
+        } 
+      });
+
   
       calendar.render();
 
