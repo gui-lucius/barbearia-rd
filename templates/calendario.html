@@ -316,7 +316,9 @@
             businessHours: { daysOfWeek: [1, 2, 3, 4, 5, 6], startTime: '09:00', endTime: '20:30' },
     
             select: function (info) {
-             abrirModal(info.startStr); 
+              selectedDate = info.startStr;
+              console.log("Horário selecionado no calendário (desktop):", selectedDate);
+              abrirModal(selectedDate); 
             }
     
             eventClick: function (info) {
@@ -379,6 +381,8 @@
           if (startStr){
             selectedDate = startStr;
             console.log ("Horário selecionado corretamente:", selectedDate);
+          } else{
+            console.log("Tentativa de abrir modal sem data válida!");
           }
           modal.style.display = "flex";
         }  
@@ -480,14 +484,17 @@
             let target = event.target;
 
             if (!target.closest ('.fc-event') && target.closest('#calendar')){
+              
               let slot = document.elementFromPoint(event.changedTouches[0].clientX, event.changedTouches[0].clientY);
+              
               if (slot){
-                let dataSlot = slot.getAttribute("data-time");
-                if (dataSlot){
-                  selectedDate = dataSlot;
-                  console.log ("Data tocada:", selectedDate);
+                let dateAttr = eventElement.getAttribute("data-time");
+                if (dateAttr){
+                  selectedDate = dateAttr;
+                  console.log ("Horário selecionado no mobile:", selectedDate);
                   abrirModal (selectedDate);
-
+                }else{
+                  console.log("Nenhuma data encontrada no atributo do slot");
                 }
               }
             }
