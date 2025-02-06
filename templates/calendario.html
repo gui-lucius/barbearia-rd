@@ -377,9 +377,18 @@
     
         calendar.render();
 
-        document.getElementById("btnReservar").addEventListener("touchstart", function (event) {
-          event.preventDefault(); // Evita comportamentos inesperados no mobile
-          submitForm(event); // Chama a função corretamente
+        document.getElementById("btnReservar").addEventListener("click", function (event) {
+          event.preventDefault();
+          event.stopPropagation(); // 🔥 Evita que outro evento bloqueie o clique
+          console.log("✅ Botão Reservar foi clicado!");
+          submitForm(event);
+        });
+      
+        document.getElementById("btnReservar").addEventListener("touchend", function (event) {
+          event.preventDefault();
+          event.stopPropagation();
+          console.log("📲 Touch no botão Reservar!");
+          submitForm(event);
         });
       
 
