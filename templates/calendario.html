@@ -379,18 +379,17 @@
 
         document.getElementById("btnReservar").addEventListener("click", function (event) {
           event.preventDefault();
-          event.stopPropagation(); // 🔥 Evita que outro evento bloqueie o clique
+          event.stopPropagation(); 
           console.log("✅ Botão Reservar foi clicado!");
-          submitForm(event);
+          setTimeout(() => { submitForm(event); }, 100); // 🔥 Pequeno delay para evitar conflitos no mobile
         });
       
         document.getElementById("btnReservar").addEventListener("touchend", function (event) {
           event.preventDefault();
           event.stopPropagation();
           console.log("📲 Touch no botão Reservar!");
-          submitForm(event);
+          setTimeout(() => { submitForm(event); }, 100);
         });
-      
 
         calendarEl.addEventListener("click", function (event) {
           let slot = document.elementFromPoint(event.clientX, event.clientY);
