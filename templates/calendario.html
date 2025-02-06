@@ -377,6 +377,12 @@
     
         calendar.render();
 
+        document.getElementById("btnReservar").addEventListener("touchstart", function (event) {
+          event.preventDefault(); // Evita comportamentos inesperados no mobile
+          submitForm(event); // Chama a função corretamente
+        });
+      
+
         calendarEl.addEventListener("click", function (event) {
           let slot = document.elementFromPoint(event.clientX, event.clientY);
           
