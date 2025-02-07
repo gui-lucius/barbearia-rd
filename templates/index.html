@@ -9,7 +9,7 @@
   <link rel="icon" type="image/x-icon" href="{% static 'imagens/favicon.ico' %}">
     
   <title>Barbearia RD</title>
-  <link rel="stylesheet" href="{% static 'css/styles.css' %}?v=10">
+  <link rel="stylesheet" href="{% static 'css/styles.css' %}">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 </head>
 <body>
@@ -18,21 +18,16 @@
     <div class="container header-content">
       <!-- Logo -->
       <img src="{% static 'imagens/logo.png' %}" alt="Logo da Barbearia" class="logo">
-
-      <div class="header-buttons">
-        <a href="https://maps.app.goo.gl/VoDQMjCG7vgZorPX7" target="_blank" class="btn-header">
-            📍 Nos encontramos aqui
+      
+      <!-- Localização e botão WhatsApp lado a lado -->
+      <div class="header-right">
+        <a href="https://maps.app.goo.gl/VoDQMjCG7vgZorPX7" target="_blank" class="btn-location">
+          <span class="icon">📍</span> Nos encontramos aqui
         </a>
-        <a href="{% url 'calendario' %}" class="btn-header">
-            ✂️ Agende seu horário
-        </a>
-        <a href="https://wa.me/5548998082832" class="btn-header">
-            💬 WhatsApp
-        </a>
+        <a href="{% url 'calendario' %}" class="btn-whatsapp">Agende seu horário</a>
+      </div>
     </div>
-    
   </header>
-
 
   <!-- Seção de Serviços -->
   <section class="services">
