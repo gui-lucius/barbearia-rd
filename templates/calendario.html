@@ -337,7 +337,8 @@
                           const end = new Date(start.getTime() + 30 * 60 * 1000);
   
                           let backgroundColor = horario.status === 'pendente' ? '#ffc107' : '#28a745';
-
+                          let title = horario.status === 'pendente' ? 'Aguardando Confirmação' : 'Horário Confirmado';
+  
                           return {
                               title: title,
                               start: start.toISOString(),
