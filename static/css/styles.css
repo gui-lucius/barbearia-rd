@@ -287,8 +287,8 @@ body {
     display: flex;
     justify-content: center; /* Centraliza os botões */
     align-items: center;
-    gap: 0.8rem; /* Espaço entre os botões */
-    flex-wrap: wrap; /* Quebra em telas menores */
+    gap: 1rem; /* Espaço entre os botões */
+    flex-wrap: wrap; /* Permite quebra em telas menores */
     margin-top: 1rem;
 }
 
@@ -297,16 +297,16 @@ body {
     display: flex;
     align-items: center;
     justify-content: center;
-    padding: 0.6rem 1.2rem;
+    padding: 0.7rem 1.3rem;
     font-size: 0.9rem;
     font-weight: bold;
     text-decoration: none;
     background: var(--accent-color);
     color: var(--background-color);
-    border-radius: 8px;
+    border-radius: 6px;
     border: 2px solid var(--accent-color);
     transition: background 0.3s ease, transform 0.2s ease;
-    white-space: nowrap; /* Impede quebra de linha dentro dos botões */
+    white-space: nowrap; /* Evita quebra de linha dentro dos botões */
 }
 
 .btn-header:hover {
@@ -317,8 +317,8 @@ body {
 /* Ajustes para telas menores */
 @media (max-width: 768px) {
     .header-buttons {
-        flex-direction: row; /* Mantém os botões em linha */
-        flex-wrap: wrap; /* Permite quebra, mas tenta manter na mesma linha */
+        flex-wrap: nowrap; /* Mantém em uma linha */
+        overflow-x: auto; /* Permite rolagem horizontal se precisar */
         justify-content: center;
     }
 
@@ -331,6 +331,7 @@ body {
 @media (max-width: 480px) {
     .header-buttons {
         flex-direction: column;
+        align-items: center;
     }
 
     .btn-header {
