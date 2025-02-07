@@ -430,16 +430,17 @@
           console.log("Valor de selectedDate antes da conversão:", selectedDate);
 
           if(!selectedDate.includes("T")){
-          
             console.warn("selectedDate sem data completa! Ajustando...");
 
             let dataSelecionada = new Date (calendar.view.currentStart);
-            console.log("📆 [DATA DO CALENDÁRIO] Data base do calendário:", dataSelecionada);
+            console.log("📆 [DATA REALMENTE ESCOLHIDA] Data selecionada pelo usuário:", dataSelecionada);
             
             let ano = dataSelecionada.getFullYear();
             let mes = (dataSelecionada.getMonth() +1).toString().padStart(2, '0');
             let dia = dataSelecionada.getDate().toString().padStart(2, '0');
 
+            let hora = dataSelecionada.getHours().toString().padStart(2, '0');
+            let minuto = dataSelecionada.getMinutes().toString().padStart()
             let dataCorrigida = `${ano}-${mes}-${dia}T${selectedDate}`;
             console.log("📅 [DATA CORRIGIDA] Data corrigida para:", dataCorrigida);
 
