@@ -1,11 +1,11 @@
-/* Resetando estilos padrão */
+/* ==================== RESET GERAL ==================== */
 * {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
 }
 
-/* Cores globais */
+/* ==================== CORES GLOBAIS ==================== */
 :root {
     --background-color: #1b1b1b; /* Preto escuro */
     --text-color: #ffffff;      /* Branco */
@@ -13,7 +13,7 @@
     --secondary-text: #d4d4d4;  /* Cinza claro */
 }
 
-/* Estilo do body */
+/* ==================== ESTILO GERAL ==================== */
 body {
     font-family: 'Arial', sans-serif;
     background-color: var(--background-color);
@@ -21,14 +21,13 @@ body {
     line-height: 1.6;
 }
 
-/* Container centralizado */
 .container {
     width: 90%;
     max-width: 1200px;
     margin: 0 auto;
 }
 
-/* Estilo do cabeçalho */
+/* ==================== CABEÇALHO ==================== */
 .header {
     background: var(--background-color);
     padding: 1rem 0;
@@ -39,7 +38,7 @@ body {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    flex-wrap: wrap; /* Para que os itens se alinhem em telas menores */
+    flex-wrap: wrap; /* Permite ajuste automático */
 }
 
 .logo {
@@ -47,53 +46,46 @@ body {
     object-fit: contain;
 }
 
-.header-right {
+/* ==================== BOTÕES DO TOPO ==================== */
+.header-buttons {
     display: flex;
-    gap: 1rem; /* Espaçamento entre os botões */
-    flex-wrap: wrap;
+    justify-content: center; /* Centraliza */
+    align-items: center;
+    gap: 1rem; /* Espaço entre botões */
+    flex-wrap: wrap; /* Permite quebra em telas menores */
+    margin-top: 10px;
+    padding: 10px 0;
 }
 
-.btn-location,
-.btn-whatsapp {
-    display: inline-flex;
+.btn-header {
+    display: flex;
     align-items: center;
-    padding: 0.5rem 1rem;
-    border-radius: 5px;
+    justify-content: center;
+    padding: 0.7rem 1.3rem;
     font-size: 0.9rem;
     font-weight: bold;
     text-decoration: none;
-    transition: background 0.3s ease, color 0.3s ease;
-}
-
-.btn-location {
-    background: none;
-    color: var(--accent-color);
-    border: 1px solid var(--accent-color);
-}
-
-.btn-location:hover {
     background: var(--accent-color);
     color: var(--background-color);
+    border-radius: 6px;
+    border: 2px solid var(--accent-color);
+    transition: background 0.3s ease, transform 0.2s ease;
+    white-space: nowrap; /* Evita quebra de linha */
 }
 
-.btn-whatsapp {
-    background: var(--accent-color);
-    color: var(--background-color);
-    text-transform: uppercase;
-}
-
-.btn-whatsapp:hover {
+.btn-header:hover {
     background: #e09f00;
+    transform: scale(1.05);
 }
 
-/* Seção de Serviços */
+/* ==================== SEÇÃO DE SERVIÇOS ==================== */
 .services {
     padding: 2rem 0;
     text-align: center;
 }
 
 .services h2 {
-    font-size: 2rem;    
+    font-size: 2rem;
     margin-bottom: 1.5rem;
     color: var(--accent-color);
 }
@@ -137,7 +129,7 @@ body {
     color: var(--secondary-text);
 }
 
-/* Sobre Nós */
+/* ==================== SOBRE NÓS ==================== */
 .about {
     padding: 2rem 0;
     text-align: center;
@@ -155,14 +147,7 @@ body {
     margin-bottom: 1rem;
 }
 
-.about img {
-    max-width: 100%;
-    border-radius: 10px;
-    margin-top: 1rem;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-}
-
-/* Tabela de Preços */
+/* ==================== TABELA DE PREÇOS ==================== */
 .pricing {
     padding: 2rem 0;
     background: #111;
@@ -208,7 +193,7 @@ body {
     font-weight: bold;
 }
 
-/* Rodapé */
+/* ==================== RODAPÉ ==================== */
 .footer {
     background: var(--background-color);
     text-align: center;
@@ -223,22 +208,24 @@ body {
 
 .footer .social-links a {
     display: inline-flex;
-    align-items: center; /* Centraliza ícone e texto verticalmente */
+    align-items: center; /* Centraliza ícone e texto */
     color: var(--accent-color);
     margin: 0 0.5rem;
     font-size: 1rem;
     font-weight: bold;
     text-decoration: none;
-    gap: 0.5rem; /* Espaçamento entre o ícone e o texto */
+    gap: 0.5rem; /* Espaçamento entre ícone e texto */
 }
+
 .footer .social-links a i {
     font-size: 1.2rem;
 }
+
 .footer .social-links a:hover {
     color: #e09f00;
 }
 
-/* Responsividade */
+/* ==================== RESPONSIVIDADE ==================== */
 @media (max-width: 768px) {
     .header-content {
         flex-direction: column;
@@ -246,16 +233,19 @@ body {
         gap: 1rem;
     }
 
-    .logo{
+    .logo {
         height: 170px;
     }
-    .header-right{
-        flex-direction: column;
-        gap: 0.5rem;
+
+    .header-buttons {
+        flex-wrap: nowrap;
+        overflow-x: auto;
+        justify-content: center;
     }
-    .btn-location, .btn-whatsapp{
-        width: 90%;
-        text-align: center  ;
+
+    .btn-header {
+        font-size: 0.8rem;
+        padding: 0.5rem 1rem;
     }
 
     .service-items {
@@ -269,17 +259,14 @@ body {
 }
 
 @media (max-width: 480px) {
-    .btn-location {
-        font-size: 0.8rem;
-        padding: 0.4rem 0.8rem;
+    .header-buttons {
+        flex-direction: column;
+        align-items: center;
     }
-    .btn-whatsapp {
-        width: 80%; /* Reduz a largura */
-        display: block;
-        margin: 10px auto; /* Centraliza e adiciona margem */
-        padding: 12px 0;
-        font-size: 1rem; /* Mantém o texto legível */
-        border-radius: 8px; /* Arredonda os cantos */
+
+    .btn-header {
+        width: 90%;
+        text-align: center;
     }
 
     .service-item img {
