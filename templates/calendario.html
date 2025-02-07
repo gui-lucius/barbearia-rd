@@ -427,6 +427,18 @@
               mostrarMensagemGlobal("Preencha todos os campos!", "erro");
               return;
           }
+          console.log("Valor de selectedDate antes da conversão:", selectedDate);
+
+          let hoje = new Date();
+          let dataCompleta = `${hoje.getFullYear()}-${(hoje.getMonth() + 1).toString().padStart(2, '0')}-${hoje.getDate().toString().padStart(2, '0')}T${selectedDate}`;
+          console.log("Data corrigida:", dataCompleta);
+
+          let dataObj = new Date(dataCompleta);
+          if(isNaN(dataObj.getTime())){
+            console.error("Erro: selectedDate não é uma data válida", selectedDate);
+            mostrarMensagemGlobal("Erro: Data inválida", "erro");
+            return;
+          }
   
           let dataISO = new Date(selectedDate).toISOString().split(".")[0] + "Z";
           console.log("📡 Data enviada para API:", dataISO);
