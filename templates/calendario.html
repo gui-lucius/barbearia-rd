@@ -436,7 +436,7 @@
           }else{
             console.warn("selectedDate sem data completa! Ajustando...");
 
-            let dataBase = calendar.getDate();
+            let dataBase = new Date();
             let ano = dataBase.getFullYear();
             let mes = (dataBase.getMonth()+1).toString().padStart(2, '0');
             let dia = dataBase.getDate().toString().padStart(2, '0');
