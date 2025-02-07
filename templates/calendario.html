@@ -439,7 +439,7 @@
             let dataBase = calendar.getDate();
             let ano = dataBase.getFullYear();
             let mes = (dataBase.getMonth()+1).toString().padStart(2, '0');
-            let dia = dataBase.getDate().toString.padStart(2, '0');
+            let dia = dataBase.getDate().toString().padStart(2, '0');
 
             let dataCorrigida = `${ano}-${mes}-${dia}T${selectedDate}`;
             console.log("Data corrigida para:", dataCorrigida);
