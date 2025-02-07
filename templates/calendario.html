@@ -453,7 +453,7 @@
             return;
           }
   
-          let dataISO = new Date (selectedDate).toString().split(".")[0];
+          let dataISO = selectedDate.replace("T"," ") + ":00";
           console.log("📡 Data enviada para API:", dataISO);
   
           const dados = {
