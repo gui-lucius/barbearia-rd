@@ -24,10 +24,13 @@ class Agendamento(models.Model):
             old_status = Agendamento.objects.get(pk=self.pk).status
             if old_status != self.status:
                 if self.status == "recusado":
-                    self.delete()  # 🔴 Se for recusado, deleta o agendamento
+                    super().delete()  # 🔴 Isso evita que o Django continue processando
                     return
+            
                 self.enviar_email()
+    
         super().save(*args, **kwargs)
+
 
     def enviar_email(self):
         if self.email_cliente:
