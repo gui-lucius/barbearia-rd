@@ -313,7 +313,7 @@
   
           select: function (info) {
               selectedDate = info.startStr;
-              console.log("📅 Horário selecionado:", selectedDate);
+              console.log("📅 [FULLCALENDAR] Horário selecionado:", selectedDate);
               abrirModal(selectedDate);
           },
   
@@ -412,11 +412,11 @@
           if (event) event.preventDefault();
   
           console.log("🚀 Tentando enviar a reserva...");
-          console.log("Data selecionada:", selectedDate);
+          console.log("[ANTES DA CONVERSÃO] selectedDate:", selectedDate);
   
           if (!selectedDate) {
               mostrarMensagemGlobal("Erro: Data não selecionada!", "erro");
-              console.log("Data enviada:", selectedDate);
+              console.log("Data enviada está vazia:", selectedDate);
               return;
           }
   
@@ -434,12 +434,14 @@
             console.warn("selectedDate sem data completa! Ajustando...");
 
             let dataSelecionada = new Date (calendar.view.currentStart);
+            console.log("📆 [DATA DO CALENDÁRIO] Data base do calendário:", dataSelecionada);
+            
             let ano = dataSelecionada.getFullYear();
             let mes = (dataSelecionada.getMonth() +1).toString().padStart(2, '0');
             let dia = dataSelecionada.getDate().toString().padStart(2, '0');
 
             let dataCorrigida = `${ano}-${mes}-${dia}T${selectedDate}`;
-            console.log("Data corrigida para:", dataCorrigida);
+            console.log("📅 [DATA CORRIGIDA] Data corrigida para:", dataCorrigida);
 
             selectedDate = dataCorrigida;
 
@@ -451,7 +453,8 @@
             mostrarMensagemGlobal("Erro: Data inválida", "erro");
             return;
           }
-  
+          console.log("📡 [FINAL] Data enviada para API:", selectedDate);
+
           let dataISO = selectedDate;
           console.log("📡 Data enviada para API:", dataISO);
   
