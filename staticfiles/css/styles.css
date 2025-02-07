@@ -71,8 +71,6 @@ body {
     border: 2px solid var(--accent-color);
     transition: background 0.3s ease, transform 0.2s ease;
     white-space: nowrap; /* Evita quebra de linha */
-    width: 200px;
-    text-align: center;
 }
 
 .btn-header:hover {
@@ -262,15 +260,13 @@ body {
 
 @media (max-width: 480px) {
     .header-buttons {
-        flex-wrap: wrap;
-        justify-content: center;
+        flex-direction: column;
+        align-items: center;
     }
 
     .btn-header {
-        width: 30%;
-        min-width: 110px;
-        font-size: 0.8rem;
-        padding: 0.4rem 0.8rem;
+        width: 90%;
+        text-align: center;
     }
 
     .service-item img {
