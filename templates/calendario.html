@@ -430,15 +430,13 @@
           console.log("Valor de selectedDate antes da conversão:", selectedDate);
 
           let dataObj;
-          if(selectedDate.includes("T")){
-            dataObj = new Date(selectedDate);
-
-          }else{
+          if(!selectedDate.includes("T")){
+          
             console.warn("selectedDate sem data completa! Ajustando...");
 
             let dataBase = new Date();
             let ano = dataBase.getFullYear();
-            let mes = (dataBase.getMonth()+1).toString().padStart(2, '0');
+            let mes = (dataBase.getMonth() +1).toString().padStart(2, '0');
             let dia = dataBase.getDate().toString().padStart(2, '0');
 
             let dataCorrigida = `${ano}-${mes}-${dia}T${selectedDate}`;
