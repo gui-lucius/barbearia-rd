@@ -365,6 +365,11 @@
       let touchStartY = 0;
       let touchEndY = 0;
 
+      calendarEl.addEventListener("touchstart", function (event) {
+        touchStartY = event.touches[0].clientY;
+        touchStartX = event.touches[0].clientX;
+        touchStartTime = new Date().getTime(); // Salva o tempo do toque
+      });
       calendarEl.addEventListener("touchend", function (event) {
         touchEndY = event.changedTouches[0].clientY;
     
