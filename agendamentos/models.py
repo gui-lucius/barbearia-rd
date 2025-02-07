@@ -33,7 +33,15 @@ class Agendamento(models.Model):
     from django.utils.timezone import localtime
 
     def enviar_email(self):
-        if self.email_cliente:
+        if not self.email_cliente:
+            print("⚠️ Nenhum e-mail de cliente cadastrado. E-mail não enviado.")
+            return  # Sai da função se o e-mail estiver vazio
+
+        try:
+            # Garante que data_horario_reserva não seja None antes de formatar
+            if not self.data_horario_reserva:
+                raise ValueError("A data e horário do agendamento estão vazios!")
+
             # Formatando a data e hora corretamente
             data_horario_formatado = localtime(self.data_horario_reserva).strftime('%d/%m/%Y')
             hora_formatada = localtime(self.data_horario_reserva).strftime('%H:%M')
@@ -41,7 +49,7 @@ class Agendamento(models.Model):
             # Definindo o assunto do e-mail
             assunto = "Confirmação de Agendamento" if self.status == "aceito" else "Agendamento Recusado"
 
-            # Mensagem personalizada pro cliente
+            # Mensagem personalizada
             mensagem = (
                 f"Olá {self.nome_cliente},\n\n"
                 f"Seu agendamento foi **{self.status.upper()}**!\n\n"
@@ -50,17 +58,19 @@ class Agendamento(models.Model):
                 "Obrigado por agendar conosco! Se tiver dúvidas, entre em contato.\n"
             )
 
-            # Envia o e-mail
-            try:
-                send_mail(
-                    assunto,
-                    mensagem,
-                    'seuemail@gmail.com',  # 🔴 Usa um e-mail real configurado no Django
-                    [self.email_cliente],
-                    fail_silently=False
-                )
-            except Exception as e:
-                print(f"Erro ao enviar e-mail: {e}")
+            #  Envia o e-mail
+            send_mail(
+                assunto,
+                mensagem,
+                'denisbarbeariard@gmail.com',  # 🔴 Troca pelo e-mail configurado no settings.py
+                [self.email_cliente],
+                fail_silently=False  # Muda pra False pra ver o erro no terminal
+            )
+
+            print("✅ E-mail enviado com sucesso!")  # Log pra debug
+
+        except Exception as e:
+            print(f"❌ Erro ao enviar e-mail: {e}")  # Log do erro
 
 
     def __str__(self):
