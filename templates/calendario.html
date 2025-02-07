@@ -361,48 +361,39 @@
               }
           }
       });
+      // Variáveis para detectar toque e evitar "segurar e soltar"
       let touchStartY = 0;
-      let touchStartX = 0;
-      let touchStartTime = 0;
+      let touchEndY = 0;
 
-      // Captura início do toque
-      calendarEl.addEventListener("touchstart", function (event) {
-        touchStartY = event.touches[0].clientY;
-        touchStartX = event.touches[0].clientX;
-        touchStartTime = new Date().getTime(); // Salva o tempo do toque
-      });
-
-      // Captura fim do toque e verifica se foi um clique rápido
-      calendarEl.addEventListener("click", function (event) {
-        let touchEndTime = new Date().getTime();
-        let touchDuration = touchEndTime - touchStartTime;
-
-        // Permite apenas cliques rápidos (evita abrir ao arrastar)
-        if (touchDuration < 300) {
-          let slot = document.elementFromPoint(event.clientX, event.clientY);
-          if (slot && slot.closest(".fc-timegrid-slot")) {
-            let dateAttr = slot.getAttribute("data-time");
-
-            if (dateAttr) {
-              // 📌 🚀 Pegamos a data exata do clique
-              let dataClicada = calendar.getDate(); // Obtém a data exata que o usuário está vendo
-              let dataBase = new Date(dataClicada);
-
-              let [hora, minuto] = dateAttr.split(":");
-
-              let ano = dataBase.getFullYear();
-              let mes = (dataBase.getMonth() + 1).toString().padStart(2, '0');
-              let dia = dataBase.getDate().toString().padStart(2, '0');
-
-              selectedDate = `${ano}-${mes}-${dia}T${hora}:${minuto}:00`;
-              console.log("📆 [MOBILE] Data final corrigida:", selectedDate);
-
-              abrirModal(selectedDate);
+    
+      calendarEl.addEventListener("touchend", function (event) {
+        touchEndY = event.changedTouches[0].clientY;
+    
+        if (Math.abs(touchStartY - touchEndY) < 10) {
+            let slot = document.elementFromPoint(event.changedTouches[0].clientX, event.changedTouches[0].clientY);
+            if (slot && slot.closest(".fc-timegrid-slot")) {
+                let dateAttr = slot.getAttribute("data-time");
+    
+                if (dateAttr) {
+                    let dataDoCalendario = calendar.view.currentStart; // AQUI PEGA O DIA CORRETO DA TELA
+                    let dataBase = new Date(dataDoCalendario);
+    
+                    let [hora, minuto] = dateAttr.split(":");
+    
+                    let ano = dataBase.getFullYear();
+                    let mes = (dataBase.getMonth() + 1).toString().padStart(2, '0');
+                    let dia = dataBase.getDate().toString().padStart(2, '0');
+    
+                    selectedDate = `${ano}-${mes}-${dia}T${hora}:${minuto}:00`;
+                    console.log("📆 [MOBILE] Data final corrigida:", selectedDate);
+    
+                    abrirModal(selectedDate);
+                } else {
+                    console.log("⚠️ Nenhuma data encontrada no slot.");
+                }
             }
-          }
         }
       });
-
   
       document.getElementById("btnReservar").addEventListener("click", function (event) {
         event.preventDefault();
