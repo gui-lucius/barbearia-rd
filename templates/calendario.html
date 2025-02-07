@@ -434,9 +434,9 @@
             console.warn("selectedDate sem data completa! Ajustando...");
 
             let dataSelecionada = new Date (calendar.view.currentStart);
-            let ano = dataBase.getFullYear();
-            let mes = (dataBase.getMonth() +1).toString().padStart(2, '0');
-            let dia = dataBase.getDate().toString().padStart(2, '0');
+            let ano = dataSelecionada.getFullYear();
+            let mes = (dataSelecionada.getMonth() +1).toString().padStart(2, '0');
+            let dia = dataSelecionada.getDate().toString().padStart(2, '0');
 
             let dataCorrigida = `${ano}-${mes}-${dia}T${selectedDate}`;
             console.log("Data corrigida para:", dataCorrigida);
