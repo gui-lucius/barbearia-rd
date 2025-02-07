@@ -285,10 +285,11 @@ body {
 /* Alinhamento correto dos botões no cabeçalho */
 .header-buttons {
     display: flex;
-    justify-content: center;
+    justify-content: center; /* Centraliza os botões */
     align-items: center;
     gap: 0.8rem; /* Espaço entre os botões */
-    flex-wrap: wrap; /* Permite quebra em telas pequenas */
+    flex-wrap: wrap; /* Quebra em telas menores */
+    margin-top: 1rem;
 }
 
 /* Estilização dos botões */
