@@ -366,8 +366,9 @@
   
                           let backgroundColor = horario.status === 'pendente' ? '#ffc107' : '#28a745';
 
-                          let title = horario.status === 'pendente' ? '⏳ Pendente' : '✅ Confirmado';
-                          let mobileTitle = horario.status === 'pendente' ? '⏳' : '✅';
+                          let title = `<span class="desktop-event">${horario.status === 'pendente' ? '⏳ Pendente' : '✅ Confirmado'}</span>
+                                       <span class="mobile-event">${horario.status === 'pendente' ? '⏳' : '✅'}</span>`;
+
                           return {
                             title: `<span class="desktop-event">${title}</span><span class="mobile-event">${mobileTitle}</span>`,
                             start: start.toISOString(),
