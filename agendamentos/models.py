@@ -21,23 +21,63 @@ class Agendamento(models.Model):
         ]
 
     def save(self, *args, **kwargs):
-        if self.pk:
+        enviar_email = False
+
+        if self.pk:  # Se já existe, verifica se o status mudou
             old_status = Agendamento.objects.get(pk=self.pk).status
             if old_status != self.status:
+                enviar_email = True
                 if self.status == "recusado":
-                    self.delete()  # 🔴 Se for recusado, deleta o agendamento
+                    self.delete()
                     return
-                self.enviar_email()
+
         super().save(*args, **kwargs)
+
+        if enviar_email:
+            self.enviar_email()  # Chama o envio do e-mail
+
 
     def enviar_email(self):
         if self.email_cliente:
-            assunto = "Confirmação de Agendamento" if self.status == "aceito" else "Agendamento Recusado"
-            mensagem = f"Olá {self.nome_cliente}, seu agendamento foi {self.status}!"
+            # Formatar data e horário corretamente
+            data_formatada = localtime(self.data_horario_reserva).strftime('%d/%m/%Y')
+            hora_formatada = localtime(self.data_horario_reserva).strftime('%H:%M')
+
+            # Assunto do e-mail
+            if self.status == "aceito":
+                assunto = "Seu agendamento foi CONFIRMADO! 🎉"
+                mensagem = (
+                    f"Olá {self.nome_cliente},\n\n"
+                    f"Seu agendamento na **Denis Barbearia** foi **CONFIRMADO**! 🎉\n"
+                    f"📅 **Data:** {data_formatada}\n"
+                    f"🕒 **Horário:** {hora_formatada}\n\n"
+                    "Se precisar reagendar ou tiver dúvidas, entre em contato.\n\n"
+                    "Até breve!\n"
+                    "📍 Denis Barbearia"
+                )
+            else:
+                assunto = "Infelizmente, seu agendamento foi recusado 😢"
+                mensagem = (
+                    f"Olá {self.nome_cliente},\n\n"
+                    f"Infelizmente, seu agendamento foi **RECUSADO**.\n"
+                    f"Se desejar remarcar, entre em contato conosco.\n\n"
+                    "Agradecemos sua compreensão.\n"
+                    "📍 Denis Barbearia"
+                )
+
+            # Enviar e-mail
             try:
-                send_mail(assunto, mensagem, 'seuemail@gmail.com', [self.email_cliente], fail_silently=True)
+                send_mail(
+                    assunto,
+                    mensagem,
+                    'denisbarbeariard@gmail.com',
+                    [self.email_cliente],
+                    fail_silently=False  # 🔴 Agora vai mostrar erro se falhar
+                )
+                print(f"✅ E-mail enviado com sucesso para {self.email_cliente}")
             except Exception as e:
-                print(f"Erro ao enviar e-mail: {e}")
+                print(f"❌ Erro ao enviar e-mail: {e}")
+
 
     def __str__(self):
         if self.data_horario_reserva is not None:
