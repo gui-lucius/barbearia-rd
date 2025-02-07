@@ -285,11 +285,12 @@ body {
 /* Alinhamento correto dos botões no cabeçalho */
 .header-buttons {
     display: flex;
-    justify-content: center; /* Centraliza os botões */
+    justify-content: center; /* Centraliza os botões no topo */
     align-items: center;
-    gap: 1rem; /* Espaço entre os botões */
+    gap: 1.2rem; /* Espaço entre os botões */
     flex-wrap: wrap; /* Permite quebra em telas menores */
-    margin-top: 1rem;
+    margin-top: 10px; /* Pequeno espaçamento do topo */
+    padding: 10px 0; /* Espaço interno para não ficar colado no topo */
 }
 
 /* Estilização dos botões */
@@ -297,8 +298,8 @@ body {
     display: flex;
     align-items: center;
     justify-content: center;
-    padding: 0.7rem 1.3rem;
-    font-size: 0.9rem;
+    padding: 0.6rem 1.2rem;
+    font-size: 1rem;
     font-weight: bold;
     text-decoration: none;
     background: var(--accent-color);
@@ -309,33 +310,34 @@ body {
     white-space: nowrap; /* Evita quebra de linha dentro dos botões */
 }
 
+/* Animação ao passar o mouse */
 .btn-header:hover {
     background: #e09f00;
     transform: scale(1.05);
 }
 
-/* Ajustes para telas menores */
+/* Responsividade */
 @media (max-width: 768px) {
     .header-buttons {
-        flex-wrap: nowrap; /* Mantém em uma linha */
-        overflow-x: auto; /* Permite rolagem horizontal se precisar */
+        flex-wrap: nowrap; /* Mantém os botões em uma única linha */
+        overflow-x: auto; /* Adiciona rolagem horizontal se necessário */
         justify-content: center;
     }
 
     .btn-header {
-        font-size: 0.8rem;
+        font-size: 0.9rem;
         padding: 0.5rem 1rem;
     }
 }
 
 @media (max-width: 480px) {
     .header-buttons {
-        flex-direction: column;
+        flex-direction: column; /* Empilha os botões no mobile */
         align-items: center;
     }
 
     .btn-header {
-        width: 100%;
+        width: 90%;
         text-align: center;
     }
 }
