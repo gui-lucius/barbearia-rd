@@ -433,6 +433,9 @@
           
             console.warn("selectedDate sem data completa! Ajustando...");
 
+            console.log("🟡 Data do calendário (antes de corrigir):", calendar.getDate());
+            console.log("🟡 selectedDate antes da correção:", selectedDate);
+
             let dataBase = calendar.getDate();
             let ano = dataBase.getFullYear();
             let mes = (dataBase.getMonth() +1).toString().padStart(2, '0');
