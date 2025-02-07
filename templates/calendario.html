@@ -453,7 +453,7 @@
             return;
           }
   
-          let dataISO = selectedDate + ":00";
+          let dataISO = new Date (selectedDate).toString().split(".")[0] + "Z";
           console.log("📡 Data enviada para API:", dataISO);
   
           const dados = {
