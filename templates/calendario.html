@@ -376,10 +376,6 @@
 
       calendarEl.addEventListener("touchend", function (event) {
         touchEndY = event.changedTouches[0].clientY;
-        touchEndX = event.changedTouches[0].clientX;
-        let touchEndTime = new Date().getTime();
-
-        let touchDuration = touchEndTime - touchStartTime; // Tempo do toque
     
         if (Math.abs(touchStartY - touchEndY) < 10) {
             let slot = document.elementFromPoint(event.changedTouches[0].clientX, event.changedTouches[0].clientY);
