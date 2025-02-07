@@ -416,6 +416,7 @@
   
           if (!selectedDate) {
               mostrarMensagemGlobal("Erro: Data não selecionada!", "erro");
+              console.log("Data enviada:", selectedDate);
               return;
           }
   
@@ -435,7 +436,9 @@
               email_cliente: email,
               data_horario_reserva: dataISO,
           };
-  
+          
+          console.log("📦 Dados enviados:", JSON.stringify(dados));
+
           try {
               loading.style.display = "flex";
   
@@ -448,7 +451,9 @@
                       return;
                   }
               }
-  
+              console.log("🔑 Token utilizado:", accessToken);
+              console.log("🚀 Enviando requisição para API...");
+              
               const response = await fetch("https://barbearia-rd-a3b518df45e1.herokuapp.com/api/agendamentos/", {
                   method: "POST",
                   headers: {
@@ -460,6 +465,8 @@
               });
   
               let responseData = await response.json();
+
+              console.log("📩 Resposta da API:", responseData);
   
               if (!response.ok) {
                   console.error("❌ Erro ao enviar reserva:", responseData);
@@ -478,9 +485,7 @@
               loading.style.display = "none";
           }
       }
-  
-      
-  
+
       document.getElementById("cancelarModal").onclick = function () {
           modal.style.display = "none";
       };
