@@ -361,48 +361,38 @@
               }
           }
       });
-      // Detectar toque inicial e final para diferenciar toque de arrasto
+      // Variáveis para detectar toque e evitar "segurar e soltar"
       let touchStartY = 0;
-      let touchStartX = 0;
+      let touchEndY = 0;
       let touchStartTime = 0;
 
-      calendarEl.addEventListener("touchstart", function (event) {
-        touchStartY = event.touches[0].clientY;
-        touchStartX = event.touches[0].clientX;
-        touchStartTime = new Date().getTime(); // Tempo do toque
-      });
-
+    
       calendarEl.addEventListener("touchend", function (event) {
-        let touchEndY = event.changedTouches[0].clientY;
-        let touchEndX = event.changedTouches[0].clientX;
-        let touchEndTime = new Date().getTime();
-
-        let touchDuration = touchEndTime - touchStartTime; // Quanto tempo durou o toque
-
-        // Se o toque foi curto e sem movimento significativo, trata como clique
-        if (touchDuration < 200 && Math.abs(touchStartY - touchEndY) < 10 && Math.abs(touchStartX - touchEndX) < 10) {
-          let slot = document.elementFromPoint(touchEndX, touchEndY);
-          if (slot && slot.closest(".fc-timegrid-slot")) {
-            let dateAttr = slot.getAttribute("data-time");
-
-            if (dateAttr) {
-              let dataDoCalendario = calendar.view.currentStart; // AQUI PEGA O DIA CORRETO DA TELA
-              let dataBase = new Date(dataDoCalendario);
-
-              let [hora, minuto] = dateAttr.split(":");
-
-              let ano = dataBase.getFullYear();
-              let mes = (dataBase.getMonth() + 1).toString().padStart(2, '0');
-              let dia = dataBase.getDate().toString().padStart(2, '0');
-
-              selectedDate = `${ano}-${mes}-${dia}T${hora}:${minuto}:00`;
-              console.log("📆 [MOBILE] Data final corrigida:", selectedDate);
-
-              abrirModal(selectedDate);
-            } else {
-              console.log("⚠️ Nenhuma data encontrada no slot.");
+        touchEndY = event.changedTouches[0].clientY;
+    
+        if (Math.abs(touchStartY - touchEndY) < 10) {
+            let slot = document.elementFromPoint(event.changedTouches[0].clientX, event.changedTouches[0].clientY);
+            if (slot && slot.closest(".fc-timegrid-slot")) {
+                let dateAttr = slot.getAttribute("data-time");
+    
+                if (dateAttr) {
+                    let dataDoCalendario = calendar.view.currentStart; // AQUI PEGA O DIA CORRETO DA TELA
+                    let dataBase = new Date(dataDoCalendario);
+    
+                    let [hora, minuto] = dateAttr.split(":");
+    
+                    let ano = dataBase.getFullYear();
+                    let mes = (dataBase.getMonth() + 1).toString().padStart(2, '0');
+                    let dia = dataBase.getDate().toString().padStart(2, '0');
+    
+                    selectedDate = `${ano}-${mes}-${dia}T${hora}:${minuto}:00`;
+                    console.log("📆 [MOBILE] Data final corrigida:", selectedDate);
+    
+                    abrirModal(selectedDate);
+                } else {
+                    console.log("⚠️ Nenhuma data encontrada no slot.");
+                }
             }
-          }
         }
       });
 
