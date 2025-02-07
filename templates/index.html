@@ -18,18 +18,19 @@
     <div class="container header-content">
       <!-- Logo -->
       <img src="{% static 'imagens/logo.png' %}" alt="Logo da Barbearia" class="logo">
-      
-      <!-- Botões alinhados -->
-      <div class="header-right">
+
+      <!-- Botões alinhados na mesma linha -->
+      <div class="header-buttons">
         <a href="https://maps.app.goo.gl/VoDQMjCG7vgZorPX7" target="_blank" class="btn-header">
-          <span class="icon">📍</span> Nos encontramos aqui
+          📍 Nos encontramos aqui
         </a>
-        <a href="{% url 'calendario' %}" class="btn-header">Agende seu horário</a>
-        <a href="https://wa.me/5548998082832" class="btn-header">Fale conosco no WhatsApp</a>
+        <a href="{% url 'calendario' %}" class="btn-header">✂️ Agende seu horário</a>
+        <a href="https://wa.me/5548998082832" class="btn-header">💬 WhatsApp</a>
       </div>
     </div>
   </header>
-  
+
+
   <!-- Seção de Serviços -->
   <section class="services">
     <div class="container">

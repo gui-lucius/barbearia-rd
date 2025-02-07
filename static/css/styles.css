@@ -52,43 +52,6 @@ body {
     gap: 1rem; /* Espaçamento entre os botões */
     flex-wrap: wrap;
 }
-/* Botões no cabeçalho */
-.btn-header {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    padding: 0.5rem 1rem;
-    border-radius: 5px;
-    font-size: 0.9rem;
-    font-weight: bold;
-    text-decoration: none;
-    background: var(--accent-color);
-    color: var(--background-color);
-    transition: background 0.3s ease, color 0.3s ease;
-}
-
-.btn-header:hover {
-    background: #e09f00;
-}
-
-/* Responsividade */
-@media (max-width: 768px) {
-    .header-content {
-        flex-direction: column;
-        align-items: center;
-    }
-
-    .header-right {
-        flex-direction: column;
-        width: 100%;
-        text-align: center;
-    }
-
-    .btn-header {
-        width: 90%;
-    }
-}
-
 
 .btn-location,
 .btn-whatsapp {
@@ -317,5 +280,47 @@ body {
 
     .about h2, .pricing h2 {
         font-size: 1.5rem;
+    }
+}
+/* Estilo para alinhar os botões no cabeçalho */
+.header-buttons {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 0.5rem; /* Espaço entre os botões */
+    flex-wrap: wrap; /* Permite quebra em telas menores */
+}
+
+/* Estilização dos botões */
+.btn-header {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.5rem 1rem;
+    font-size: 0.85rem;
+    font-weight: bold;
+    text-decoration: none;
+    background: var(--accent-color);
+    color: var(--background-color);
+    border-radius: 5px;
+    transition: background 0.3s ease;
+    white-space: nowrap; /* Impede que o texto quebre */
+}
+
+.btn-header:hover {
+    background: #e09f00;
+}
+
+/* Responsividade para manter os botões alinhados */
+@media (max-width: 768px) {
+    .header-buttons {
+        flex-wrap: nowrap; /* Mantém tudo em uma linha */
+        overflow-x: auto; /* Permite rolagem horizontal caso necessário */
+        justify-content: center;
+    }
+
+    .btn-header {
+        font-size: 0.75rem; /* Reduz um pouco o tamanho do texto */
+        padding: 0.4rem 0.7rem;
     }
 }
