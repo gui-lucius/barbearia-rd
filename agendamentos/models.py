@@ -53,7 +53,7 @@ class Agendamento(models.Model):
                     mensagem,
                     'denisbarbeariard@gmail.com',  # 🔴 Certifique-se de que esse e-mail está configurado corretamente no Django
                     [self.email_cliente],
-                    fail_silently=True
+                    fail_silently=False
                 )
             except Exception as e:
                 print(f"Erro ao enviar e-mail: {e}")
