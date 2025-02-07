@@ -19,16 +19,17 @@
       <!-- Logo -->
       <img src="{% static 'imagens/logo.png' %}" alt="Logo da Barbearia" class="logo">
       
-      <!-- Localização e botão WhatsApp lado a lado -->
+      <!-- Botões alinhados -->
       <div class="header-right">
-        <a href="https://maps.app.goo.gl/VoDQMjCG7vgZorPX7" target="_blank" class="btn-location">
+        <a href="https://maps.app.goo.gl/VoDQMjCG7vgZorPX7" target="_blank" class="btn-header">
           <span class="icon">📍</span> Nos encontramos aqui
         </a>
-        <a href="{% url 'calendario' %}" class="btn-whatsapp">Agende seu horário</a>
+        <a href="{% url 'calendario' %}" class="btn-header">Agende seu horário</a>
+        <a href="https://wa.me/5548998082832" class="btn-header">Fale conosco no WhatsApp</a>
       </div>
     </div>
   </header>
-
+  
   <!-- Seção de Serviços -->
   <section class="services">
     <div class="container">
