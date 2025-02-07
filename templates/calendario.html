@@ -199,34 +199,6 @@
       background-color: #dc3545; 
       color: white; 
     }
-    /* No desktop, mostrar o texto completo */
-    .desktop-event {
-      display: inline;
-    }
-
-    /* No mobile, esconder o texto e mostrar só os ícones */
-    .mobile-event {
-      display: none;
-    }
-
-    /* Ajustando para telas menores */
-    @media (max-width: 768px) {
-      .desktop-event {
-      display: none; /* Esconde o texto no mobile */
-      }
-
-      .mobile-event {
-        display: inline; /* Mostra os ícones no mobile */
-      }
-
-      /* Ajustando o tamanho dos eventos */
-      .fc-event {
-        font-size: 1rem !important;
-        padding: 5px !important;
-        text-align: center;
-      }
-    } 
-
     
   </style>
 </head>
@@ -366,16 +338,13 @@
   
                           let backgroundColor = horario.status === 'pendente' ? '#ffc107' : '#28a745';
 
-                          let title = `<span class="desktop-event">${horario.status === 'pendente' ? '⏳ Pendente' : '✅ Confirmado'}</span>
-                                       <span class="mobile-event">${horario.status === 'pendente' ? '⏳' : '✅'}</span>`;
-
                           return {
-                            title: `<span class="desktop-event">${title}</span><span class="mobile-event">${mobileTitle}</span>`,
-                            start: start.toISOString(),
-                            end: end.toISOString(),
-                            allDay: false,
-                            backgroundColor: backgroundColor,
-                            borderColor: backgroundColor
+                              title: title,
+                              start: start.toISOString(),
+                              end: end.toISOString(),
+                              allDay: false,
+                              backgroundColor: backgroundColor,
+                              borderColor: backgroundColor
                           };
                       });
   
