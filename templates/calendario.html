@@ -363,13 +363,27 @@
       });
       // Variáveis para detectar toque e evitar "segurar e soltar"
       let touchStartY = 0;
+      let touchStartX = 0;
       let touchEndY = 0;
+      let touchEndX = 0;
+      let touchStartTime = 0;
+      
+      calendarEl.addEventListener("touchstart", function (event) {
+        touchStartY = event.touches[0].clientY;
+        touchStartX = event.touches[0].clientX;
+        touchStartTime = new Date().getTime(); // Salva o tempo do toque
+      });
 
       calendarEl.addEventListener("touchend", function (event) {
         touchEndY = event.changedTouches[0].clientY;
+        touchEndX = event.changedTouches[0].clientX;
+        let touchEndTime = new Date().getTime();
+
+        let touchDuration = touchEndTime - touchStartTime; // Tempo do toque
     
         if (Math.abs(touchStartY - touchEndY) < 10) {
             let slot = document.elementFromPoint(event.changedTouches[0].clientX, event.changedTouches[0].clientY);
+            
             if (slot && slot.closest(".fc-timegrid-slot")) {
                 let dateAttr = slot.getAttribute("data-time");
     
