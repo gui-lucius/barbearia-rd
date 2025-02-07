@@ -1,7 +1,6 @@
 from django.db import models
 from django.core.mail import send_mail
 from django.utils.timezone import make_aware, localtime
-from django.core.exceptions import ValidationError
 
 class Agendamento(models.Model):
     nome_cliente = models.CharField(max_length=100)
@@ -32,10 +31,30 @@ class Agendamento(models.Model):
 
     def enviar_email(self):
         if self.email_cliente:
+            # Formata a data e hora corretamente
+            data_horario_formatado = localtime(self.data_horario_reserva).strftime('%d/%m/%Y')
+            hora_formatada = localtime(self.data_horario_reserva).strftime('%H:%M')
+
+            # Define o assunto do e-mail
             assunto = "Confirmação de Agendamento" if self.status == "aceito" else "Agendamento Recusado"
-            mensagem = f"Olá {self.nome_cliente}, seu agendamento foi {self.status}!"
+
+            # Mensagem personalizada para o cliente
+            mensagem = (
+                f"Olá {self.nome_cliente}, seu agendamento foi {self.status}!\n\n"
+                f"📅 Dia: {data_horario_formatado}\n"
+                f"🕒 Hora: {hora_formatada}\n\n"
+                "Fico no seu aguardo, até logo!"
+            )
+
+            # Envia o e-mail
             try:
-                send_mail(assunto, mensagem, 'seuemail@gmail.com', [self.email_cliente], fail_silently=True)
+                send_mail(
+                    assunto,
+                    mensagem,
+                    'denisbarbeariard@gmail.com',  # 🔴 Certifique-se de que esse e-mail está configurado corretamente no Django
+                    [self.email_cliente],
+                    fail_silently=True
+                )
             except Exception as e:
                 print(f"Erro ao enviar e-mail: {e}")
 
