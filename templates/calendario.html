@@ -432,21 +432,22 @@
           if (!selectedDate.includes("T")) {
             console.warn("⚠️ selectedDate sem data completa! Ajustando...");
         
-            let dataSelecionada = new Date(selectedDate); // AGORA PEGA A DATA ESCOLHIDA PELO USUÁRIO ✅
-            console.log("📆 [DATA REALMENTE ESCOLHIDA] Data selecionada pelo usuário:", dataSelecionada);
+            let dataBase = new Date(calendar.getDate()); // ✅ ISSO PEGA O DIA CORRETO DA VISUALIZAÇÃO
+            console.log("📆 [DATA BASE DO CALENDÁRIO] Data base:", dataBase);
         
-            let ano = dataSelecionada.getUTCFullYear();
-            let mes = (dataSelecionada.getUTCMonth() + 1).toString().padStart(2, '0');
-            let dia = dataSelecionada.getUTCDate().toString().padStart(2, '0');
+            let horaSelecionada = selectedDate; // Vai conter só "HH:MM:SS"
+            console.log("⌚ [HORA ESCOLHIDA] Hora selecionada:", horaSelecionada);
         
-            let hora = dataSelecionada.getUTCHours().toString().padStart(2, '0');
-            let minuto = dataSelecionada.getUTCMinutes().toString().padStart(2, '0');
+            let ano = dataBase.getFullYear();
+            let mes = (dataBase.getMonth() + 1).toString().padStart(2, '0');
+            let dia = dataBase.getDate().toString().padStart(2, '0');
         
-            let dataCorrigida = `${ano}-${mes}-${dia}T${hora}:${minuto}:00`;
-            console.log("📅 [DATA CORRIGIDA] Data corrigida para:", dataCorrigida);
+            let dataCorrigida = `${ano}-${mes}-${dia}T${horaSelecionada}`;
+            console.log("📅 [DATA FINALMENTE CORRIGIDA] Data corrigida:", dataCorrigida);
         
             selectedDate = dataCorrigida;
           }
+        
         
           dataObj = new Date (selectedDate);
           
