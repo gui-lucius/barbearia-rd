@@ -21,15 +21,16 @@ class Agendamento(models.Model):
 
     def save(self, *args, **kwargs):
         if self.pk:
-            old_status = Agendamento.objects.get(pk=self.pk).status
-            if old_status != self.status:
+            old_status = Agendamento.objects.filter(pk=self.pk).values_list("status", flat=True).first()
+            if old_status and old_status != self.status:
                 if self.status == "recusado":
-                    super().delete()  # 🔴 Isso evita que o Django continue processando
+                    self.__class__.objects.filter(pk=self.pk).delete()  # 🔴 Isso evita chamadas extras do Django
                     return
             
                 self.enviar_email()
     
-        super().save(*args, **kwargs)
+    super().save(*args, **kwargs)
+
 
 
     def enviar_email(self):
