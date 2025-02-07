@@ -365,10 +365,6 @@
       let touchStartY = 0;
       let touchEndY = 0;
 
-      calendarEl.addEventListener("touchstart", function (event) {
-        touchStartY = event.touches[0].clientY;
-      });
-
       calendarEl.addEventListener("touchend", function (event) {
         touchEndY = event.changedTouches[0].clientY;
     
@@ -378,7 +374,9 @@
                 let dateAttr = slot.getAttribute("data-time");
     
                 if (dateAttr) {
-                    let dataBase = new Date(calendar.getDate()); // Obtém a data correta da visualização
+                    let dataDoCalendario = calendar.view.currentStart; // AQUI PEGA O DIA CORRETO DA TELA
+                    let dataBase = new Date(dataDoCalendario);
+    
                     let [hora, minuto] = dateAttr.split(":");
     
                     let ano = dataBase.getFullYear();
@@ -395,8 +393,7 @@
             }
         }
       });
-    
-
+  
       document.getElementById("btnReservar").addEventListener("click", function (event) {
         event.preventDefault();
         event.stopPropagation();
@@ -440,9 +437,9 @@
           if (!selectedDate.includes("T")) {
             console.warn("⚠️ selectedDate sem data completa! Ajustando...");
         
-            let dataBase = new Date(calendar.getDate()); // ✅ ISSO PEGA O DIA CORRETO DA VISUALIZAÇÃO
-            console.log("📆 [DATA BASE DO CALENDÁRIO] Data base:", dataBase);
-        
+            let dataDoCalendario = calendar.view.currentStart; // Obtém o dia certo da visualização no mobile
+            let dataBase = new Date(dataDoCalendario);
+            
             let horaSelecionada = selectedDate; // Vai conter só "HH:MM:SS"
             console.log("⌚ [HORA ESCOLHIDA] Hora selecionada:", horaSelecionada);
         
@@ -455,7 +452,6 @@
         
             selectedDate = dataCorrigida;
           }
-        
         
           dataObj = new Date (selectedDate);
           
