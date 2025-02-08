@@ -39,44 +39,41 @@ class Agendamento(models.Model):
 
     def enviar_email(self):
         if self.email_cliente:
-            # Formatar data e horário corretamente
-            data_formatada = localtime(self.data_horario_reserva).strftime('%d/%m/%Y')
-            hora_formatada = localtime(self.data_horario_reserva).strftime('%H:%M')
+            assunto = "Seu agendamento foi CONFIRMADO! 🎉" if self.status == "aceito" else "Infelizmente, seu agendamento foi recusado 😢"
+        
+            mensagem_texto = (
+                f"Olá {self.nome_cliente},\n\n"
+                f"Seu agendamento foi {'CONFIRMADO' if self.status == 'aceito' else 'RECUSADO'}!\n"
+                f"Data: {localtime(self.data_horario_reserva).strftime('%d/%m/%Y')}\n"
+                f"Horário: {localtime(self.data_horario_reserva).strftime('%H:%M')}\n\n"
+                "Se precisar reagendar, entre em contato.\n"
+                "Até breve!\n"
+                "Denis Barbearia"
+            )
 
-            # Assunto do e-mail
-            if self.status == "aceito":
-                assunto = "Seu agendamento foi CONFIRMADO! 🎉"
-                mensagem = (
-                    f"Olá {self.nome_cliente},\n\n"
-                    f"Seu agendamento na **Denis Barbearia** foi **CONFIRMADO**! 🎉\n"
-                    f"📅 **Data:** {data_formatada}\n"
-                    f"🕒 **Horário:** {hora_formatada}\n\n"
-                    "Se precisar reagendar ou tiver dúvidas, entre em contato.\n\n"
-                    "Até breve!\n"
-                    "📍 Denis Barbearia"
-                )
-            else:
-                assunto = "Infelizmente, seu agendamento foi recusado 😢"
-                mensagem = (
-                    f"Olá {self.nome_cliente},\n\n"
-                    f"Infelizmente, seu agendamento foi **RECUSADO**.\n"
-                    f"Se desejar remarcar, entre em contato conosco.\n\n"
-                    "Agradecemos sua compreensão.\n"
-                    "📍 Denis Barbearia"
-                )
+            mensagem_html = (
+                f"<p>Olá <strong>{self.nome_cliente}</strong>,</p>"
+                f"<p>Seu agendamento na <strong>Denis Barbearia</strong> foi "
+                f"{'<strong style=\"color:green;\">CONFIRMADO! 🎉</strong>' if self.status == 'aceito' else '<strong style=\"color:red;\">RECUSADO 😢</strong>'}</p>"
+                f"<p><strong>📅 Data:</strong> {localtime(self.data_horario_reserva).strftime('%d/%m/%Y')}</p>"
+                f"<p><strong>🕒 Horário:</strong> {localtime(self.data_horario_reserva).strftime('%H:%M')}</p>"
+                "<p>Se precisar reagendar ou tiver dúvidas, entre em contato.</p>"
+                "<p>Até breve!</p>"
+                "<p>📍 <strong>Denis Barbearia</strong></p>"
+            )
 
-            # Enviar e-mail
             try:
                 send_mail(
                     assunto,
-                    mensagem,
-                    'denisbarbeariard@gmail.com',
+                    mensagem_texto,  # Texto puro (fallback)
+                    'seuemail@gmail.com',
                     [self.email_cliente],
-                    fail_silently=False  # 🔴 Agora vai mostrar erro se falhar
+                    fail_silently=True,
+                    html_message=mensagem_html  # Agora permite formatação HTML
                 )
-                print(f"✅ E-mail enviado com sucesso para {self.email_cliente}")
             except Exception as e:
-                print(f"❌ Erro ao enviar e-mail: {e}")
+                print(f"Erro ao enviar e-mail: {e}")
+
 
 
     def __str__(self):
