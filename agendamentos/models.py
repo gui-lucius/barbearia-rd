@@ -38,29 +38,44 @@ class Agendamento(models.Model):
 
 
     def enviar_email(self):
-        if not self.email_cliente:
-            print("⚠️ ERRO: Cliente sem e-mail!")  # Verifica se o e-mail está vazio
-            return
+        if self.email_cliente:
+            # Formatar a data e horário corretamente
+            data_formatada = localtime(self.data_horario_reserva).strftime('%d/%m/%Y')
+            hora_formatada = localtime(self.data_horario_reserva).strftime('%H:%M')
 
-        try:
-            print(f"📧 Tentando enviar e-mail para {self.email_cliente}")  # Log antes do envio
+            # Definir assunto e mensagem com a data e horário formatados
+            if self.status == "aceito":
+                assunto = "Seu agendamento foi CONFIRMADO! 🎉"
+                mensagem = (
+                    f"Olá {self.nome_cliente},\n\n"
+                    f"Seu agendamento na *Denis Barbearia* foi **CONFIRMADO**! 🎉\n"
+                    f"📅 **Data:** {data_formatada}\n"
+                    f"⏰ **Horário:** {hora_formatada}\n\n"
+                    f"Se precisar reagendar ou tiver dúvidas, entre em contato.\n\n"
+                    f"Até breve!\n"
+                    f"📍 *Denis Barbearia*"
+                )
+            else:
+                assunto = "Infelizmente, seu agendamento foi recusado 😟"
+                mensagem = (
+                    f"Olá {self.nome_cliente},\n\n"
+                    f"Infelizmente, seu agendamento foi **RECUSADO**.\n"
+                    f"Se desejar remarcar, entre em contato conosco.\n"
+                    f"Agradecemos sua compreensão.\n\n"
+                    f"📍 *Denis Barbearia*"
+                )
 
-            assunto = "Seu agendamento foi CONFIRMADO! 🎉" if self.status == "aceito" else "Infelizmente, seu agendamento foi recusado 😢"
-            mensagem = f"Olá {self.nome_cliente}, seu agendamento foi {self.status}!"
-
-            send_mail(
-                assunto,
-                mensagem,
-                'denisbarbeariard@gmail.com',
-                [self.email_cliente],
-                fail_silently=False  # 🔴 Agora vai mostrar erro no log
-            )
-
-            print("✅ E-mail enviado com sucesso!")
-
-        except Exception as e:
-            print(f"❌ ERRO AO ENVIAR E-MAIL: {e}")  # Captura qualquer erro e mostra no log
-
+            try:
+                send_mail(
+                    assunto,
+                    mensagem,
+                    'seuemail@gmail.com',
+                    [self.email_cliente],
+                    fail_silently=False,  # Mudar para False para capturar erros
+                )
+                print(f"✅ E-mail enviado para {self.email_cliente}")
+            except Exception as e:
+                print(f"❌ Erro ao enviar e-mail: {e}")
 
 
     def __str__(self):
