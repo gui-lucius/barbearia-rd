@@ -38,41 +38,28 @@ class Agendamento(models.Model):
 
 
     def enviar_email(self):
-        if self.email_cliente:
+        if not self.email_cliente:
+            print("⚠️ ERRO: Cliente sem e-mail!")  # Verifica se o e-mail está vazio
+            return
+
+        try:
+            print(f"📧 Tentando enviar e-mail para {self.email_cliente}")  # Log antes do envio
+
             assunto = "Seu agendamento foi CONFIRMADO! 🎉" if self.status == "aceito" else "Infelizmente, seu agendamento foi recusado 😢"
-        
-            mensagem_texto = (
-                f"Olá {self.nome_cliente},\n\n"
-                f"Seu agendamento foi {'CONFIRMADO' if self.status == 'aceito' else 'RECUSADO'}!\n"
-                f"Data: {localtime(self.data_horario_reserva).strftime('%d/%m/%Y')}\n"
-                f"Horário: {localtime(self.data_horario_reserva).strftime('%H:%M')}\n\n"
-                "Se precisar reagendar, entre em contato.\n"
-                "Até breve!\n"
-                "Denis Barbearia"
+            mensagem = f"Olá {self.nome_cliente}, seu agendamento foi {self.status}!"
+
+            send_mail(
+                assunto,
+                mensagem,
+                'denisbarbeariard@gmail.com',
+                [self.email_cliente],
+                fail_silently=False  # 🔴 Agora vai mostrar erro no log
             )
 
-            mensagem_html = (
-                f"<p>Olá <strong>{self.nome_cliente}</strong>,</p>"
-                f"<p>Seu agendamento na <strong>Denis Barbearia</strong> foi "
-                f"{'<strong style=\"color:green;\">CONFIRMADO! 🎉</strong>' if self.status == 'aceito' else '<strong style=\"color:red;\">RECUSADO 😢</strong>'}</p>"
-                f"<p><strong>📅 Data:</strong> {localtime(self.data_horario_reserva).strftime('%d/%m/%Y')}</p>"
-                f"<p><strong>🕒 Horário:</strong> {localtime(self.data_horario_reserva).strftime('%H:%M')}</p>"
-                "<p>Se precisar reagendar ou tiver dúvidas, entre em contato.</p>"
-                "<p>Até breve!</p>"
-                "<p>📍 <strong>Denis Barbearia</strong></p>"
-            )
+            print("✅ E-mail enviado com sucesso!")
 
-            try:
-                send_mail(
-                    assunto,
-                    mensagem_texto,  # Texto puro (fallback)
-                    'seuemail@gmail.com',
-                    [self.email_cliente],
-                    fail_silently=True,
-                    html_message=mensagem_html  # Agora permite formatação HTML
-                )
-            except Exception as e:
-                print(f"Erro ao enviar e-mail: {e}")
+        except Exception as e:
+            print(f"❌ ERRO AO ENVIAR E-MAIL: {e}")  # Captura qualquer erro e mostra no log
 
 
 
