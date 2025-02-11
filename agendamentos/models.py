@@ -3,12 +3,20 @@ from django.core.mail import send_mail
 from django.utils.timezone import make_aware, localtime
 from django.core.exceptions import ValidationError
 
+
 class HorarioBloqueado(models.Model):
     data_horario = models.DateTimeField(unique=True)  # O horário que será bloqueado
     motivo = models.CharField(max_length=255, blank=True, null=True)  # O barbeiro pode anotar um motivo opcional
 
     def __str__(self):
-        return f"Bloqueado: {localtime(self.data_horario).strftime('%d/%m/%Y %H:%M')}"
+        # ✅ Corrigindo erro de timezone
+        if self.data_horario.tzinfo is None:
+            data_horario_com_tz = make_aware(self.data_horario)
+        else:
+            data_horario_com_tz = self.data_horario
+
+        return f"Bloqueado: {localtime(data_horario_com_tz).strftime('%d/%m/%Y %H:%M')}"
+
 
 
 class Agendamento(models.Model):
