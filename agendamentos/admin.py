@@ -1,5 +1,13 @@
 from django.contrib import admin
 from .models import Agendamento
+from .models import HorarioBloqueado
+
+
+@admin.register(HorarioBloqueado)
+class HorarioBloqueadoAdmin(admin.ModelAdmin):
+    list_display = ('data_horario', 'motivo')  # Exibe os horários bloqueados no painel
+    search_fields = ('data_horario', 'motivo')
+
 
 @admin.register(Agendamento)
 class AgendamentoAdmin(admin.ModelAdmin):

@@ -316,14 +316,14 @@
               console.log("📅 [FULLCALENDAR] Horário selecionado:", selectedDate);
               abrirModal(selectedDate);
           },
-          eventClick: function (info) {
+          calendar.on('dateClick', function(info) {
             if (info.event.extendedProps.clickable) {
-              alert('✅ Você pode agendar esse horário!');
-              abrirModal(info.event.startStr);
+                alert('Você pode agendar esse horário!'); // Aqui mantém o fluxo normal
             } else {
-              alert('⛔ Esse horário está bloqueado!');
+                alert('Esse horário está bloqueado!'); // Bloqueia o clique em horários indisponíveis
             }
-          },
+          });
+        
         
   
           eventClick: function (info) {

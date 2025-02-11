@@ -7,6 +7,8 @@ from rest_framework.response import Response
 from .models import Agendamento
 from dateutil import parser  # Import necessário para parsear datas com fuso horário
 from django.shortcuts import render
+from .models import HorarioBloqueado
+
 
 # Endpoint para criar agendamentos
 @api_view(['POST'])
@@ -74,17 +76,33 @@ def horarios_ocupados(request):
 def home(request):
     return render(request, 'index.html')
 
-# ✅ Função para enviar todos os horários para o FullCalendar
+from .models import HorarioBloqueado
+
 def get_agendamentos(request):
-    agendamentos = Agendamento.objects.all()  # ✅ Envia todos os horários
+    agendamentos = Agendamento.objects.filter(disponivel=True)
+    bloqueios = HorarioBloqueado.objects.all()  # Busca os horários bloqueados
+
     eventos = [
         {
             "title": f"Agendado: {ag.nome_cliente}" if ag.nome_cliente else "Disponível",
             "start": ag.data_horario_reserva.isoformat(),
-            "clickable": ag.disponivel,  # ✅ Só permite clique se estiver disponível
-            "backgroundColor": "#28a745" if ag.disponivel else "#dc3545",  # Verde para disponíveis, vermelho para bloqueados
-            "borderColor": "#28a745" if ag.disponivel else "#dc3545"
+            "clickable": ag.disponivel,  # Só permite clique se estiver disponível
+            "backgroundColor": "#28a745" if ag.disponivel else "#dc3545",  # Verde = disponível, vermelho = bloqueado
+            "borderColor": "#28a745" if ag.disponivel else "#dc3545",
         }
         for ag in agendamentos
     ]
+
+    # Adiciona os bloqueios ao calendário
+    eventos += [
+        {
+            "title": "Indisponível",
+            "start": bloqueio.data_horario.isoformat(),
+            "clickable": False,  # Cliente não pode clicar
+            "backgroundColor": "#000000",  # Preto para bloqueios
+            "borderColor": "#000000",
+        }
+        for bloqueio in bloqueios
+    ]
+
     return JsonResponse(eventos, safe=False)
