@@ -317,12 +317,13 @@
               abrirModal(selectedDate);
           },
           calendar.on('dateClick', function(info) {
-            if (info.event.extendedProps.clickable) {
-                alert('Você pode agendar esse horário!'); // Aqui mantém o fluxo normal
+            if (info.extendedProps && info.extendedProps.clickable) {
+                alert('Você pode agendar esse horário!'); // Mantém o fluxo normal
             } else {
                 alert('Esse horário está bloqueado!'); // Bloqueia o clique em horários indisponíveis
             }
           });
+        
         
         
   
