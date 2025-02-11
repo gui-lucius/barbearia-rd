@@ -316,6 +316,15 @@
               console.log("📅 [FULLCALENDAR] Horário selecionado:", selectedDate);
               abrirModal(selectedDate);
           },
+          eventClick: function (info) {
+            if (info.event.extendedProps.clickable) {
+              alert('✅ Você pode agendar esse horário!');
+              abrirModal(info.event.startStr);
+            } else {
+              alert('⛔ Esse horário está bloqueado!');
+            }
+          },
+        
   
           eventClick: function (info) {
               return false;
@@ -345,7 +354,8 @@
                               end: end.toISOString(),
                               allDay: false,
                               backgroundColor: backgroundColor,
-                              borderColor: backgroundColor
+                              borderColor: backgroundColor,
+                              clickable: horario.disponivel
                           };
                       });
   

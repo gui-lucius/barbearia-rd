@@ -73,3 +73,18 @@ def horarios_ocupados(request):
 # Página inicial
 def home(request):
     return render(request, 'index.html')
+
+# ✅ Função para enviar todos os horários para o FullCalendar
+def get_agendamentos(request):
+    agendamentos = Agendamento.objects.all()  # ✅ Envia todos os horários
+    eventos = [
+        {
+            "title": f"Agendado: {ag.nome_cliente}" if ag.nome_cliente else "Disponível",
+            "start": ag.data_horario_reserva.isoformat(),
+            "clickable": ag.disponivel,  # ✅ Só permite clique se estiver disponível
+            "backgroundColor": "#28a745" if ag.disponivel else "#dc3545",  # Verde para disponíveis, vermelho para bloqueados
+            "borderColor": "#28a745" if ag.disponivel else "#dc3545"
+        }
+        for ag in agendamentos
+    ]
+    return JsonResponse(eventos, safe=False)

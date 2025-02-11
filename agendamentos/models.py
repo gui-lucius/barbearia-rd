@@ -15,6 +15,9 @@ class Agendamento(models.Model):
     ]
     status = models.CharField(max_length=10, choices=STATUS_CHOICES, default='pendente')
 
+    # ✅ Novo campo para bloquear horários
+    disponivel = models.BooleanField(default=True)  # Se False, o horário está fechado
+
     class Meta:
         constraints = [
             models.UniqueConstraint(fields=['data_horario_reserva'], name='unique_agendamento_horario')
@@ -42,5 +45,6 @@ class Agendamento(models.Model):
     def __str__(self):
         if self.data_horario_reserva is not None:
             data_horario_com_tz = make_aware(self.data_horario_reserva) if self.data_horario_reserva.tzinfo is None else self.data_horario_reserva
-            return f"{self.nome_cliente} - {localtime(data_horario_com_tz).strftime('%d/%m/%Y %H:%M')}"
+            status = "Disponível" if self.disponivel else "Fechado"
+            return f"{self.nome_cliente} - {localtime(data_horario_com_tz).strftime('%d/%m/%Y %H:%M')} ({status})"
         return f"{self.nome_cliente} - (Sem data)"
