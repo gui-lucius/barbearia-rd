@@ -4,13 +4,17 @@ from django.core.validators import validate_email
 from django.core.exceptions import ValidationError
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
-from .models import Agendamento
+from .models import Agendamento, HorarioBloqueado
 from dateutil import parser  # Import necessário para parsear datas com fuso horário
 from django.shortcuts import render
-from .models import HorarioBloqueado
 
 
-# Endpoint para criar agendamentos
+# Página inicial
+def home(request):
+    return render(request, 'index.html')
+
+
+# ✅ Endpoint para criar agendamentos
 @api_view(['POST'])
 def criar_agendamento(request):
     try:
@@ -62,22 +66,22 @@ def criar_agendamento(request):
         print(f"Erro ao criar agendamento: {e}")  # Log para debug
         return JsonResponse({'erro': f'Erro inesperado: {str(e)}'}, status=500)
 
+
+# ✅ Endpoint que retorna os horários ocupados (agendados)
 @api_view(['GET'])
 def horarios_ocupados(request):
     try:
-        # Agora filtra apenas os horários "pendente" e "aceito"
-        horarios = Agendamento.objects.filter(status__in=['pendente', 'aceito']).values('data_horario_reserva', 'status')
+        # Filtra apenas os horários "pendente" e "aceito"
+        horarios = Agendamento.objects.filter(status__in=['pendente', 'aceito']).values(
+            'data_horario_reserva', 'status'
+        )
         return Response(list(horarios))  # Retorna os horários sem os recusados
     except Exception as e:
         print(f"Erro ao buscar horários ocupados: {e}")
         return Response({'erro': f'Erro inesperado: {str(e)}'}, status=500)
 
-# Página inicial
-def home(request):
-    return render(request, 'index.html')
 
-from .models import HorarioBloqueado
-
+# ✅ Função que retorna os horários para o calendário (agendamentos + bloqueios)
 def get_agendamentos(request):
     agendamentos = Agendamento.objects.filter(disponivel=True)
     bloqueios = HorarioBloqueado.objects.all()  # Busca os horários bloqueados
@@ -96,7 +100,7 @@ def get_agendamentos(request):
     # Adiciona os bloqueios ao calendário
     eventos += [
         {
-            "title": "Indisponível",
+            "title": "🔴 BLOQUEADO",
             "start": bloqueio.data_horario.isoformat(),
             "clickable": False,  # Cliente não pode clicar
             "backgroundColor": "#000000",  # Preto para bloqueios
