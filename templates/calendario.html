@@ -324,59 +324,58 @@
   
           events: async function (fetchInfo, successCallback, failureCallback) {
             try {
-              loading.style.display = "flex";
-                
-              const response = await fetch('https://barbearia-rd-a3b518df45e1.herokuapp.com/api/horarios/', {
-                headers: { "Authorization": `Bearer ${accessToken}` }
-              });
+                loading.style.display = "flex";
         
-              if (response.ok) {
-                const data = await response.json();
-                const filteredData = data.filter(horario => horario.status !== 'recusado');
-        
-                let events = filteredData.map(horario => {
-                  const start = new Date(horario.data_horario_reserva);
-                  const end = new Date(start.getTime() + 30 * 60 * 1000);
-        
-                  let backgroundColor = horario.status === 'pendente' ? '#ffc107' : '#28a745';
-                  let title = horario.status === 'pendente' ? 'Aguardando Confirmação' : 'Horário Confirmado';
-        
-                  return {
-                    title: title,
-                    start: start.toISOString(),
-                    end: end.toISOString(),
-                    allDay: false,
-                    backgroundColor: backgroundColor,
-                    borderColor: backgroundColor,
-                    clickable: horario.disponivel
-                  };
+                // Buscar agendamentos
+                const responseAgendamentos = await fetch('https://barbearia-rd-a3b518df45e1.herokuapp.com/api/horarios/', {
+                    headers: { "Authorization": `Bearer ${accessToken}` }
                 });
         
-                // 🔴 Agora busca os horários bloqueados e adiciona ao calendário
-                const bloqueiosResponse = await fetch('https://barbearia-rd-a3b518df45e1.herokuapp.com/api/bloqueios/', {
-                  headers: { "Authorization": `Bearer ${accessToken}` }
+                // Buscar horários bloqueados
+                const responseBloqueios = await fetch('https://barbearia-rd-a3b518df45e1.herokuapp.com/api/bloqueios/', {
+                    headers: { "Authorization": `Bearer ${accessToken}` }
                 });
         
-                if (bloqueiosResponse.ok) {
-                  const bloqueios = await bloqueiosResponse.json();
-                  const eventosBloqueados = bloqueios.map(bloqueio => ({
-                    title: "🔴 BLOQUEADO",
-                    start: new Date(bloqueio.data_horario).toISOString(),
-                    end: new Date(new Date(bloqueio.data_horario).getTime() + 30 * 60 * 1000).toISOString(),
-                    allDay: false,
-                    backgroundColor: "#000000", // Preto para bloqueios
-                    borderColor: "#000000",
-                    clickable: false
-                  }));
+                if (responseAgendamentos.ok && responseBloqueios.ok) {
+                    const dataAgendamentos = await responseAgendamentos.json();
+                    const dataBloqueios = await responseBloqueios.json();
         
-                  events = [...events, ...eventosBloqueados]; // Junta os eventos normais com os bloqueados
-                }else {
-                  console.error("⚠️ Erro ao buscar horários bloqueados");
-                }
+                    // Formatar agendamentos
+                    const eventsAgendamentos = dataAgendamentos.map(horario => {
+                        const start = new Date(horario.data_horario_reserva);
+                        const end = new Date(start.getTime() + 30 * 60 * 1000);
         
-                successCallback(events);
-                }else {
-                  mostrarMensagemGlobal("Erro ao carregar eventos!", "erro");
+                        let backgroundColor = horario.status === 'pendente' ? '#ffc107' : '#28a745';
+                        let title = horario.status === 'pendente' ? 'Aguardando Confirmação' : 'Horário Confirmado';
+        
+                        return {
+                            title: title,
+                            start: start.toISOString(),
+                            end: end.toISOString(),
+                            allDay: false,
+                            backgroundColor: backgroundColor,
+                            borderColor: backgroundColor,
+                            clickable: horario.disponivel
+                        };
+                    });
+        
+                    // Formatar horários bloqueados
+                    const eventsBloqueios = dataBloqueios.map(bloqueio => {
+                        const start = new Date(bloqueio.data_horario);
+        
+                        return {
+                            title: "Indisponível",
+                            start: start.toISOString(),
+                            allDay: false,
+                            backgroundColor: "#000000",  // Preto para bloqueados
+                            borderColor: "#000000",
+                            clickable: false
+                        };
+                    });
+        
+                    successCallback([...eventsAgendamentos, ...eventsBloqueios]);
+                } else {
+                    mostrarMensagemGlobal("Erro ao carregar eventos!", "erro");
                 }
             } catch (error) {
                 console.error('❌ Erro ao carregar eventos:', error);
@@ -385,6 +384,7 @@
                 loading.style.display = "none";
             }
           }
+        
         
       });
       // Variáveis para detectar toque e evitar "segurar e soltar"

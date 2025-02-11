@@ -79,6 +79,17 @@ def horarios_ocupados(request):
     except Exception as e:
         print(f"Erro ao buscar horários ocupados: {e}")
         return Response({'erro': f'Erro inesperado: {str(e)}'}, status=500)
+    
+# ✅ Endpoint que retorna os horários bloqueados
+@api_view(['GET'])
+def horarios_bloqueados(request):
+    try:
+        bloqueios = HorarioBloqueado.objects.all().values('data_horario')
+        return Response(list(bloqueios))
+    except Exception as e:
+        print(f"Erro ao buscar horários bloqueados: {e}")
+        return Response({'erro': f'Erro inesperado: {str(e)}'}, status=500)
+
 
 
 # ✅ Função que retorna os horários para o calendário (agendamentos + bloqueios)
