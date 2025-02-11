@@ -5,8 +5,14 @@ from .models import HorarioBloqueado
 
 @admin.register(HorarioBloqueado)
 class HorarioBloqueadoAdmin(admin.ModelAdmin):
-    list_display = ('data_horario', 'motivo')  # Exibe os horários bloqueados no painel
+    list_display = ('data_horario', 'motivo') 
     search_fields = ('data_horario', 'motivo')
+
+    # 🔥 Força o formato correto no formulário
+    def formfield_for_dbfield(self, db_field, **kwargs):
+        if db_field.name == "data_horario":
+            kwargs["widget"].format = '%Y-%m-%d %H:%M:%S'  # Define formato correto
+        return super().formfield_for_dbfield(db_field, **kwargs)
 
 
 @admin.register(Agendamento)
