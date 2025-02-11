@@ -99,7 +99,10 @@ STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
 # Configuração do CORS
-CORS_ALLOWED_ORIGINS = ["http://127.0.0.1:5500", "https://sua-barbearia.com"]
+CORS_ALLOWED_ORIGINS = [
+    "https://www.barbearia-rd.com.br",
+    "https://barbearia-rd.com.br"
+]
 
 # Configuração de envio de e-mails
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
