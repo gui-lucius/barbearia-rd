@@ -316,16 +316,7 @@
               console.log("📅 [FULLCALENDAR] Horário selecionado:", selectedDate);
               abrirModal(selectedDate);
           },
-          calendar.on('dateClick', function(info) {
-            if (info.hasOwnProperty("extendedProps") && info.extendedProps.clickable) {
-              alert('Você pode agendar esse horário!'); // Mantém o fluxo normal
-            } else {
-              alert('Esse horário está bloqueado!'); // Bloqueia o clique em horários indisponíveis
-            }
-          });
-        
-        
-        
+          
   
           eventClick: function (info) {
               return false;
@@ -414,6 +405,28 @@
         console.log("✅ Botão Reservar foi clicado!");
         submitForm(event);
       });
+
+      calendar.on('dateClick', function(info) {
+        console.log("📅 Clique detectado:", info); // Log para depuração
+    
+        // Verifica se há eventos no dia/hora clicado
+        let eventosNaqueleHorario = calendar.getEvents().filter(evento => {
+            return evento.start.toISOString() === info.date.toISOString();
+        });
+    
+        if (eventosNaqueleHorario.length > 0) {
+            let evento = eventosNaqueleHorario[0]; // Pega o primeiro evento encontrado
+    
+            if (evento.extendedProps && evento.extendedProps.clickable) {
+                alert('Você pode agendar esse horário!'); // Mantém o fluxo normal
+            } else {
+                alert('Esse horário está bloqueado!'); // Bloqueia o clique em horários indisponíveis
+            }
+        } else {
+            alert('Você clicou em um horário disponível!');
+        }
+      });
+    
 
       calendar.render();
 
