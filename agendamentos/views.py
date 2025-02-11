@@ -7,6 +7,7 @@ from rest_framework.response import Response
 from .models import Agendamento, HorarioBloqueado
 from dateutil import parser  # Import necessário para parsear datas com fuso horário
 from django.shortcuts import render
+from datetime import timedelta
 
 
 # Página inicial
@@ -113,6 +114,7 @@ def get_agendamentos(request):
         {
             "title": "🔴 BLOQUEADO",
             "start": bloqueio.data_horario.isoformat(),
+            "end": (bloqueio.data_horario + timedelta(minutes=1)).isoformat(),
             "clickable": False,  # Cliente não pode clicar
             "backgroundColor": "#000000",  # Preto para bloqueios
             "borderColor": "#000000",
