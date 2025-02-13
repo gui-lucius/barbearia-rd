@@ -298,8 +298,8 @@
           timeZone: 'local',
           slotMinTime: '09:00:00',
           slotMaxTime: '20:30:00',
-          slotDuration: '00:30:00',
-          slotLabelInterval: '00:30:00',
+          slotDuration: '01:00:00',
+          slotLabelInterval: '01:00:00',
           slotLabelFormat: { hour: '2-digit', minute: '2-digit', hour12: false },
           allDaySlot: false,
           dayHeaderFormat: { weekday: 'short' },
@@ -307,6 +307,7 @@
           selectable: true,
           unselectAuto: false,
           selectOverlap: false,
+          snapDuration: '01:00:00',
           dragScroll: false,
   
           businessHours: { daysOfWeek: [1, 2, 3, 4, 5, 6], startTime: '09:00', endTime: '20:30' },
@@ -343,7 +344,7 @@
                     // Formatar agendamentos
                     const eventsAgendamentos = dataAgendamentos.map(horario => {
                         const start = new Date(horario.data_horario_reserva);
-                        const end = new Date(start.getTime() + 30 * 60 * 1000);
+                        const end = new Date(start.getTime() + 60 * 60 * 1000);
         
                         let backgroundColor = horario.status === 'pendente' ? '#ffc107' : '#28a745';
                         let title = horario.status === 'pendente' ? 'Aguardando Confirmação' : 'Horário Confirmado';
