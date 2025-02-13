@@ -1,19 +1,16 @@
-/* Resetando estilos padrão */
 * {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
 }
 
-/* Cores globais */
 :root {
-    --background-color: #1b1b1b; /* Preto escuro */
-    --text-color: #ffffff;      /* Branco */
-    --accent-color: #f0a500;    /* Amarelo */
-    --secondary-text: #d4d4d4;  /* Cinza claro */
+    --background-color: #1b1b1b; 
+    --text-color: #ffffff;      
+    --accent-color: #f0a500;    
+    --secondary-text: #d4d4d4;  
 }
 
-/* Estilo do body */
 body {
     font-family: 'Arial', sans-serif;
     background-color: var(--background-color);
@@ -21,14 +18,12 @@ body {
     line-height: 1.6;
 }
 
-/* Container centralizado */
 .container {
     width: 90%;
     max-width: 1200px;
     margin: 0 auto;
 }
 
-/* Estilo do cabeçalho */
 .header {
     background: var(--background-color);
     padding: 1rem 0;
@@ -39,7 +34,7 @@ body {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    flex-wrap: wrap; /* Para que os itens se alinhem em telas menores */
+    flex-wrap: wrap;
 }
 
 .logo {
@@ -49,7 +44,7 @@ body {
 
 .header-right {
     display: flex;
-    gap: 1rem; /* Espaçamento entre os botões */
+    gap: 1rem; 
     flex-wrap: wrap;
 }
 
@@ -86,7 +81,6 @@ body {
     background: #e09f00;
 }
 
-/* Seção de Serviços */
 .services {
     padding: 2rem 0;
     text-align: center;
@@ -137,7 +131,6 @@ body {
     color: var(--secondary-text);
 }
 
-/* Sobre Nós */
 .about {
     padding: 2rem 0;
     text-align: center;
@@ -162,7 +155,6 @@ body {
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
 }
 
-/* Tabela de Preços */
 .pricing {
     padding: 2rem 0;
     background: #111;
@@ -208,7 +200,6 @@ body {
     font-weight: bold;
 }
 
-/* Rodapé */
 .footer {
     background: var(--background-color);
     text-align: center;
@@ -223,13 +214,13 @@ body {
 
 .footer .social-links a {
     display: inline-flex;
-    align-items: center; /* Centraliza ícone e texto verticalmente */
+    align-items: center; 
     color: var(--accent-color);
     margin: 0 0.5rem;
     font-size: 1rem;
     font-weight: bold;
     text-decoration: none;
-    gap: 0.5rem; /* Espaçamento entre o ícone e o texto */
+    gap: 0.5rem;
 }
 .footer .social-links a i {
     font-size: 1.2rem;
@@ -238,7 +229,6 @@ body {
     color: #e09f00;
 }
 
-/* Responsividade */
 @media (max-width: 768px) {
     .header-content {
         flex-direction: column;

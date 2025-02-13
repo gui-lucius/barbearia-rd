@@ -5,20 +5,17 @@ from django.core.exceptions import ValidationError
 
 
 class HorarioBloqueado(models.Model):
-    data_horario = models.DateTimeField(unique=True)  # O horário que será bloqueado
-    motivo = models.CharField(max_length=255, blank=True, null=True)  # O barbeiro pode anotar um motivo opcional
+    data_horario = models.DateTimeField(unique=True)
+    motivo = models.CharField(max_length=255, blank=True, null=True) 
 
     def __str__(self):
-        # ✅ Corrigindo erro de timezone
         if self.data_horario.tzinfo is None:
             data_horario_com_tz = make_aware(self.data_horario)
         else:
             data_horario_com_tz = self.data_horario
 
         return f"Bloqueado: {localtime(data_horario_com_tz).strftime('%d/%m/%Y %H:%M')}"
-
-
-
+    
 class Agendamento(models.Model):
     nome_cliente = models.CharField(max_length=100)
     email_cliente = models.EmailField(null=True, blank=True)
@@ -31,8 +28,7 @@ class Agendamento(models.Model):
     ]
     status = models.CharField(max_length=10, choices=STATUS_CHOICES, default='pendente')
 
-    # ✅ Novo campo para bloquear horários
-    disponivel = models.BooleanField(default=True)  # Se False, o horário está fechado
+    disponivel = models.BooleanField(default=True)  
 
     class Meta:
         constraints = [
@@ -44,7 +40,7 @@ class Agendamento(models.Model):
             old_status = Agendamento.objects.get(pk=self.pk).status
             if old_status != self.status:
                 if self.status == "recusado":
-                    self.delete()  # 🔴 Se for recusado, deleta o agendamento
+                    self.delete()  
                     return
                 self.enviar_email()
         super().save(*args, **kwargs)
@@ -62,7 +58,7 @@ class Agendamento(models.Model):
                     "Atenciosamente,\n"
                     "Equipe Barbearia RD ✂️"
                 )
-            else:  # Caso o agendamento seja recusado
+            else:  
                 assunto = "❌ Agendamento Recusado - Barbearia RD"
                 mensagem = (
                     f"Olá {self.nome_cliente},\n\n"
