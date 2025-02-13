@@ -55,7 +55,7 @@ class Agendamento(models.Model):
                 assunto = "✅ Agendamento Confirmado - Barbearia RD"
                 mensagem = (
                     f"Olá {self.nome_cliente},\n\n"
-                    "Seu agendamento foi **CONFIRMADO**! Estamos ansiosos para recebê-lo.\n\n"
+                    "Seu agendamento foi CONFIRMADO! Estamos ansiosos para recebê-lo.\n\n"
                     f"📅 Data e Hora: {self.data_horario_reserva.strftime('%d/%m/%Y %H:%M')}\n"
                     "📍 Local: Barbearia RD\n\n"
                     "Caso precise remarcar, entre em contato conosco.\n\n"
