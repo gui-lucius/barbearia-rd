@@ -51,10 +51,35 @@ class Agendamento(models.Model):
 
     def enviar_email(self):
         if self.email_cliente:
-            assunto = "Confirmação de Agendamento" if self.status == "aceito" else "Agendamento Recusado"
-            mensagem = f"Olá {self.nome_cliente}, seu agendamento foi {self.status}!"
+            if self.status == "aceito":
+                assunto = "✅ Agendamento Confirmado - Barbearia RD"
+                mensagem = (
+                    f"Olá {self.nome_cliente},\n\n"
+                    "Seu agendamento foi **CONFIRMADO**! Estamos ansiosos para recebê-lo.\n\n"
+                    f"📅 Data e Hora: {self.data_horario_reserva.strftime('%d/%m/%Y %H:%M')}\n"
+                    "📍 Local: Barbearia RD\n\n"
+                    "Caso precise remarcar, entre em contato conosco.\n\n"
+                    "Atenciosamente,\n"
+                    "Equipe Barbearia RD ✂️"
+                )
+            else:  # Caso o agendamento seja recusado
+                assunto = "❌ Agendamento Recusado - Barbearia RD"
+                mensagem = (
+                    f"Olá {self.nome_cliente},\n\n"
+                    "Infelizmente, não conseguimos confirmar seu agendamento.\n\n"
+                    "Sugerimos que tente outro horário disponível em nosso calendário.\n\n"
+                    "Atenciosamente,\n"
+                    "Equipe Barbearia RD ✂️"
+                )
+
             try:
-                send_mail(assunto, mensagem, 'seuemail@gmail.com', [self.email_cliente], fail_silently=True)
+                send_mail(
+                    assunto,
+                    mensagem,
+                    'denisbarbeariard@gmail.com',
+                    [self.email_cliente],
+                    fail_silently=True
+                )
             except Exception as e:
                 print(f"Erro ao enviar e-mail: {e}")
 
