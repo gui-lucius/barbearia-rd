@@ -12,12 +12,3 @@ class AgendamentoAdmin(admin.ModelAdmin):
     list_filter = ('status', 'data_horario_reserva', 'disponivel')  
     search_fields = ('nome_cliente', 'email_cliente')
 
-    actions = ["trancar_horarios", "destrancar_horarios"]
-
-    @admin.action(description="Trancar horários selecionados")
-    def trancar_horarios(self, request, queryset):
-        queryset.update(disponivel=False)
-
-    @admin.action(description="Destrancar horários selecionados")
-    def destrancar_horarios(self, request, queryset):
-        queryset.update(disponivel=True)
