@@ -1,3 +1,5 @@
+# barbearia/settings.py
+
 from pathlib import Path
 from datetime import timedelta
 import os
@@ -9,7 +11,13 @@ SECRET_KEY = os.getenv('DJANGO_SECRET_KEY', 'chave-de-desenvolvimento')
 
 DEBUG = os.getenv('DJANGO_DEVELOPMENT', 'False') == 'True'
 
-ALLOWED_HOSTS = ["barbearia-rd.com.br", "www.barbearia-rd.com.br", "barbearia-rd-a3b518df45e1.herokuapp.com"]
+ALLOWED_HOSTS = [
+    "barbearia-rd.com.br",
+    "www.barbearia-rd.com.br",
+    "barbearia-rd-a3b518df45e1.herokuapp.com",
+    "127.0.0.1",
+    "localhost",
+]
 
 INSTALLED_APPS = [
     'django.contrib.admin',
