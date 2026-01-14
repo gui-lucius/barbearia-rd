@@ -1,3 +1,5 @@
+# barbearia/settings.py
+
 from pathlib import Path
 from datetime import timedelta
 import os
@@ -21,13 +23,12 @@ ALLOWED_HOSTS = [
     "barbearia-rd-a3b518df45e1.herokuapp.com",
     "127.0.0.1",
     "localhost",
-
     # ✅ Railway (aceita subdomínios)
     ".railway.app",
     ".up.railway.app",
 ]
 
-# (recomendado pra POST/login/admin em produção)
+# Recomendado pra POST/login/admin em produção (Django 4+ exige https)
 CSRF_TRUSTED_ORIGINS = [
     "https://barbearia-rd.com.br",
     "https://www.barbearia-rd.com.br",
@@ -35,7 +36,7 @@ CSRF_TRUSTED_ORIGINS = [
     "https://*.up.railway.app",
 ]
 
-# Quando está atrás de proxy (Railway/Heroku), isso evita problemas com HTTPS
+# Quando está atrás de proxy (Railway/Heroku), evita problemas com HTTPS
 SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
 USE_X_FORWARDED_HOST = True
 
@@ -101,10 +102,16 @@ DATABASES = {}
 DATABASE_URL = os.getenv("DATABASE_URL")
 
 if DATABASE_URL:
+    # ✅ Railway internal normalmente NÃO usa SSL.
+    # Já Railway public/proxy costuma usar SSL.
+    ssl_required = True
+    if "railway.internal" in DATABASE_URL:
+        ssl_required = False
+
     DATABASES["default"] = dj_database_url.config(
         default=DATABASE_URL,
         conn_max_age=600,
-        ssl_require=True,
+        ssl_require=ssl_required,
     )
 else:
     DATABASES["default"] = {
@@ -144,7 +151,7 @@ STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
 CORS_ALLOWED_ORIGINS = [
     "https://www.barbearia-rd.com.br",
     "https://barbearia-rd.com.br",
-    # (opcional) se você for consumir API direto do front no domínio do railway:
+    # Se for consumir API direto do domínio Railway, adicione aqui também:
     # "https://web-production-xxxx.up.railway.app",
 ]
 
@@ -186,7 +193,6 @@ if DEBUG:
     SECURE_HSTS_INCLUDE_SUBDOMAINS = False
     SECURE_HSTS_PRELOAD = False
 else:
-    # Em produção normalmente é bom deixar ON
     SECURE_SSL_REDIRECT = True
     SESSION_COOKIE_SECURE = True
     CSRF_COOKIE_SECURE = True
