@@ -3,18 +3,28 @@
 from pathlib import Path
 from datetime import timedelta
 import os
+
 import dj_database_url
 
+
+# -----------------------------
+# Base
+# -----------------------------
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 SECRET_KEY = os.getenv("DJANGO_SECRET_KEY", "chave-de-desenvolvimento")
 
-DEBUG = os.getenv("DJANGO_DEVELOPMENT", "False") == "True"
+# Mantive teu padrão (DJANGO_DEVELOPMENT)
+DEBUG = os.getenv("DJANGO_DEVELOPMENT", "False").lower() == "true"
 
+
+# -----------------------------
+# Hosts / CSRF
+# -----------------------------
 ALLOWED_HOSTS = [
     "barbearia-rd.com.br",
     "www.barbearia-rd.com.br",
-    "barbearia-rd-a3b518df45e1.herokuapp.com",
+    "barbearia-rd-a3b518df45e1.herokuapp.com",  # se ainda existir
     "127.0.0.1",
     "localhost",
     ".railway.app",
@@ -31,6 +41,10 @@ CSRF_TRUSTED_ORIGINS = [
 SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
 USE_X_FORWARDED_HOST = True
 
+
+# -----------------------------
+# Apps
+# -----------------------------
 INSTALLED_APPS = [
     "django.contrib.admin",
     "django.contrib.auth",
@@ -38,15 +52,22 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
+
     "agendamentos",
+
     "corsheaders",
     "rest_framework",
     "rest_framework_simplejwt",
 ]
 
+
+# -----------------------------
+# Middleware
+# -----------------------------
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
     "whitenoise.middleware.WhiteNoiseMiddleware",
+
     "django.contrib.sessions.middleware.SessionMiddleware",
     "corsheaders.middleware.CorsMiddleware",
     "django.middleware.common.CommonMiddleware",
@@ -56,6 +77,10 @@ MIDDLEWARE = [
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
 ]
 
+
+# -----------------------------
+# Templates / WSGI
+# -----------------------------
 ROOT_URLCONF = "barbearia.urls"
 
 TEMPLATES = [
@@ -76,11 +101,16 @@ TEMPLATES = [
 
 WSGI_APPLICATION = "barbearia.wsgi.application"
 
+
+# -----------------------------
+# Database (Railway / local)
+# -----------------------------
 DATABASES = {}
 
-DATABASE_URL = os.getenv("DATABASE_URL")
+DATABASE_URL = os.getenv("DATABASE_URL") or os.getenv("DATABASE_PUBLIC_URL")
 
 if DATABASE_URL:
+    # Railway internal não precisa SSL; public geralmente precisa.
     ssl_required = True
     if "railway.internal" in DATABASE_URL:
         ssl_required = False
@@ -96,6 +126,10 @@ else:
         "NAME": BASE_DIR / "db.sqlite3",
     }
 
+
+# -----------------------------
+# Auth
+# -----------------------------
 AUTH_PASSWORD_VALIDATORS = [
     {"NAME": "django.contrib.auth.password_validation.UserAttributeSimilarityValidator"},
     {"NAME": "django.contrib.auth.password_validation.MinimumLengthValidator"},
@@ -103,29 +137,60 @@ AUTH_PASSWORD_VALIDATORS = [
     {"NAME": "django.contrib.auth.password_validation.NumericPasswordValidator"},
 ]
 
+
+# -----------------------------
+# Locale
+# -----------------------------
 LANGUAGE_CODE = "pt-br"
 TIME_ZONE = "America/Sao_Paulo"
 USE_I18N = True
-USE_TZ = False  
+USE_TZ = False  # mantive como tu está usando
 
+
+# -----------------------------
+# Static (WhiteNoise)
+# -----------------------------
 STATIC_URL = "/static/"
 STATICFILES_DIRS = [os.path.join(BASE_DIR, "static")]
 STATIC_ROOT = os.path.join(BASE_DIR, "staticfiles")
 STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
 
+
+# -----------------------------
+# CORS
+# -----------------------------
 CORS_ALLOWED_ORIGINS = [
     "https://www.barbearia-rd.com.br",
     "https://barbearia-rd.com.br",
+    "https://web-production-3f791.up.railway.app",  # se for o atual
 ]
 
+
+# -----------------------------
+# Email (Gmail SMTP - Railway)
+# -----------------------------
 EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
-EMAIL_HOST = "smtp.gmail.com"
-EMAIL_PORT = 587
-EMAIL_USE_TLS = True
+
+# ✅ Agora lê das envs (evita erro de ter "EMAIL_HOST" literal)
+EMAIL_HOST = os.getenv("EMAIL_HOST", "smtp.gmail.com")
+EMAIL_PORT = int(os.getenv("EMAIL_PORT", "587"))
+EMAIL_USE_TLS = os.getenv("EMAIL_USE_TLS", "True").lower() == "true"
+
 EMAIL_HOST_USER = os.getenv("EMAIL_HOST_USER", "")
 EMAIL_HOST_PASSWORD = os.getenv("EMAIL_HOST_PASSWORD", "")
-EMAIL_FAIL_SILENTLY = True
 
+# ✅ Timeout: isso evita travar e dar 500/worker timeout
+EMAIL_TIMEOUT = int(os.getenv("EMAIL_TIMEOUT", "10"))
+
+DEFAULT_FROM_EMAIL = os.getenv("DEFAULT_FROM_EMAIL", EMAIL_HOST_USER)
+
+# ✅ Importante: deixa False pra erro aparecer nos logs (pra debugar)
+EMAIL_FAIL_SILENTLY = False
+
+
+# -----------------------------
+# DRF / JWT
+# -----------------------------
 REST_FRAMEWORK = {
     "DEFAULT_AUTHENTICATION_CLASSES": [
         "rest_framework_simplejwt.authentication.JWTAuthentication",
@@ -139,6 +204,10 @@ SIMPLE_JWT = {
     "BLACKLIST_AFTER_ROTATION": True,
 }
 
+
+# -----------------------------
+# Security (prod vs dev)
+# -----------------------------
 if DEBUG:
     SECURE_SSL_REDIRECT = False
     SESSION_COOKIE_SECURE = False
