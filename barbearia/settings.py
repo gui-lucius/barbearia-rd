@@ -7,28 +7,20 @@ import dj_database_url
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-# =========================
-# Segurança / Ambiente
-# =========================
 SECRET_KEY = os.getenv("DJANGO_SECRET_KEY", "chave-de-desenvolvimento")
 
 DEBUG = os.getenv("DJANGO_DEVELOPMENT", "False") == "True"
 
-# =========================
-# Hosts / Domínios
-# =========================
 ALLOWED_HOSTS = [
     "barbearia-rd.com.br",
     "www.barbearia-rd.com.br",
     "barbearia-rd-a3b518df45e1.herokuapp.com",
     "127.0.0.1",
     "localhost",
-    # ✅ Railway (aceita subdomínios)
     ".railway.app",
     ".up.railway.app",
 ]
 
-# Recomendado pra POST/login/admin em produção (Django 4+ exige https)
 CSRF_TRUSTED_ORIGINS = [
     "https://barbearia-rd.com.br",
     "https://www.barbearia-rd.com.br",
@@ -36,13 +28,9 @@ CSRF_TRUSTED_ORIGINS = [
     "https://*.up.railway.app",
 ]
 
-# Quando está atrás de proxy (Railway/Heroku), evita problemas com HTTPS
 SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
 USE_X_FORWARDED_HOST = True
 
-# =========================
-# Apps
-# =========================
 INSTALLED_APPS = [
     "django.contrib.admin",
     "django.contrib.auth",
@@ -56,9 +44,6 @@ INSTALLED_APPS = [
     "rest_framework_simplejwt",
 ]
 
-# =========================
-# Middleware
-# =========================
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
     "whitenoise.middleware.WhiteNoiseMiddleware",
@@ -73,9 +58,6 @@ MIDDLEWARE = [
 
 ROOT_URLCONF = "barbearia.urls"
 
-# =========================
-# Templates
-# =========================
 TEMPLATES = [
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",
@@ -94,16 +76,11 @@ TEMPLATES = [
 
 WSGI_APPLICATION = "barbearia.wsgi.application"
 
-# =========================
-# Banco
-# =========================
 DATABASES = {}
 
 DATABASE_URL = os.getenv("DATABASE_URL")
 
 if DATABASE_URL:
-    # ✅ Railway internal normalmente NÃO usa SSL.
-    # Já Railway public/proxy costuma usar SSL.
     ssl_required = True
     if "railway.internal" in DATABASE_URL:
         ssl_required = False
@@ -119,9 +96,6 @@ else:
         "NAME": BASE_DIR / "db.sqlite3",
     }
 
-# =========================
-# Password validators
-# =========================
 AUTH_PASSWORD_VALIDATORS = [
     {"NAME": "django.contrib.auth.password_validation.UserAttributeSimilarityValidator"},
     {"NAME": "django.contrib.auth.password_validation.MinimumLengthValidator"},
@@ -129,35 +103,21 @@ AUTH_PASSWORD_VALIDATORS = [
     {"NAME": "django.contrib.auth.password_validation.NumericPasswordValidator"},
 ]
 
-# =========================
-# Locale / Timezone
-# =========================
 LANGUAGE_CODE = "pt-br"
 TIME_ZONE = "America/Sao_Paulo"
 USE_I18N = True
-USE_TZ = False  # (mantive como você está usando)
+USE_TZ = False  
 
-# =========================
-# Static files
-# =========================
 STATIC_URL = "/static/"
 STATICFILES_DIRS = [os.path.join(BASE_DIR, "static")]
 STATIC_ROOT = os.path.join(BASE_DIR, "staticfiles")
 STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
 
-# =========================
-# CORS
-# =========================
 CORS_ALLOWED_ORIGINS = [
     "https://www.barbearia-rd.com.br",
     "https://barbearia-rd.com.br",
-    # Se for consumir API direto do domínio Railway, adicione aqui também:
-    # "https://web-production-xxxx.up.railway.app",
 ]
 
-# =========================
-# Email
-# =========================
 EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
 EMAIL_HOST = "smtp.gmail.com"
 EMAIL_PORT = 587
@@ -166,9 +126,6 @@ EMAIL_HOST_USER = os.getenv("EMAIL_HOST_USER", "")
 EMAIL_HOST_PASSWORD = os.getenv("EMAIL_HOST_PASSWORD", "")
 EMAIL_FAIL_SILENTLY = True
 
-# =========================
-# DRF / JWT
-# =========================
 REST_FRAMEWORK = {
     "DEFAULT_AUTHENTICATION_CLASSES": [
         "rest_framework_simplejwt.authentication.JWTAuthentication",
@@ -182,9 +139,6 @@ SIMPLE_JWT = {
     "BLACKLIST_AFTER_ROTATION": True,
 }
 
-# =========================
-# Segurança HTTPS (produção vs debug)
-# =========================
 if DEBUG:
     SECURE_SSL_REDIRECT = False
     SESSION_COOKIE_SECURE = False

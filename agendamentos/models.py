@@ -8,10 +8,6 @@ from django.core.mail import send_mail
 from django.db import models
 from django.utils import timezone
 
-
-# ---------------------------
-# Helpers
-# ---------------------------
 def _ensure_hour_floor(dt):
     """Arredonda PARA BAIXO para a hora cheia (min/sec/micro = 0)."""
     return dt.replace(minute=0, second=0, microsecond=0)
@@ -38,10 +34,6 @@ def _iter_hours(start, end):
         yield cur
         cur += timedelta(hours=1)
 
-
-# ---------------------------
-# MODELOS BASE (já existentes)
-# ---------------------------
 class HorarioBloqueado(models.Model):
     """
     Slot individual de bloqueio (1 por hora).
@@ -50,7 +42,6 @@ class HorarioBloqueado(models.Model):
     data_horario = models.DateTimeField(unique=True)
     motivo = models.CharField(max_length=255, blank=True, null=True)
 
-    # ✅ vínculo opcional com período (para deletar/recriar fácil)
     bloqueio_periodo = models.ForeignKey(
         "BloqueioPeriodo",
         on_delete=models.CASCADE,
@@ -84,10 +75,8 @@ class Agendamento(models.Model):
 
     status = models.CharField(max_length=10, choices=STATUS_CHOICES, default=STATUS_PENDENTE)
 
-    # "disponivel" = se o horário ainda está livre pra alguém pegar
     disponivel = models.BooleanField(default=True)
 
-    # ✅ vínculo opcional com período (para deletar/recriar fácil)
     reserva_periodo = models.ForeignKey(
         "ReservaPeriodo",
         on_delete=models.CASCADE,
@@ -103,7 +92,6 @@ class Agendamento(models.Model):
         ordering = ["-data_horario_reserva"]
 
     def clean(self):
-        # ✅ trava agendar se estiver bloqueado naquele slot
         if HorarioBloqueado.objects.filter(data_horario=self.data_horario_reserva).exists():
             raise ValidationError("Esse horário está bloqueado.")
 
@@ -112,7 +100,6 @@ class Agendamento(models.Model):
         if self.pk:
             old_status = Agendamento.objects.filter(pk=self.pk).values_list("status", flat=True).first()
 
-        # Padroniza "disponivel"
         if self.status == self.STATUS_ACEITO:
             self.disponivel = False
         else:
@@ -172,10 +159,6 @@ class Agendamento(models.Model):
             dt = timezone.localtime(dt)
         return f"{self.nome_cliente} - {dt.strftime('%d/%m/%Y %H:%M')} ({self.get_status_display()})"
 
-
-# ---------------------------
-# NOVO: BLOQUEIO POR PERÍODO
-# ---------------------------
 class BloqueioPeriodo(models.Model):
     """
     Bloqueia um intervalo (início/fim) e automaticamente cria slots de 1h em HorarioBloqueado.
@@ -203,7 +186,6 @@ class BloqueioPeriodo(models.Model):
         if fim <= ini:
             raise ValidationError("O fim precisa ser maior que o início.")
 
-        # ✅ conflito com agendamentos existentes
         for dt in _iter_hours(ini, fim):
             if Agendamento.objects.filter(data_horario_reserva=dt).exists():
                 raise ValidationError(
@@ -211,17 +193,14 @@ class BloqueioPeriodo(models.Model):
                 )
 
     def save(self, *args, **kwargs):
-        # normaliza
         self.inicio = _ensure_hour_floor(self.inicio)
         self.fim = _ensure_hour_ceil(self.fim)
 
         super().save(*args, **kwargs)
 
-        # recria slots sempre (simples e confiável)
         HorarioBloqueado.objects.filter(bloqueio_periodo=self).delete()
 
         for dt in _iter_hours(self.inicio, self.fim):
-            # se já existir um bloqueio manual nesse horário, mantém (não cria duplicado)
             HorarioBloqueado.objects.get_or_create(
                 data_horario=dt,
                 defaults={"motivo": self.motivo, "bloqueio_periodo": self},
@@ -236,10 +215,6 @@ class BloqueioPeriodo(models.Model):
             fim = timezone.localtime(fim)
         return f"Bloqueio {ini.strftime('%d/%m/%Y %H:%M')} → {fim.strftime('%H:%M')}"
 
-
-# ---------------------------
-# NOVO: RESERVA POR PERÍODO (ADMIN)
-# ---------------------------
 class ReservaPeriodo(models.Model):
     """
     Cria vários Agendamentos confirmados (um por hora) via Admin.
@@ -266,7 +241,6 @@ class ReservaPeriodo(models.Model):
         if fim <= ini:
             raise ValidationError("O fim precisa ser maior que o início.")
 
-        # ✅ conflito com bloqueios/agendamentos
         for dt in _iter_hours(ini, fim):
             if HorarioBloqueado.objects.filter(data_horario=dt).exists():
                 raise ValidationError(
@@ -283,7 +257,6 @@ class ReservaPeriodo(models.Model):
 
         super().save(*args, **kwargs)
 
-        # recria agendamentos do período
         Agendamento.objects.filter(reserva_periodo=self).delete()
 
         for dt in _iter_hours(self.inicio, self.fim):
@@ -291,7 +264,7 @@ class ReservaPeriodo(models.Model):
                 nome_cliente=self.titulo,
                 email_cliente=None,
                 data_horario_reserva=dt,
-                status=Agendamento.STATUS_ACEITO,   # confirmado
+                status=Agendamento.STATUS_ACEITO,   
                 disponivel=False,
                 reserva_periodo=self,
             )

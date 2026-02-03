@@ -10,10 +10,6 @@ from .models import (
     ReservaPeriodo,
 )
 
-
-# -------------------------------------------------
-# Helpers de formatação (só pra ficar bonito no admin)
-# -------------------------------------------------
 def format_dt(dt):
     if not dt:
         return "-"
@@ -21,10 +17,6 @@ def format_dt(dt):
         dt = timezone.localtime(dt)
     return dt.strftime("%d/%m/%Y %H:%M")
 
-
-# -------------------------------------------------
-# HORÁRIOS BLOQUEADOS (slots individuais)
-# -------------------------------------------------
 @admin.register(HorarioBloqueado)
 class HorarioBloqueadoAdmin(admin.ModelAdmin):
     list_display = ("data_formatada", "motivo", "bloqueio_periodo")
@@ -37,10 +29,6 @@ class HorarioBloqueadoAdmin(admin.ModelAdmin):
 
     data_formatada.short_description = "Data / Hora"
 
-
-# -------------------------------------------------
-# AGENDAMENTOS (clientes)
-# -------------------------------------------------
 @admin.register(Agendamento)
 class AgendamentoAdmin(admin.ModelAdmin):
     list_display = (
@@ -83,10 +71,6 @@ class AgendamentoAdmin(admin.ModelAdmin):
 
     data_formatada.short_description = "Data / Hora"
 
-
-# -------------------------------------------------
-# BLOQUEIO POR PERÍODO (ADMIN MASTER)
-# -------------------------------------------------
 @admin.register(BloqueioPeriodo)
 class BloqueioPeriodoAdmin(admin.ModelAdmin):
     list_display = (
@@ -126,10 +110,6 @@ class BloqueioPeriodoAdmin(admin.ModelAdmin):
     fim_formatado.short_description = "Fim"
     total_slots.short_description = "Slots criados"
 
-
-# -------------------------------------------------
-# RESERVA POR PERÍODO (ADMIN)
-# -------------------------------------------------
 @admin.register(ReservaPeriodo)
 class ReservaPeriodoAdmin(admin.ModelAdmin):
     list_display = (

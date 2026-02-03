@@ -16,14 +16,11 @@ def health_check(request):
 urlpatterns = [
     path("admin/", admin.site.urls),
 
-    # App principal
     path("", include("agendamentos.urls")),
 
-    # JWT
     path("api/token/", TokenObtainPairView.as_view(), name="token_obtain_pair"),
     path("api/token/refresh/", TokenRefreshView.as_view(), name="token_refresh"),
 
-    # Health + Google verify
     path("health/", health_check, name="health_check"),
     path(
         "google5e41cd1aba47309f.html",

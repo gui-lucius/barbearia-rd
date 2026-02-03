@@ -34,7 +34,6 @@ def _parse_datetime(dt_str: str):
     """
     dt = parser.parse(dt_str)
 
-    # Se o projeto estiver usando TZ, garante aware
     if getattr(settings, "USE_TZ", False):
         if timezone.is_naive(dt):
             dt = timezone.make_aware(dt, timezone.get_current_timezone())
@@ -64,11 +63,9 @@ def criar_agendamento(request):
     except Exception:
         return Response({"erro": "Data/Horário inválido."}, status=400)
 
-    # ✅ Checa horário bloqueado antes de criar
     if HorarioBloqueado.objects.filter(data_horario=data_horario_reserva).exists():
         return Response({"erro": "Esse horário está bloqueado. Escolha outro."}, status=409)
 
-    # ✅ Criação segura: transação + tratamento de conflito do UniqueConstraint
     try:
         with transaction.atomic():
             agendamento = Agendamento.objects.create(
@@ -80,7 +77,6 @@ def criar_agendamento(request):
     except IntegrityError:
         return Response({"erro": "Esse horário já foi reservado. Escolha outro."}, status=409)
 
-    # E-mail pro dono (pode deixar assim por enquanto)
     try:
         send_mail(
             "Novo Agendamento Pendente",
@@ -93,7 +89,7 @@ def criar_agendamento(request):
             ),
             "denisbarbeariard@gmail.com",
             ["denisbarbeariard@gmail.com"],
-            fail_silently=True,  # em DEV evita quebrar a API por SMTP
+            fail_silently=True,  
         )
     except Exception as e:
         print(f"Erro ao enviar e-mail: {e}")
@@ -103,7 +99,6 @@ def criar_agendamento(request):
 
 @api_view(["GET"])
 def horarios_ocupados(request):
-    # Retorna horários que devem aparecer como ocupados no calendário
     horarios = Agendamento.objects.filter(status__in=["pendente", "aceito"]).values(
         "data_horario_reserva", "status"
     )
@@ -148,7 +143,7 @@ def eventos_calendario(request):
             {
                 "title": "🔴 BLOQUEADO",
                 "start": dt.isoformat(),
-                "end": (dt + timedelta(minutes=30)).isoformat(),  # ajuste conforme tua duração real
+                "end": (dt + timedelta(minutes=30)).isoformat(), 
                 "allDay": False,
             }
         )
