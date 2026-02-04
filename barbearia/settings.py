@@ -58,6 +58,9 @@ INSTALLED_APPS = [
     "corsheaders",
     "rest_framework",
     "rest_framework_simplejwt",
+
+    # ✅ Email por API (SendGrid)
+    "anymail",
 ]
 
 
@@ -167,24 +170,25 @@ CORS_ALLOWED_ORIGINS = [
 
 
 # -----------------------------
-# Email (Gmail SMTP - Railway)
+# Email (SendGrid via API - Railway)
 # -----------------------------
-EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
+# ✅ IMPORTANTE: remove SMTP do Gmail (Railway bloqueia 587/465/25)
+EMAIL_BACKEND = "anymail.backends.sendgrid.EmailBackend"
 
-# ✅ Agora lê das envs (evita erro de ter "EMAIL_HOST" literal)
-EMAIL_HOST = os.getenv("EMAIL_HOST", "smtp.gmail.com")
-EMAIL_PORT = int(os.getenv("EMAIL_PORT", "587"))
-EMAIL_USE_TLS = os.getenv("EMAIL_USE_TLS", "True").lower() == "true"
+ANYMAIL = {
+    "SENDGRID_API_KEY": os.getenv("SENDGRID_API_KEY", ""),
+}
 
-EMAIL_HOST_USER = os.getenv("EMAIL_HOST_USER", "")
-EMAIL_HOST_PASSWORD = os.getenv("EMAIL_HOST_PASSWORD", "")
+# Quem aparece como remetente
+DEFAULT_FROM_EMAIL = os.getenv(
+    "DEFAULT_FROM_EMAIL",
+    "Barbearia RD <denisbarbeariard@gmail.com>",
+)
 
-# ✅ Timeout: isso evita travar e dar 500/worker timeout
-EMAIL_TIMEOUT = int(os.getenv("EMAIL_TIMEOUT", "10"))
+# Opcional: pra erros do servidor
+SERVER_EMAIL = DEFAULT_FROM_EMAIL
 
-DEFAULT_FROM_EMAIL = os.getenv("DEFAULT_FROM_EMAIL", EMAIL_HOST_USER)
-
-# ✅ Importante: deixa False pra erro aparecer nos logs (pra debugar)
+# ✅ Deixa False pra ver erro nos logs (se a API key estiver errada, etc.)
 EMAIL_FAIL_SILENTLY = False
 
 
