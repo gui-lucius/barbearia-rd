@@ -191,10 +191,6 @@ SIMPLE_JWT = {
     "BLACKLIST_AFTER_ROTATION": True,
 }
 
-
-# ------------------------------------------------------------------------------
-# Security
-# ------------------------------------------------------------------------------
 if DEBUG:
     SECURE_SSL_REDIRECT = False
     SESSION_COOKIE_SECURE = False
