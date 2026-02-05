@@ -52,10 +52,10 @@ def _send_agendamento_email(nome_cliente: str, email_cliente: str, data_horario_
     Envia email sem derrubar a request.
     Roda em background (thread) e loga erros.
     """
-    # Para quem mandar (barbearia)
-    destino = getattr(settings, "EMAIL_HOST_USER", "") or ""
+    # ✅ Agora o destino vem do Railway: BARBEARIA_EMAIL
+    destino = (getattr(settings, "BARBEARIA_EMAIL", "") or "").strip()
     if not destino:
-        logger.warning("EMAIL_HOST_USER vazio: email de notificação não será enviado.")
+        logger.warning("BARBEARIA_EMAIL vazio: email de notificação não será enviado.")
         return
 
     subject = "Novo Agendamento Pendente"
@@ -67,10 +67,10 @@ def _send_agendamento_email(nome_cliente: str, email_cliente: str, data_horario_
         "Verifique o painel administrativo."
     )
 
-    from_email = getattr(settings, "DEFAULT_FROM_EMAIL", destino)
+    # Remetente (SendGrid vai usar DEFAULT_FROM_EMAIL)
+    from_email = getattr(settings, "DEFAULT_FROM_EMAIL", "no-reply@barbearia-rd")
 
     try:
-        # fail_silently=False pra aparecer no log se der problema
         send_mail(
             subject,
             message,
@@ -80,7 +80,7 @@ def _send_agendamento_email(nome_cliente: str, email_cliente: str, data_horario_
         )
         logger.info("Email de agendamento enviado com sucesso para %s.", destino)
     except Exception:
-        logger.exception("Erro ao enviar email de agendamento (SMTP).")
+        logger.exception("Erro ao enviar email de agendamento (SendGrid/API).")
 
 
 @api_view(["POST"])
@@ -121,13 +121,15 @@ def criar_agendamento(request):
             def _async_send():
                 _send_agendamento_email(nome_cliente, email_cliente, data_horario_reserva)
 
-            transaction.on_commit(lambda: threading.Thread(target=_async_send, daemon=True).start())
+            transaction.on_commit(
+                lambda: threading.Thread(target=_async_send, daemon=True).start()
+            )
 
     except IntegrityError:
         # Constraint unique_agendamento_horario
         return Response({"erro": "Esse horário já foi reservado. Escolha outro."}, status=409)
 
-    # ✅ Resposta completa (ajuda o front a atualizar sem refresh)
+    # Resposta completa (ajuda o front a atualizar sem refresh)
     dt = agendamento.data_horario_reserva
     if getattr(settings, "USE_TZ", False) and timezone.is_aware(dt):
         dt = timezone.localtime(dt)
@@ -146,7 +148,8 @@ def criar_agendamento(request):
 @api_view(["GET"])
 def horarios_ocupados(request):
     ags = Agendamento.objects.filter(status__in=["pendente", "aceito"]).values(
-        "data_horario_reserva", "status"
+        "data_horario_reserva",
+        "status",
     )
 
     # Garantir formato consistente pro front
@@ -155,6 +158,7 @@ def horarios_ocupados(request):
         dt = item["data_horario_reserva"]
         if getattr(settings, "USE_TZ", False) and timezone.is_aware(dt):
             dt = timezone.localtime(dt)
+
         resultado.append(
             {
                 "data_horario_reserva": dt.isoformat() if hasattr(dt, "isoformat") else dt,
@@ -174,7 +178,10 @@ def horarios_bloqueados(request):
         dt = item["data_horario"]
         if getattr(settings, "USE_TZ", False) and timezone.is_aware(dt):
             dt = timezone.localtime(dt)
-        resultado.append({"data_horario": dt.isoformat() if hasattr(dt, "isoformat") else dt})
+
+        resultado.append(
+            {"data_horario": dt.isoformat() if hasattr(dt, "isoformat") else dt}
+        )
 
     return Response(resultado)
 
