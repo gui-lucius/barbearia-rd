@@ -6,25 +6,17 @@ import os
 
 import dj_database_url
 
-
-# -----------------------------
-# Base
-# -----------------------------
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 SECRET_KEY = os.getenv("DJANGO_SECRET_KEY", "chave-de-desenvolvimento")
 
-# Mantive teu padrão (DJANGO_DEVELOPMENT)
 DEBUG = os.getenv("DJANGO_DEVELOPMENT", "False").lower() == "true"
 
 
-# -----------------------------
-# Hosts / CSRF
-# -----------------------------
 ALLOWED_HOSTS = [
     "barbearia-rd.com.br",
     "www.barbearia-rd.com.br",
-    "barbearia-rd-a3b518df45e1.herokuapp.com",  # se ainda existir
+    "barbearia-rd-a3b518df45e1.herokuapp.com",  
     "127.0.0.1",
     "localhost",
     ".railway.app",
@@ -42,9 +34,6 @@ SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
 USE_X_FORWARDED_HOST = True
 
 
-# -----------------------------
-# Apps
-# -----------------------------
 INSTALLED_APPS = [
     "django.contrib.admin",
     "django.contrib.auth",
@@ -59,14 +48,9 @@ INSTALLED_APPS = [
     "rest_framework",
     "rest_framework_simplejwt",
 
-    # ✅ Email por API (SendGrid)
     "anymail",
 ]
 
-
-# -----------------------------
-# Middleware
-# -----------------------------
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
     "whitenoise.middleware.WhiteNoiseMiddleware",
@@ -80,10 +64,6 @@ MIDDLEWARE = [
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
 ]
 
-
-# -----------------------------
-# Templates / WSGI
-# -----------------------------
 ROOT_URLCONF = "barbearia.urls"
 
 TEMPLATES = [
@@ -104,16 +84,11 @@ TEMPLATES = [
 
 WSGI_APPLICATION = "barbearia.wsgi.application"
 
-
-# -----------------------------
-# Database (Railway / local)
-# -----------------------------
 DATABASES = {}
 
 DATABASE_URL = os.getenv("DATABASE_URL") or os.getenv("DATABASE_PUBLIC_URL")
 
 if DATABASE_URL:
-    # Railway internal não precisa SSL; public geralmente precisa.
     ssl_required = True
     if "railway.internal" in DATABASE_URL:
         ssl_required = False
@@ -129,10 +104,6 @@ else:
         "NAME": BASE_DIR / "db.sqlite3",
     }
 
-
-# -----------------------------
-# Auth
-# -----------------------------
 AUTH_PASSWORD_VALIDATORS = [
     {"NAME": "django.contrib.auth.password_validation.UserAttributeSimilarityValidator"},
     {"NAME": "django.contrib.auth.password_validation.MinimumLengthValidator"},
@@ -140,61 +111,39 @@ AUTH_PASSWORD_VALIDATORS = [
     {"NAME": "django.contrib.auth.password_validation.NumericPasswordValidator"},
 ]
 
-
-# -----------------------------
-# Locale
-# -----------------------------
 LANGUAGE_CODE = "pt-br"
 TIME_ZONE = "America/Sao_Paulo"
 USE_I18N = True
-USE_TZ = False  # mantive como tu está usando
+USE_TZ = False  
 
-
-# -----------------------------
-# Static (WhiteNoise)
-# -----------------------------
 STATIC_URL = "/static/"
 STATICFILES_DIRS = [os.path.join(BASE_DIR, "static")]
 STATIC_ROOT = os.path.join(BASE_DIR, "staticfiles")
 STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
 
-
-# -----------------------------
-# CORS
-# -----------------------------
 CORS_ALLOWED_ORIGINS = [
     "https://www.barbearia-rd.com.br",
     "https://barbearia-rd.com.br",
-    "https://web-production-3f791.up.railway.app",  # se for o atual
+    "https://web-production-3f791.up.railway.app", 
 ]
 
-
-# -----------------------------
-# Email (SendGrid via API - Railway)
-# -----------------------------
-# ✅ IMPORTANTE: remove SMTP do Gmail (Railway bloqueia 587/465/25)
 EMAIL_BACKEND = "anymail.backends.sendgrid.EmailBackend"
 
 ANYMAIL = {
     "SENDGRID_API_KEY": os.getenv("SENDGRID_API_KEY", ""),
 }
 
-# Quem aparece como remetente
 DEFAULT_FROM_EMAIL = os.getenv(
     "DEFAULT_FROM_EMAIL",
     "Barbearia RD <denisbarbeariard@gmail.com>",
 )
 
-# Opcional: pra erros do servidor
 SERVER_EMAIL = DEFAULT_FROM_EMAIL
 
-# ✅ Deixa False pra ver erro nos logs (se a API key estiver errada, etc.)
+BARBEARIA_EMAIL = os.getenv("BARBEARIA_EMAIL", "")
+
 EMAIL_FAIL_SILENTLY = False
 
-
-# -----------------------------
-# DRF / JWT
-# -----------------------------
 REST_FRAMEWORK = {
     "DEFAULT_AUTHENTICATION_CLASSES": [
         "rest_framework_simplejwt.authentication.JWTAuthentication",
@@ -208,10 +157,6 @@ SIMPLE_JWT = {
     "BLACKLIST_AFTER_ROTATION": True,
 }
 
-
-# -----------------------------
-# Security (prod vs dev)
-# -----------------------------
 if DEBUG:
     SECURE_SSL_REDIRECT = False
     SESSION_COOKIE_SECURE = False
@@ -223,6 +168,6 @@ else:
     SECURE_SSL_REDIRECT = True
     SESSION_COOKIE_SECURE = True
     CSRF_COOKIE_SECURE = True
-    SECURE_HSTS_SECONDS = 60 * 60 * 24 * 30  # 30 dias
+    SECURE_HSTS_SECONDS = 60 * 60 * 24 * 30 
     SECURE_HSTS_INCLUDE_SUBDOMAINS = True
     SECURE_HSTS_PRELOAD = True
