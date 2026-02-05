@@ -1,6 +1,7 @@
 # agendamentos/models.py
 
 from datetime import timedelta
+import logging
 
 from django.conf import settings
 from django.core.exceptions import ValidationError
@@ -8,6 +9,12 @@ from django.core.mail import send_mail
 from django.db import models
 from django.utils import timezone
 
+logger = logging.getLogger(__name__)
+
+
+# ---------------------------
+# Helpers
+# ---------------------------
 def _ensure_hour_floor(dt):
     """Arredonda PARA BAIXO para a hora cheia (min/sec/micro = 0)."""
     return dt.replace(minute=0, second=0, microsecond=0)
@@ -34,10 +41,14 @@ def _iter_hours(start, end):
         yield cur
         cur += timedelta(hours=1)
 
+
+# ---------------------------
+# Models
+# ---------------------------
 class HorarioBloqueado(models.Model):
     """
     Slot individual de bloqueio (1 por hora).
-    Agora pode ser criado "manual" OU automaticamente por um BloqueioPeriodo.
+    Pode ser criado manualmente OU automaticamente por um BloqueioPeriodo.
     """
     data_horario = models.DateTimeField(unique=True)
     motivo = models.CharField(max_length=255, blank=True, null=True)
@@ -73,7 +84,11 @@ class Agendamento(models.Model):
         (STATUS_RECUSADO, "Recusado"),
     ]
 
-    status = models.CharField(max_length=10, choices=STATUS_CHOICES, default=STATUS_PENDENTE)
+    status = models.CharField(
+        max_length=10,
+        choices=STATUS_CHOICES,
+        default=STATUS_PENDENTE,
+    )
 
     disponivel = models.BooleanField(default=True)
 
@@ -87,30 +102,42 @@ class Agendamento(models.Model):
 
     class Meta:
         constraints = [
-            models.UniqueConstraint(fields=["data_horario_reserva"], name="unique_agendamento_horario")
+            models.UniqueConstraint(
+                fields=["data_horario_reserva"],
+                name="unique_agendamento_horario",
+            )
         ]
         ordering = ["-data_horario_reserva"]
 
     def clean(self):
-        if HorarioBloqueado.objects.filter(data_horario=self.data_horario_reserva).exists():
+        if HorarioBloqueado.objects.filter(
+            data_horario=self.data_horario_reserva
+        ).exists():
             raise ValidationError("Esse horário está bloqueado.")
 
     def save(self, *args, **kwargs):
         old_status = None
         if self.pk:
-            old_status = Agendamento.objects.filter(pk=self.pk).values_list("status", flat=True).first()
+            old_status = (
+                Agendamento.objects.filter(pk=self.pk)
+                .values_list("status", flat=True)
+                .first()
+            )
 
-        if self.status == self.STATUS_ACEITO:
-            self.disponivel = False
-        else:
-            self.disponivel = True
+        # regra de disponibilidade
+        self.disponivel = self.status != self.STATUS_ACEITO
 
         super().save(*args, **kwargs)
 
+        # envia email apenas quando houve troca de status (update)
         if old_status is not None and old_status != self.status:
-            self.enviar_email()
+            self.enviar_email_status()
 
-    def enviar_email(self):
+    def enviar_email_status(self):
+        """
+        Envia email para o CLIENTE quando o barbeiro aceita/recusa.
+        Agora NÃO engole erro: loga no Railway.
+        """
         if not self.email_cliente:
             return
 
@@ -127,7 +154,7 @@ class Agendamento(models.Model):
                 "📍 Local: Barbearia RD\n\n"
                 "Caso precise remarcar, entre em contato conosco.\n\n"
                 "Atenciosamente,\n"
-                "Equipe Barbearia RD ✂️"
+                "Equipe Barbearia RD"
             )
         elif self.status == self.STATUS_RECUSADO:
             assunto = "❌ Agendamento Recusado - Barbearia RD"
@@ -136,20 +163,34 @@ class Agendamento(models.Model):
                 "Infelizmente, não conseguimos confirmar seu agendamento.\n\n"
                 "Sugerimos que tente outro horário disponível em nosso calendário.\n\n"
                 "Atenciosamente,\n"
-                "Equipe Barbearia RD ✂️"
+                "Equipe Barbearia RD"
             )
         else:
             return
 
-        from_email = getattr(settings, "DEFAULT_FROM_EMAIL", None) or "no-reply@barbearia-rd.com.br"
+        from_email = getattr(settings, "DEFAULT_FROM_EMAIL", "no-reply@barbearia-rd.com.br")
 
-        send_mail(
-            assunto,
-            mensagem,
-            from_email,
-            [self.email_cliente],
-            fail_silently=True,
-        )
+        try:
+            send_mail(
+                assunto,
+                mensagem,
+                from_email,
+                [self.email_cliente],
+                fail_silently=False,  # ✅ importante
+            )
+            logger.info(
+                "Email de status (%s) enviado para cliente=%s agendamento_id=%s",
+                self.status,
+                self.email_cliente,
+                self.pk,
+            )
+        except Exception:
+            logger.exception(
+                "Falha ao enviar email de status (%s) para cliente=%s agendamento_id=%s",
+                self.status,
+                self.email_cliente,
+                self.pk,
+            )
 
     def __str__(self):
         dt = self.data_horario_reserva
@@ -158,6 +199,7 @@ class Agendamento(models.Model):
         if timezone.is_aware(dt):
             dt = timezone.localtime(dt)
         return f"{self.nome_cliente} - {dt.strftime('%d/%m/%Y %H:%M')} ({self.get_status_display()})"
+
 
 class BloqueioPeriodo(models.Model):
     """
@@ -215,6 +257,7 @@ class BloqueioPeriodo(models.Model):
             fim = timezone.localtime(fim)
         return f"Bloqueio {ini.strftime('%d/%m/%Y %H:%M')} → {fim.strftime('%H:%M')}"
 
+
 class ReservaPeriodo(models.Model):
     """
     Cria vários Agendamentos confirmados (um por hora) via Admin.
@@ -264,7 +307,7 @@ class ReservaPeriodo(models.Model):
                 nome_cliente=self.titulo,
                 email_cliente=None,
                 data_horario_reserva=dt,
-                status=Agendamento.STATUS_ACEITO,   
+                status=Agendamento.STATUS_ACEITO,
                 disponivel=False,
                 reserva_periodo=self,
             )

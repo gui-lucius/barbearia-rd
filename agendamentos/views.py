@@ -68,7 +68,7 @@ def _send_agendamento_email(nome_cliente: str, email_cliente: str, data_horario_
     )
 
     # Remetente (SendGrid vai usar DEFAULT_FROM_EMAIL)
-    from_email = getattr(settings, "DEFAULT_FROM_EMAIL", "no-reply@barbearia-rd")
+    from_email = getattr(settings, "DEFAULT_FROM_EMAIL", "no-reply@barbearia-rd.com.br")
 
     try:
         send_mail(
