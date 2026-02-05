@@ -2,7 +2,6 @@
 
 from datetime import timedelta
 import logging
-import threading
 
 from dateutil import parser
 from django.conf import settings
@@ -49,10 +48,9 @@ def _parse_datetime(dt_str: str):
 
 def _send_agendamento_email(nome_cliente: str, email_cliente: str, data_horario_reserva):
     """
-    Envia email sem derrubar a request.
-    Roda em background (thread) e loga erros.
+    Envia email pro BARBEIRO/ADMIN avisando que tem agendamento pendente.
+    Agora é síncrono (para logar erro com clareza no Railway).
     """
-    # ✅ Agora o destino vem do Railway: BARBEARIA_EMAIL
     destino = (getattr(settings, "BARBEARIA_EMAIL", "") or "").strip()
     if not destino:
         logger.warning("BARBEARIA_EMAIL vazio: email de notificação não será enviado.")
@@ -67,7 +65,6 @@ def _send_agendamento_email(nome_cliente: str, email_cliente: str, data_horario_
         "Verifique o painel administrativo."
     )
 
-    # Remetente (SendGrid vai usar DEFAULT_FROM_EMAIL)
     from_email = getattr(settings, "DEFAULT_FROM_EMAIL", "no-reply@barbearia-rd.com.br")
 
     try:
@@ -80,7 +77,7 @@ def _send_agendamento_email(nome_cliente: str, email_cliente: str, data_horario_
         )
         logger.info("Email de agendamento enviado com sucesso para %s.", destino)
     except Exception:
-        logger.exception("Erro ao enviar email de agendamento (SendGrid/API).")
+        logger.exception("Erro ao enviar email de agendamento.")
 
 
 @api_view(["POST"])
@@ -117,16 +114,12 @@ def criar_agendamento(request):
                 status="pendente",
             )
 
-            # ✅ Enviar email só depois do commit (e em background)
-            def _async_send():
-                _send_agendamento_email(nome_cliente, email_cliente, data_horario_reserva)
-
+            # ✅ Enviar email só depois do commit (AGORA SÍNCRONO)
             transaction.on_commit(
-                lambda: threading.Thread(target=_async_send, daemon=True).start()
+                lambda: _send_agendamento_email(nome_cliente, email_cliente, data_horario_reserva)
             )
 
     except IntegrityError:
-        # Constraint unique_agendamento_horario
         return Response({"erro": "Esse horário já foi reservado. Escolha outro."}, status=409)
 
     # Resposta completa (ajuda o front a atualizar sem refresh)
@@ -152,7 +145,6 @@ def horarios_ocupados(request):
         "status",
     )
 
-    # Garantir formato consistente pro front
     resultado = []
     for item in ags:
         dt = item["data_horario_reserva"]
@@ -179,9 +171,7 @@ def horarios_bloqueados(request):
         if getattr(settings, "USE_TZ", False) and timezone.is_aware(dt):
             dt = timezone.localtime(dt)
 
-        resultado.append(
-            {"data_horario": dt.isoformat() if hasattr(dt, "isoformat") else dt}
-        )
+        resultado.append({"data_horario": dt.isoformat() if hasattr(dt, "isoformat") else dt})
 
     return Response(resultado)
 

@@ -8,15 +8,16 @@ import dj_database_url
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
+# ------------------------------------------------------------------------------
+# Core
+# ------------------------------------------------------------------------------
 SECRET_KEY = os.getenv("DJANGO_SECRET_KEY", "chave-de-desenvolvimento")
-
 DEBUG = os.getenv("DJANGO_DEVELOPMENT", "False").lower() == "true"
-
 
 ALLOWED_HOSTS = [
     "barbearia-rd.com.br",
     "www.barbearia-rd.com.br",
-    "barbearia-rd-a3b518df45e1.herokuapp.com",  
+    "barbearia-rd-a3b518df45e1.herokuapp.com",
     "127.0.0.1",
     "localhost",
     ".railway.app",
@@ -34,6 +35,9 @@ SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
 USE_X_FORWARDED_HOST = True
 
 
+# ------------------------------------------------------------------------------
+# Apps
+# ------------------------------------------------------------------------------
 INSTALLED_APPS = [
     "django.contrib.admin",
     "django.contrib.auth",
@@ -47,8 +51,7 @@ INSTALLED_APPS = [
     "corsheaders",
     "rest_framework",
     "rest_framework_simplejwt",
-
-    "anymail",
+    # ✅ removido "anymail" (vamos usar SMTP direto)
 ]
 
 MIDDLEWARE = [
@@ -84,6 +87,10 @@ TEMPLATES = [
 
 WSGI_APPLICATION = "barbearia.wsgi.application"
 
+
+# ------------------------------------------------------------------------------
+# Database
+# ------------------------------------------------------------------------------
 DATABASES = {}
 
 DATABASE_URL = os.getenv("DATABASE_URL") or os.getenv("DATABASE_PUBLIC_URL")
@@ -104,6 +111,10 @@ else:
         "NAME": BASE_DIR / "db.sqlite3",
     }
 
+
+# ------------------------------------------------------------------------------
+# Auth
+# ------------------------------------------------------------------------------
 AUTH_PASSWORD_VALIDATORS = [
     {"NAME": "django.contrib.auth.password_validation.UserAttributeSimilarityValidator"},
     {"NAME": "django.contrib.auth.password_validation.MinimumLengthValidator"},
@@ -111,39 +122,62 @@ AUTH_PASSWORD_VALIDATORS = [
     {"NAME": "django.contrib.auth.password_validation.NumericPasswordValidator"},
 ]
 
+
+# ------------------------------------------------------------------------------
+# i18n / timezone
+# ------------------------------------------------------------------------------
 LANGUAGE_CODE = "pt-br"
 TIME_ZONE = "America/Sao_Paulo"
 USE_I18N = True
-USE_TZ = False  
+USE_TZ = False  # mantém como você já está usando
 
+
+# ------------------------------------------------------------------------------
+# Static files
+# ------------------------------------------------------------------------------
 STATIC_URL = "/static/"
 STATICFILES_DIRS = [os.path.join(BASE_DIR, "static")]
 STATIC_ROOT = os.path.join(BASE_DIR, "staticfiles")
 STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
 
+
+# ------------------------------------------------------------------------------
+# CORS
+# ------------------------------------------------------------------------------
 CORS_ALLOWED_ORIGINS = [
     "https://www.barbearia-rd.com.br",
     "https://barbearia-rd.com.br",
-    "https://web-production-3f791.up.railway.app", 
+    "https://web-production-3f791.up.railway.app",
 ]
 
-EMAIL_BACKEND = "anymail.backends.sendgrid.EmailBackend"
 
-ANYMAIL = {
-    "SENDGRID_API_KEY": os.getenv("SENDGRID_API_KEY", ""),
-}
+# ------------------------------------------------------------------------------
+# Email (SMTP - Gmail)
+# ------------------------------------------------------------------------------
+EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
+
+EMAIL_HOST = os.getenv("EMAIL_HOST", "smtp.gmail.com")
+EMAIL_PORT = int(os.getenv("EMAIL_PORT", "587"))
+EMAIL_HOST_USER = os.getenv("EMAIL_HOST_USER", "")
+EMAIL_HOST_PASSWORD = os.getenv("EMAIL_HOST_PASSWORD", "")
+EMAIL_USE_TLS = os.getenv("EMAIL_USE_TLS", "True").lower() == "true"
+EMAIL_TIMEOUT = int(os.getenv("EMAIL_TIMEOUT", "10"))
 
 DEFAULT_FROM_EMAIL = os.getenv(
     "DEFAULT_FROM_EMAIL",
-    "Barbearia RD <denisbarbeariard@gmail.com>",
+    f"Barbearia RD <{EMAIL_HOST_USER}>" if EMAIL_HOST_USER else "Barbearia RD <no-reply@barbearia-rd.com.br>",
 )
-
 SERVER_EMAIL = DEFAULT_FROM_EMAIL
 
+# destino do email do barbeiro (notificação de pendente)
 BARBEARIA_EMAIL = os.getenv("BARBEARIA_EMAIL", "")
 
 EMAIL_FAIL_SILENTLY = False
 
+
+# ------------------------------------------------------------------------------
+# DRF / JWT
+# ------------------------------------------------------------------------------
 REST_FRAMEWORK = {
     "DEFAULT_AUTHENTICATION_CLASSES": [
         "rest_framework_simplejwt.authentication.JWTAuthentication",
@@ -157,6 +191,10 @@ SIMPLE_JWT = {
     "BLACKLIST_AFTER_ROTATION": True,
 }
 
+
+# ------------------------------------------------------------------------------
+# Security
+# ------------------------------------------------------------------------------
 if DEBUG:
     SECURE_SSL_REDIRECT = False
     SESSION_COOKIE_SECURE = False
@@ -168,6 +206,6 @@ else:
     SECURE_SSL_REDIRECT = True
     SESSION_COOKIE_SECURE = True
     CSRF_COOKIE_SECURE = True
-    SECURE_HSTS_SECONDS = 60 * 60 * 24 * 30 
+    SECURE_HSTS_SECONDS = 60 * 60 * 24 * 30
     SECURE_HSTS_INCLUDE_SUBDOMAINS = True
     SECURE_HSTS_PRELOAD = True
