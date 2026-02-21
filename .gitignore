@@ -7,3 +7,5 @@ __pycache__/
 
 # Ignorar arquivos de cache do Django
 db.sqlite3
+
+.env

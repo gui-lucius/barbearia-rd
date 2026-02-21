@@ -10,11 +10,10 @@
   <link href="https://cdn.jsdelivr.net/npm/fullcalendar@5.11.0/main.min.css" rel="stylesheet">
   <script src="https://cdn.jsdelivr.net/npm/fullcalendar@5.11.0/main.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/fullcalendar@5.11.0/locales/pt-br.js"></script>
-
   <link rel="stylesheet" href="{% static 'css/styles.css' %}" />
 
   <style>
-    :root{
+    :root {
       --bg: #0b0f14;
       --card: #0f1620;
       --muted: #98a2b3;
@@ -22,15 +21,12 @@
       --border: rgba(255,255,255,0.08);
       --shadow: 0 10px 30px rgba(0,0,0,0.35);
       --accent: #ffd700;
-
       --ok: #22c55e;
       --warn: #f59e0b;
       --bad: #ef4444;
-
       --radius: 16px;
     }
-
-    body{
+    body {
       margin: 0;
       font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial, "Apple Color Emoji", "Segoe UI Emoji";
       background: radial-gradient(1200px 600px at 20% -20%, rgba(255,215,0,0.15), transparent 60%),
@@ -38,14 +34,12 @@
                   var(--bg);
       color: var(--text);
     }
-
-    .page{
+    .page {
       max-width: 1120px;
       margin: 0 auto;
       padding: 18px 16px 30px;
     }
-
-    .topbar{
+    .topbar {
       display: flex;
       gap: 12px;
       align-items: center;
@@ -53,32 +47,29 @@
       flex-wrap: wrap;
       margin-bottom: 14px;
     }
-
-    .brand{
+    .brand {
       display:flex;
       flex-direction: column;
       gap: 4px;
     }
-    .brand h1{
+    .brand h1 {
       margin: 0;
       font-size: 20px;
       letter-spacing: .2px;
       font-weight: 800;
     }
-    .brand p{
+    .brand p {
       margin: 0;
       color: var(--muted);
       font-size: 13px;
     }
-
-    .actions{
+    .actions {
       display:flex;
       gap: 10px;
       align-items:center;
       flex-wrap: wrap;
     }
-
-    .btn{
+    .btn {
       display:inline-flex;
       align-items:center;
       gap: 8px;
@@ -93,29 +84,27 @@
       transition: transform .08s ease, background .2s ease, border-color .2s ease;
       user-select:none;
     }
-    .btn:hover{
+    .btn:hover {
       background: rgba(255,255,255,0.07);
       border-color: rgba(255,255,255,0.14);
       transform: translateY(-1px);
     }
-    .btn-accent{
+    .btn-accent {
       background: rgba(255,215,0,0.12);
       border-color: rgba(255,215,0,0.35);
     }
-    .btn-accent:hover{
+    .btn-accent:hover {
       background: rgba(255,215,0,0.18);
       border-color: rgba(255,215,0,0.45);
     }
-
-    .card{
+    .card {
       background: linear-gradient(180deg, rgba(255,255,255,0.04), rgba(255,255,255,0.02));
       border: 1px solid var(--border);
       border-radius: var(--radius);
       box-shadow: var(--shadow);
       overflow: hidden;
     }
-
-    .card-head{
+    .card-head {
       padding: 14px 14px 10px;
       display:flex;
       align-items: center;
@@ -124,8 +113,7 @@
       border-bottom: 1px solid var(--border);
       flex-wrap: wrap;
     }
-
-    .legend{
+    .legend {
       display:flex;
       gap: 10px;
       align-items:center;
@@ -133,7 +121,7 @@
       color: var(--muted);
       font-size: 13px;
     }
-    .dot{
+    .dot {
       width: 10px;
       height: 10px;
       border-radius: 999px;
@@ -141,8 +129,7 @@
       margin-right: 6px;
       vertical-align: middle;
     }
-
-    #mensagem-global{
+    #mensagem-global {
       display:none;
       margin: 10px 0 0;
       padding: 10px 12px;
@@ -151,19 +138,17 @@
       font-size: 14px;
       border: 1px solid transparent;
     }
-    #mensagem-global.sucesso{
+    #mensagem-global.sucesso {
       background: rgba(34,197,94,0.14);
       border-color: rgba(34,197,94,0.35);
       color: #d9ffe7;
     }
-    #mensagem-global.erro{
+    #mensagem-global.erro {
       background: rgba(239,68,68,0.14);
       border-color: rgba(239,68,68,0.35);
       color: #ffd7d7;
     }
-
-    /* FullCalendar: deixar bonito */
-    .fc{
+    .fc {
       --fc-border-color: rgba(255,255,255,0.08);
       --fc-page-bg-color: transparent;
       --fc-neutral-bg-color: rgba(255,255,255,0.02);
@@ -176,77 +161,62 @@
       --fc-button-active-bg-color: rgba(255,215,0,0.20);
       --fc-button-active-border-color: rgba(255,215,0,0.35);
     }
-
-    .fc .fc-toolbar{
+    .fc .fc-toolbar {
       padding: 12px 14px;
       margin: 0;
       background: rgba(0,0,0,0.25);
       border-bottom: 1px solid var(--border);
     }
-    .fc .fc-toolbar-title{
+    .fc .fc-toolbar-title {
       font-size: 16px;
       font-weight: 900;
       letter-spacing: .2px;
     }
-    .fc .fc-button{
+    .fc .fc-button {
       border-radius: 10px;
       font-weight: 900;
       text-transform: capitalize;
       padding: 8px 10px;
       box-shadow: none;
     }
-
-    /* eventos pill bonitos + texto legível */
-    .fc .fc-event{
+    .fc .fc-event {
       border: 1px solid rgba(255,255,255,0.12);
       border-radius: 12px;
-      padding: 6px 8px;                /* mais espaço */
+      padding: 6px 8px;
       font-weight: 900;
       box-shadow: 0 8px 18px rgba(0,0,0,0.25);
-
-      min-height: 40px;                /* ✅ garante espaço pro título */
+      min-height: 40px;
       display: flex;
       flex-direction: column;
       justify-content: center;
-
-      overflow: visible;               /* evita cortar conteúdo */
+      overflow: visible;
     }
-
-    /* hora (time) */
-    .fc .fc-event-time{
+    .fc .fc-event-time {
       font-size: 12px;
       opacity: .95;
       line-height: 1.1;
     }
-
-    /* título (Pendente / Confirmado / Indisponível) */
-    .fc .fc-event-title{
+    .fc .fc-event-title {
       white-space: normal;
       line-height: 1.15;
-      font-size: 12px;                 /* ✅ menor e legível */
+      font-size: 12px;
       opacity: .95;
     }
-
-    /* EXTRA: tira padding interno do wrapper do evento (deixa o texto mais alinhado) */
-    .fc .fc-timegrid-event .fc-event-main{
+    .fc .fc-timegrid-event .fc-event-main {
       padding: 0 !important;
     }
-
-    /* slots e grid */
-    .fc .fc-timegrid-slot{
+    .fc .fc-timegrid-slot {
       height: 52px;
     }
-    .fc .fc-col-header-cell-cushion{
+    .fc .fc-col-header-cell-cushion {
       color: rgba(230,237,243,0.9);
       font-weight: 900;
     }
-    .fc .fc-timegrid-axis-cushion{
+    .fc .fc-timegrid-axis-cushion {
       color: rgba(230,237,243,0.7);
       font-weight: 800;
     }
-
-    /* Modal */
-    #reservaModal{
+    #reservaModal {
       display:none;
       position: fixed;
       inset: 0;
@@ -256,7 +226,7 @@
       align-items: center;
       justify-content: center;
     }
-    .modal-box{
+    .modal-box {
       width: 100%;
       max-width: 520px;
       background: #0f1620;
@@ -265,7 +235,7 @@
       box-shadow: var(--shadow);
       overflow:hidden;
     }
-    .modal-head{
+    .modal-head {
       padding: 14px 14px 10px;
       border-bottom: 1px solid var(--border);
       display:flex;
@@ -273,12 +243,12 @@
       align-items: center;
       gap: 10px;
     }
-    .modal-head h3{
+    .modal-head h3 {
       margin:0;
       font-size: 16px;
       font-weight: 900;
     }
-    .modal-close{
+    .modal-close {
       background: transparent;
       border: 1px solid var(--border);
       color: var(--text);
@@ -287,27 +257,27 @@
       cursor: pointer;
       font-weight: 900;
     }
-    .modal-body{
+    .modal-body {
       padding: 14px;
     }
-    .slot-info{
+    .slot-info {
       color: var(--muted);
       font-weight: 800;
       font-size: 13px;
       margin-bottom: 10px;
     }
-    .field{
+    .field {
       display:flex;
       flex-direction: column;
       gap: 6px;
       margin-bottom: 12px;
     }
-    .field label{
+    .field label {
       font-size: 13px;
       color: rgba(230,237,243,0.85);
       font-weight: 800;
     }
-    .field input{
+    .field input {
       background: rgba(255,255,255,0.04);
       border: 1px solid rgba(255,255,255,0.10);
       color: var(--text);
@@ -316,16 +286,16 @@
       outline: none;
       font-weight: 700;
     }
-    .field input:focus{
+    .field input:focus {
       border-color: rgba(255,215,0,0.45);
       box-shadow: 0 0 0 4px rgba(255,215,0,0.12);
     }
-    .modal-actions{
+    .modal-actions {
       display:flex;
       gap: 10px;
       margin-top: 10px;
     }
-    .modal-actions button{
+    .modal-actions button {
       flex: 1;
       padding: 12px;
       border-radius: 12px;
@@ -333,19 +303,17 @@
       cursor: pointer;
       font-weight: 900;
     }
-    .primary{
+    .primary {
       background: rgba(255,215,0,0.18);
       border-color: rgba(255,215,0,0.35);
       color: var(--text);
     }
-    .danger{
+    .danger {
       background: rgba(239,68,68,0.16);
       border-color: rgba(239,68,68,0.35);
       color: var(--text);
     }
-
-    /* Loading */
-    #loading{
+    #loading {
       display:none;
       position: fixed;
       inset: 0;
@@ -354,7 +322,7 @@
       align-items: center;
       justify-content: center;
     }
-    .loading-box{
+    .loading-box {
       background: rgba(15,22,32,0.9);
       border: 1px solid var(--border);
       border-radius: 18px;
@@ -366,7 +334,7 @@
       align-items: center;
       box-shadow: var(--shadow);
     }
-    .spinner{
+    .spinner {
       width: 44px;
       height: 44px;
       border-radius: 999px;
@@ -374,360 +342,290 @@
       border-top-color: rgba(255,215,0,0.9);
       animation: spin 1s linear infinite;
     }
-    @keyframes spin{ to { transform: rotate(360deg); } }
-
-    /* Responsivo */
-    @media (max-width: 640px){
-      .brand h1{ font-size: 18px; }
-      .fc .fc-toolbar{ gap: 8px; }
-      .fc .fc-toolbar-title{ font-size: 14px; }
-      .fc .fc-timegrid-slot{ height: 40px; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    @media (max-width: 640px) {
+      .brand h1 { font-size: 18px; }
+      .fc .fc-toolbar { gap: 8px; }
+      .fc .fc-toolbar-title { font-size: 14px; }
+      .fc .fc-timegrid-slot { height: 40px; }
     }
   </style>
 </head>
-
 <body>
-  <div class="page">
-    <div class="topbar">
-      <div class="brand">
-        <h1>Calendário de Reservas</h1>
-        <p>Escolha um horário livre e finalize a reserva.</p>
-      </div>
-
-      <div class="actions">
-        <a href="{% url 'agendamentos:home' %}" class="btn btn-accent">← Voltar</a>
-        <a href="https://wa.me/5548998082832?text=Oi%20Barbearia%20RD!%20Quero%20agendar%20um%20hor%C3%A1rio."
-           class="btn" target="_blank" rel="noopener noreferrer">
-          WhatsApp
-        </a>
-      </div>
+<div class="page">
+  <div class="topbar">
+    <div class="brand">
+      <h1>Calendário de Reservas</h1>
+      <p>Escolha um horário livre e finalize a reserva.</p>
     </div>
-
-    <div id="mensagem-global"></div>
-
-    <div class="card">
-      <div class="card-head">
-        <div class="legend">
-          <span><span class="dot" style="background: var(--warn)"></span>Pendente</span>
-          <span><span class="dot" style="background: var(--ok)"></span>Confirmado</span>
-          <span><span class="dot" style="background: var(--bad)"></span>Indisponível</span>
-        </div>
-        <div class="legend">
-          <span style="color:var(--muted)">Dica: no celular, começa no mês. No PC, na semana.</span>
-        </div>
-      </div>
-
-      <div id="calendar"></div>
+    <div class="actions">
+      <a href="{% url 'agendamentos:home' %}" class="btn btn-accent">← Voltar</a>
+      <a href="https://wa.me/5548998082832?text=Oi%20Barbearia%20RD!%20Quero%20agendar%20um%20hor%C3%A1rio." class="btn" target="_blank" rel="noopener noreferrer">WhatsApp</a>
     </div>
   </div>
-
-  <!-- Modal -->
-  <div id="reservaModal">
-    <div class="modal-box" role="dialog" aria-modal="true">
-      <div class="modal-head">
-        <h3>Agendar horário</h3>
-        <button class="modal-close" id="closeModal" type="button">X</button>
+  <div id="mensagem-global"></div>
+  <div class="card">
+    <div class="card-head">
+      <div class="legend">
+        <span><span class="dot" style="background: var(--warn)"></span>Pendente</span>
+        <span><span class="dot" style="background: var(--ok)"></span>Confirmado</span>
+        <span><span class="dot" style="background: var(--bad)"></span>Indisponível</span>
       </div>
-      <div class="modal-body">
-        <div class="slot-info" id="slotInfo">—</div>
+      <div class="legend">
+        <span style="color:var(--muted)">Use as abas para alternar entre semana e dia.</span>
+      </div>
+    </div>
+    <div id="calendar"></div>
+  </div>
+</div>
 
-        <div class="field">
-          <label for="nome">Seu nome</label>
-          <input id="nome" type="text" placeholder="Ex: Guilherme" autocomplete="name" />
-        </div>
-
-        <div class="field">
-          <label for="email">Seu e-mail</label>
-          <input id="email" type="email" placeholder="seuemail@exemplo.com" autocomplete="email" />
-        </div>
-
-        <div class="modal-actions">
-          <button class="primary" id="btnReservar" type="button">Confirmar reserva</button>
-          <button class="danger" id="cancelarModal" type="button">Cancelar</button>
-        </div>
+<div id="reservaModal">
+  <div class="modal-box" role="dialog" aria-modal="true">
+    <div class="modal-head">
+      <h3>Agendar horário</h3>
+      <button class="modal-close" id="closeModal" type="button">X</button>
+    </div>
+    <div class="modal-body">
+      <div class="slot-info" id="slotInfo">—</div>
+      <div class="field">
+        <label for="nome">Seu nome</label>
+        <input id="nome" type="text" placeholder="Ex: Guilherme" autocomplete="name" />
+      </div>
+      <div class="field">
+        <label for="email">Seu e-mail</label>
+        <input id="email" type="email" placeholder="seuemail@exemplo.com" autocomplete="email" />
+      </div>
+      <div class="modal-actions">
+        <button class="primary" id="btnReservar" type="button">Confirmar reserva</button>
+        <button class="danger" id="cancelarModal" type="button">Cancelar</button>
       </div>
     </div>
   </div>
+</div>
 
-  <!-- Loading -->
-  <div id="loading">
-    <div class="loading-box">
-      <div class="spinner"></div>
-      <div style="font-weight:900;">Processando…</div>
-      <div style="color:var(--muted); font-size:13px;">Só um instante</div>
-    </div>
+<div id="loading">
+  <div class="loading-box">
+    <div class="spinner"></div>
+    <div style="font-weight:900;">Processando…</div>
+    <div style="color:var(--muted); font-size:13px;">Só um instante</div>
   </div>
+</div>
 
-  <script>
-    document.addEventListener("DOMContentLoaded", function () {
-      const calendarEl = document.getElementById("calendar");
-      const modal = document.getElementById("reservaModal");
-      const loading = document.getElementById("loading");
-      const slotInfo = document.getElementById("slotInfo");
-      const mensagemGlobal = document.getElementById("mensagem-global");
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+  const calendarEl = document.getElementById("calendar");
+  const modal = document.getElementById("reservaModal");
+  const loading = document.getElementById("loading");
+  const slotInfo = document.getElementById("slotInfo");
+  const mensagemGlobal = document.getElementById("mensagem-global");
+  const btnReservar = document.getElementById("btnReservar");
+  const btnCancelar = document.getElementById("cancelarModal");
+  const btnClose = document.getElementById("closeModal");
 
-      const btnReservar = document.getElementById("btnReservar");
-      const btnCancelar = document.getElementById("cancelarModal");
-      const btnClose = document.getElementById("closeModal");
+  const API_HORARIOS = "/api/horarios/";
+  const API_BLOQUEIOS = "/api/bloqueios/";
+  const API_AGENDAMENTOS = "/api/agendamentos/";
 
-      const API_HORARIOS = "/api/horarios/";
-      const API_BLOQUEIOS = "/api/bloqueios/";
-      const API_AGENDAMENTOS = "/api/agendamentos/";
+  // Sempre começar na visão semana (tanto mobile quanto desktop)
+  const initialView = "timeGridWeek";
 
-      // responsivo: mobile abre no mês, desktop na semana
-      const isMobile = window.matchMedia("(max-width: 640px)").matches;
-      const initialView = isMobile ? "dayGridMonth" : "timeGridWeek";
+  let selectedStart = null;
+  let occupiedMap = new Set();
 
-      let selectedStart = null; // Date
-      let occupiedMap = new Set(); // "YYYY-MM-DDTHH:mm"
+  function setLoading(v) { loading.style.display = v ? "flex" : "none"; }
 
-      function setLoading(v){ loading.style.display = v ? "flex" : "none"; }
+  function showMsg(text, type) {
+    mensagemGlobal.textContent = text;
+    mensagemGlobal.className = type === "sucesso" ? "sucesso" : "erro";
+    mensagemGlobal.style.display = "block";
+    setTimeout(() => mensagemGlobal.style.display = "none", 4200);
+  }
 
-      function showMsg(text, type){
-        mensagemGlobal.textContent = text;
-        mensagemGlobal.className = type === "sucesso" ? "sucesso" : "erro";
-        mensagemGlobal.style.display = "block";
-        setTimeout(() => mensagemGlobal.style.display = "none", 4200);
+  function pad2(n) { return String(n).padStart(2, "0"); }
+
+  function keyHM(date) {
+    return `${date.getFullYear()}-${pad2(date.getMonth()+1)}-${pad2(date.getDate())}T${pad2(date.getHours())}:${pad2(date.getMinutes())}`;
+  }
+
+  function formatBR(date) {
+    const d = `${pad2(date.getDate())}/${pad2(date.getMonth()+1)}/${date.getFullYear()}`;
+    const h = `${pad2(date.getHours())}:${pad2(date.getMinutes())}`;
+    return `${d} ${h}`;
+  }
+
+  function toLocalISO(date) {
+    return `${date.getFullYear()}-${pad2(date.getMonth()+1)}-${pad2(date.getDate())}T${pad2(date.getHours())}:${pad2(date.getMinutes())}:00`;
+  }
+
+  function openModal(dateObj) {
+    selectedStart = dateObj;
+    slotInfo.textContent = `Horário selecionado: ${formatBR(dateObj)}`;
+    modal.style.display = "flex";
+    setTimeout(() => document.getElementById("nome").focus(), 50);
+  }
+
+  function closeModal() {
+    modal.style.display = "none";
+  }
+
+  btnCancelar.addEventListener("click", closeModal);
+  btnClose.addEventListener("click", closeModal);
+  modal.addEventListener("click", (e) => { if(e.target === modal) closeModal(); });
+
+  async function loadEvents(fetchInfo, successCallback, failureCallback) {
+    try {
+      setLoading(true);
+      occupiedMap.clear();
+      const [r1, r2] = await Promise.all([fetch(API_HORARIOS), fetch(API_BLOQUEIOS)]);
+      if (!r1.ok || !r2.ok) throw new Error("Falha ao carregar eventos");
+      const horarios = await r1.json();
+      const bloqueios = await r2.json();
+      const events = [];
+
+      for (const item of horarios) {
+        const start = new Date(item.data_horario_reserva);
+        const end = new Date(start.getTime() + 60*60*1000);
+        occupiedMap.add(keyHM(start));
+        const isPending = item.status === "pendente";
+        const color = isPending ? "#f59e0b" : "#22c55e";
+        const title = isPending ? "Pendente" : "Confirmado";
+        events.push({
+          title,
+          start,
+          end,
+          allDay: false,
+          backgroundColor: color,
+          borderColor: "rgba(255,255,255,0.12)",
+          textColor: "#0b0f14",
+          editable: false,
+          overlap: false,
+          extendedProps: { locked: true, kind: title }
+        });
       }
 
-      function pad2(n){ return String(n).padStart(2,"0"); }
-
-      function keyHM(date){
-        return `${date.getFullYear()}-${pad2(date.getMonth()+1)}-${pad2(date.getDate())}T${pad2(date.getHours())}:${pad2(date.getMinutes())}`;
+      for (const item of bloqueios) {
+        const start = new Date(item.data_horario);
+        const end = new Date(start.getTime() + 60*60*1000);
+        occupiedMap.add(keyHM(start));
+        events.push({
+          title: "Indisponível",
+          start,
+          end,
+          allDay: false,
+          backgroundColor: "#ef4444",
+          borderColor: "rgba(255,255,255,0.12)",
+          textColor: "#ffffff",
+          editable: false,
+          overlap: false,
+          extendedProps: { locked: true, kind: "Indisponível" }
+        });
       }
 
-      function formatBR(date){
-        const d = `${pad2(date.getDate())}/${pad2(date.getMonth()+1)}/${date.getFullYear()}`;
-        const h = `${pad2(date.getHours())}:${pad2(date.getMinutes())}`;
-        return `${d} ${h}`;
+      successCallback(events);
+    } catch(err) {
+      console.error(err);
+      showMsg("Erro ao carregar o calendário.", "erro");
+      failureCallback(err);
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  const calendar = new FullCalendar.Calendar(calendarEl, {
+    initialView,
+    locale: "pt-br",
+    timeZone: "local",
+    height: "auto",
+    expandRows: true,
+    nowIndicator: true,
+    scrollTime: "09:00:00",
+    headerToolbar: {
+      left: "prev,next today",
+      center: "title",
+      right: "timeGridWeek,timeGridDay"   // apenas semana e dia
+    },
+    slotMinTime: "09:00:00",
+    slotMaxTime: "21:00:00",
+    slotDuration: "01:00:00",
+    slotLabelInterval: "01:00:00",
+    slotLabelFormat: { hour: "2-digit", minute: "2-digit", hour12: false },
+    allDaySlot: false,
+    selectable: true,
+    selectMirror: true,
+    selectOverlap: false,
+    eventOverlap: false,
+    businessHours: [
+      { daysOfWeek: [1,2,3,4,5,6], startTime: "09:00", endTime: "21:00" },
+      { daysOfWeek: [0], startTime: "09:00", endTime: "21:00" }
+    ],
+    events: loadEvents,
+    select: function(info) {
+      const k = keyHM(info.start);
+      if (occupiedMap.has(k)) {
+        showMsg("Esse horário já está ocupado/indisponível.", "erro");
+        calendar.unselect();
+        return;
       }
+      openModal(info.start);
+    },
+    eventClick: function(info) {
+      const kind = info.event.extendedProps?.kind || "Indisponível";
+      showMsg(`Horário ${kind}. Escolha outro.`, "erro");
+    },
+    eventDidMount: function(arg) {
+      arg.el.style.padding = "6px 8px";
+    }
+  });
 
-      // ISO local sem Z (compatível com USE_TZ=False)
-      function toLocalISO(date){
-        return `${date.getFullYear()}-${pad2(date.getMonth()+1)}-${pad2(date.getDate())}T${pad2(date.getHours())}:${pad2(date.getMinutes())}:00`;
-      }
+  calendar.render();
 
-      function openModal(dateObj){
-        selectedStart = dateObj;
-        slotInfo.textContent = `Horário selecionado: ${formatBR(dateObj)}`;
-        modal.style.display = "flex";
-        setTimeout(() => document.getElementById("nome").focus(), 50);
-      }
-
-      function closeModal(){
-        modal.style.display = "none";
-      }
-
-      btnCancelar.addEventListener("click", closeModal);
-      btnClose.addEventListener("click", closeModal);
-      modal.addEventListener("click", (e) => { if(e.target === modal) closeModal(); });
-
-      async function loadEvents(fetchInfo, successCallback, failureCallback){
-        try{
-          setLoading(true);
-          occupiedMap.clear();
-
-          const [r1, r2] = await Promise.all([fetch(API_HORARIOS), fetch(API_BLOQUEIOS)]);
-          if(!r1.ok || !r2.ok) throw new Error("Falha ao carregar eventos");
-
-          const horarios = await r1.json();
-          const bloqueios = await r2.json();
-
-          // eventos VISÍVEIS (não background lavado)
-          const events = [];
-
-          // agendamentos (pendente/aceito)
-          for(const item of horarios){
-            const start = new Date(item.data_horario_reserva);
-            const end = new Date(start.getTime() + 60*60*1000);
-
-            occupiedMap.add(keyHM(start));
-
-            const isPending = item.status === "pendente";
-            const color = isPending ? "#f59e0b" : "#22c55e";
-            const title = isPending ? "Pendente" : "Confirmado";
-
-            events.push({
-              title,
-              start,
-              end,
-              allDay: false,
-              backgroundColor: color,
-              borderColor: "rgba(255,255,255,0.12)",
-              textColor: "#0b0f14",
-              editable: false,
-              overlap: false,
-              extendedProps: { locked: true, kind: title }
-            });
-          }
-
-          // bloqueios
-          for(const item of bloqueios){
-            const start = new Date(item.data_horario);
-            const end = new Date(start.getTime() + 60*60*1000);
-
-            occupiedMap.add(keyHM(start));
-
-            events.push({
-              title: "Indisponível",
-              start,
-              end,
-              allDay: false,
-              backgroundColor: "#ef4444",
-              borderColor: "rgba(255,255,255,0.12)",
-              textColor: "#ffffff",
-              editable: false,
-              overlap: false,
-              extendedProps: { locked: true, kind: "Indisponível" }
-            });
-          }
-
-          successCallback(events);
-        }catch(err){
-          console.error(err);
-          showMsg("Erro ao carregar o calendário.", "erro");
-          failureCallback(err);
-        }finally{
-          setLoading(false);
-        }
-      }
-
-      const calendar = new FullCalendar.Calendar(calendarEl, {
-        initialView,
-        locale: "pt-br",
-        timeZone: "local",
-        height: "auto",
-        expandRows: true,
-        nowIndicator: true,
-        scrollTime: "09:00:00",
-
-        headerToolbar: {
-          left: "prev,next today",
-          center: "title",
-          right: "dayGridMonth,timeGridWeek,timeGridDay"
-        },
-
-        slotMinTime: "09:00:00",
-        slotMaxTime: "21:00:00",
-        slotDuration: "01:00:00",
-        slotLabelInterval: "01:00:00",
-        slotLabelFormat: { hour: "2-digit", minute: "2-digit", hour12: false },
-        allDaySlot: false,
-
-        selectable: true,
-        selectMirror: true,
-        selectOverlap: false,
-        eventOverlap: false,
-
-        businessHours: [
-          { daysOfWeek: [1,2,3,4,5,6], startTime: "09:00", endTime: "21:00" },
-          { daysOfWeek: [0], startTime: "09:00", endTime: "21:00" }
-        ],
-
-        events: loadEvents,
-
-        select: function(info){
-          // trava se já existir algo nessa hora
-          const k = keyHM(info.start);
-          if(occupiedMap.has(k)){
-            showMsg("Esse horário já está ocupado/indisponível.", "erro");
-            calendar.unselect();
-            return;
-          }
-          openModal(info.start);
-        },
-
-        eventClick: function(info){
-          const kind = info.event.extendedProps?.kind || "Indisponível";
-          showMsg(`Horário ${kind}. Escolha outro.`, "erro");
-        },
-
-        // no mês: clique abre 09:00
-        dateClick: function(info){
-          if(calendar.view.type === "dayGridMonth"){
-            const d = new Date(info.date);
-            d.setHours(9,0,0,0);
-            const k = keyHM(d);
-            if(occupiedMap.has(k)){
-              showMsg("Dia/horário já possui bloqueio ou agendamento. Troque a hora na visão diária/semanal.", "erro");
-              return;
-            }
-            openModal(d);
-          }
-        },
-
-        // melhora texto dentro do evento
-        eventDidMount: function(arg){
-          arg.el.style.padding = "6px 8px";
-        }
+  btnReservar.addEventListener("click", async function() {
+    if (!selectedStart) {
+      showMsg("Selecione um horário primeiro.", "erro");
+      return;
+    }
+    const nome = document.getElementById("nome").value.trim();
+    const email = document.getElementById("email").value.trim();
+    if (!nome || !email) {
+      showMsg("Preencha nome e e-mail.", "erro");
+      return;
+    }
+    const k = keyHM(selectedStart);
+    if (occupiedMap.has(k)) {
+      showMsg("Esse horário acabou de ser ocupado. Escolha outro.", "erro");
+      closeModal();
+      calendar.refetchEvents();
+      return;
+    }
+    const payload = {
+      nome_cliente: nome,
+      email_cliente: email,
+      data_horario_reserva: toLocalISO(selectedStart),
+    };
+    try {
+      setLoading(true);
+      const resp = await fetch(API_AGENDAMENTOS, {
+        method: "POST",
+        headers: {"Content-Type":"application/json"},
+        body: JSON.stringify(payload),
       });
-
-      calendar.render();
-
-      btnReservar.addEventListener("click", async function(){
-        if(!selectedStart){
-          showMsg("Selecione um horário primeiro.", "erro");
-          return;
-        }
-
-        const nome = document.getElementById("nome").value.trim();
-        const email = document.getElementById("email").value.trim();
-
-        if(!nome || !email){
-          showMsg("Preencha nome e e-mail.", "erro");
-          return;
-        }
-
-        const k = keyHM(selectedStart);
-        if(occupiedMap.has(k)){
-          showMsg("Esse horário acabou de ser ocupado. Escolha outro.", "erro");
-          closeModal();
-          calendar.refetchEvents();
-          return;
-        }
-
-        const payload = {
-          nome_cliente: nome,
-          email_cliente: email,
-          data_horario_reserva: toLocalISO(selectedStart),
-        };
-
-        try{
-          setLoading(true);
-          const resp = await fetch(API_AGENDAMENTOS, {
-            method: "POST",
-            headers: {"Content-Type":"application/json"},
-            body: JSON.stringify(payload),
-          });
-
-          const data = await resp.json().catch(() => ({}));
-
-          if(!resp.ok){
-            showMsg(data.erro || data.message || "Erro ao enviar a reserva.", "erro");
-            return;
-          }
-
-          showMsg("Reserva enviada! Aguarde confirmação.", "sucesso");
-          closeModal();
-          calendar.unselect();
-          calendar.refetchEvents();
-        }catch(err){
-          console.error(err);
-          showMsg("Erro de conexão com o servidor.", "erro");
-        }finally{
-          setLoading(false);
-        }
-      });
-
-      // Atualiza view quando redimensiona (opcional mas deixa mais “pro”)
-      window.addEventListener("resize", () => {
-        const mobileNow = window.matchMedia("(max-width: 640px)").matches;
-        const desired = mobileNow ? "dayGridMonth" : "timeGridWeek";
-        if(calendar.view.type !== desired){
-          calendar.changeView(desired);
-        }
-      });
-    });
-  </script>
+      const data = await resp.json().catch(() => ({}));
+      if (!resp.ok) {
+        showMsg(data.erro || data.message || "Erro ao enviar a reserva.", "erro");
+        return;
+      }
+      showMsg("Reserva enviada! Aguarde confirmação.", "sucesso");
+      closeModal();
+      calendar.unselect();
+      calendar.refetchEvents();
+    } catch(err) {
+      console.error(err);
+      showMsg("Erro de conexão com o servidor.", "erro");
+    } finally {
+      setLoading(false);
+    }
+  });
+});
+</script>
 </body>
 </html>

@@ -4,55 +4,68 @@
   {% load static %}
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta name="description" content="A Barbearia RD oferece cortes de cabelo, barba, sobrancelha e mais. Agende seu horário online." />
+  <meta name="description" content="Barbearia RD – Cortes, barba, sobrancelha e mais. Agende seu horário online em poucos cliques." />
   <meta name="author" content="Barbearia RD" />
-
   <link rel="icon" type="image/x-icon" href="{% static 'imagens/favicon.ico' %}" />
   <title>Barbearia RD</title>
-
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
 
   <style>
-    :root{
-      --bg:#070a0f;
+    /* === VARIÁVEIS (mesmo padrão do calendário) === */
+    :root {
+      --bg: #070a0f;
       --panel: rgba(255,255,255,0.03);
       --border: rgba(255,255,255,0.10);
-      --text:#e8eef6;
-      --muted:#a3adba;
-      --accent:#ffd700;
+      --text: #e8eef6;
+      --muted: #a3adba;
+      --accent: #ffd700;
       --accentSoft: rgba(255,215,0,0.16);
       --shadow: 0 18px 55px rgba(0,0,0,0.55);
       --radius: 22px;
+      --transition: all 0.2s ease;
     }
 
-    *{box-sizing:border-box}
-    body{
-      margin:0;
-      color:var(--text);
-      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial;
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      margin: 0;
+      color: var(--text);
+      font-family: ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, Arial, sans-serif;
       background:
         radial-gradient(1100px 600px at 12% -10%, rgba(255,215,0,0.18), transparent 60%),
         radial-gradient(900px 520px at 100% 10%, rgba(59,130,246,0.10), transparent 60%),
         radial-gradient(900px 520px at 20% 110%, rgba(34,197,94,0.08), transparent 60%),
         var(--bg);
+      line-height: 1.5;
     }
 
-    a{ color:inherit; text-decoration:none; }
-    img{ display:block; max-width:100%; }
+    a {
+      color: inherit;
+      text-decoration: none;
+    }
 
-    .wrap{
+    img {
+      display: block;
+      max-width: 100%;
+    }
+
+    .wrap {
       max-width: 1120px;
       margin: 0 auto;
       padding: 18px 16px 40px;
     }
 
-    /* Topbar minimalista */
-    .topbar{
-      display:flex;
-      align-items:center;
+    /* === TOPBAR (mesmo estilo do calendário) === */
+    .topbar {
+      display: flex;
+      align-items: center;
       justify-content: space-between;
       gap: 12px;
-      padding: 14px 16px;
+      padding: 14px 20px;
       border: 1px solid var(--border);
       border-radius: var(--radius);
       background: rgba(0,0,0,0.25);
@@ -60,14 +73,14 @@
       backdrop-filter: blur(10px);
     }
 
-    .brand{
-      display:flex;
-      align-items:center;
+    .brand {
+      display: flex;
+      align-items: center;
       gap: 12px;
-      min-width: 220px;
+      min-width: 200px;
     }
 
-    .brand-mark{
+    .brand-mark {
       width: 54px;
       height: 54px;
       border-radius: 16px;
@@ -76,299 +89,373 @@
       object-fit: cover;
     }
 
-    .brand h1{
-      margin:0;
-      font-size: 17px;
+    .brand h1 {
+      margin: 0;
+      font-size: 18px;
       font-weight: 950;
-      letter-spacing: .2px;
-      line-height: 1.1;
+      letter-spacing: 0.2px;
+      line-height: 1.2;
     }
-    .brand p{
+
+    .brand p {
       margin: 4px 0 0;
       font-size: 13px;
       color: var(--muted);
       font-weight: 700;
     }
 
-    .nav-actions{
-      display:flex;
+    .nav-actions {
+      display: flex;
       gap: 10px;
       flex-wrap: wrap;
       align-items: center;
       justify-content: flex-end;
     }
 
-    .btn{
-      display:inline-flex;
-      align-items:center;
+    .btn {
+      display: inline-flex;
+      align-items: center;
       gap: 8px;
-      padding: 10px 14px;
+      padding: 10px 16px;
       border-radius: 999px;
       border: 1px solid rgba(255,255,255,0.12);
       background: rgba(255,255,255,0.05);
       font-weight: 900;
-      transition: transform .08s ease, background .18s ease, border-color .18s ease;
-      user-select:none;
+      font-size: 14px;
+      transition: var(--transition);
       white-space: nowrap;
+      cursor: pointer;
     }
-    .btn:hover{
+
+    .btn:hover {
       transform: translateY(-1px);
       background: rgba(255,255,255,0.08);
       border-color: rgba(255,255,255,0.18);
     }
-    .btn-accent{
+
+    .btn-accent {
       background: var(--accentSoft);
       border-color: rgba(255,215,0,0.38);
     }
-    .btn-accent:hover{
+
+    .btn-accent:hover {
       background: rgba(255,215,0,0.22);
-      border-color: rgba(255,215,0,0.50);
+      border-color: rgba(255,215,0,0.5);
     }
 
-    /* HERO — logo grande no lugar da foto */
-    .hero{
-      margin-top: 14px;
+    /* === HERO === */
+    .hero {
+      margin-top: 18px;
       border: 1px solid var(--border);
       border-radius: var(--radius);
       background: linear-gradient(180deg, rgba(255,255,255,0.05), rgba(255,255,255,0.02));
       box-shadow: var(--shadow);
-      overflow:hidden;
-      position: relative;
+      overflow: hidden;
       backdrop-filter: blur(10px);
     }
 
-    .hero-inner{
-      padding: 22px 18px;
-      display:grid;
-      grid-template-columns: 1.1fr .9fr;
-      gap: 18px;
-      align-items:center;
+    .hero-inner {
+      padding: 24px 22px;
+      display: grid;
+      grid-template-columns: 1.1fr 0.9fr;
+      gap: 24px;
+      align-items: center;
     }
 
-    .hero h2{
-      margin: 0 0 10px;
-      font-size: 40px;
-      line-height: 1.05;
-      letter-spacing: .2px;
+    .hero h2 {
+      margin: 0 0 12px;
+      font-size: 42px;
+      line-height: 1.1;
       font-weight: 1000;
+      letter-spacing: -0.5px;
     }
 
-    .hero p{
-      margin: 0 0 16px;
-      color: rgba(232,238,246,0.85);
-      font-weight: 650;
-      line-height: 1.65;
-      font-size: 15px;
-      max-width: 62ch;
+    .hero p {
+      margin: 0 0 18px;
+      color: rgba(232,238,246,0.9);
+      font-weight: 600;
+      font-size: 16px;
+      max-width: 60ch;
     }
 
-    .hero-ctas{
-      display:flex;
-      gap: 10px;
+    .hero-ctas {
+      display: flex;
+      gap: 12px;
       flex-wrap: wrap;
       margin-top: 8px;
     }
 
-    /* infos sem caixas */
-    .meta{
-      margin-top: 14px;
-      padding-top: 14px;
+    .meta {
+      margin-top: 18px;
+      padding-top: 16px;
       border-top: 1px solid rgba(255,255,255,0.10);
-      display:flex;
+      display: flex;
       flex-direction: column;
       gap: 8px;
-      color: rgba(232,238,246,0.86);
+      color: rgba(232,238,246,0.9);
       font-weight: 700;
       font-size: 14px;
     }
-    .meta .muted{
+
+    .meta .muted {
       color: var(--muted);
-      font-weight: 750;
+      font-weight: 600;
       font-size: 13px;
     }
-    .meta b{ color: var(--text); font-weight: 950; }
 
-    /* Logo gigante com “glow” */
-    .logo-hero{
+    .meta b {
+      color: var(--text);
+      font-weight: 950;
+    }
+
+    .logo-hero {
       width: 100%;
-      height: 100%;
       min-height: 320px;
-      display:flex;
-      align-items:center;
-      justify-content:center;
+      display: flex;
+      align-items: center;
+      justify-content: center;
       padding: 22px;
       position: relative;
     }
 
-    .logo-hero::before{
-      content:"";
-      position:absolute;
+    .logo-hero::before {
+      content: "";
+      position: absolute;
       width: 520px;
       height: 520px;
       border-radius: 999px;
-      background: radial-gradient(circle at center, rgba(255,215,0,0.22), transparent 60%);
+      background: radial-gradient(circle at center, rgba(255,215,0,0.22), transparent 70%);
       filter: blur(2px);
-      opacity: .9;
+      opacity: 0.8;
     }
 
-    .logo-hero::after{
-      content:"";
-      position:absolute;
-      inset:0;
-      background: linear-gradient(180deg, rgba(0,0,0,0.0), rgba(0,0,0,0.22));
-      pointer-events:none;
+    .logo-hero::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(180deg, transparent, rgba(0,0,0,0.2));
+      pointer-events: none;
     }
 
-    .logo-big{
+    .logo-big {
       width: min(360px, 70vw);
       max-height: 360px;
       object-fit: contain;
       position: relative;
       z-index: 2;
-      filter: drop-shadow(0 18px 28px rgba(0,0,0,0.55));
+      filter: drop-shadow(0 20px 30px rgba(0,0,0,0.6));
     }
 
-    /* SECTIONS */
-    .section{
-      margin-top: 18px;
-      border: 1px solid rgba(255,255,255,0.10);
+    /* === SEÇÕES GENÉRICAS === */
+    .section {
+      margin-top: 20px;
+      border: 1px solid var(--border);
       background: rgba(255,255,255,0.03);
       border-radius: var(--radius);
       box-shadow: var(--shadow);
-      overflow:hidden;
+      overflow: hidden;
       backdrop-filter: blur(10px);
     }
 
-    .section-head{
-      padding: 14px 16px;
-      border-bottom: 1px solid rgba(255,255,255,0.10);
-      display:flex;
+    .section-head {
+      padding: 14px 20px;
+      border-bottom: 1px solid var(--border);
+      display: flex;
       align-items: baseline;
       justify-content: space-between;
       gap: 12px;
       flex-wrap: wrap;
-      background: rgba(0,0,0,0.20);
+      background: rgba(0,0,0,0.2);
     }
-    .section-head h3{
-      margin:0;
-      font-size: 16px;
+
+    .section-head h3 {
+      margin: 0;
+      font-size: 18px;
       font-weight: 950;
-      letter-spacing: .2px;
+      letter-spacing: 0.2px;
     }
-    .section-head span{
+
+    .section-head span {
       color: var(--muted);
-      font-weight: 750;
+      font-weight: 700;
       font-size: 13px;
     }
 
-    .section-body{
-      padding: 16px;
+    .section-body {
+      padding: 20px;
     }
 
-    /* Serviços (cards ok, mas bem limpos) */
-    .services{
-      display:grid;
-      grid-template-columns: repeat(5, minmax(0,1fr));
-      gap: 12px;
+    /* === SERVIÇOS (cards) === */
+    .services {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 16px;
     }
-    .svc{
+
+    .svc {
       border: 1px solid rgba(255,255,255,0.10);
       border-radius: 18px;
-      overflow:hidden;
-      background: rgba(0,0,0,0.18);
-      transition: transform .10s ease, border-color .18s ease;
-    }
-    .svc:hover{
-      transform: translateY(-2px);
-      border-color: rgba(255,215,0,0.26);
-    }
-    .svc img{
-      width: 100%;
-      height: 120px;
-      object-fit: cover;
-      filter: contrast(1.05) saturate(1.05);
-      opacity: .95;
-    }
-    .svc .t{
-      padding: 12px;
-    }
-    .svc h4{
-      margin: 0 0 6px;
-      font-size: 14px;
-      font-weight: 950;
-    }
-    .svc p{
-      margin: 0;
-      color: rgba(232,238,246,0.78);
-      font-size: 13px;
-      font-weight: 650;
-      line-height: 1.35;
+      overflow: hidden;
+      background: rgba(0,0,0,0.25);
+      transition: var(--transition);
     }
 
-    /* Sobre */
-    .about{
-      color: rgba(232,238,246,0.84);
-      font-weight: 650;
-      line-height: 1.75;
-      font-size: 14px;
+    .svc:hover {
+      transform: translateY(-4px);
+      border-color: rgba(255,215,0,0.3);
+      box-shadow: 0 10px 20px rgba(0,0,0,0.4);
+    }
+
+    .svc img {
+      width: 100%;
+      height: 140px;
+      object-fit: cover;
+      filter: contrast(1.05) saturate(1.05);
+      transition: transform 0.3s ease;
+    }
+
+    .svc:hover img {
+      transform: scale(1.03);
+    }
+
+    .svc .t {
+      padding: 14px;
+    }
+
+    .svc h4 {
+      margin: 0 0 6px;
+      font-size: 15px;
+      font-weight: 950;
+    }
+
+    .svc p {
+      margin: 0;
+      color: rgba(232,238,246,0.8);
+      font-size: 13px;
+      font-weight: 600;
+      line-height: 1.4;
+    }
+
+    /* === SOBRE === */
+    .about {
+      color: rgba(232,238,246,0.9);
+      font-weight: 600;
+      line-height: 1.8;
+      font-size: 15px;
       max-width: 85ch;
       margin: 0;
     }
 
-    /* Preços listão elegante */
-    .prices{
-      list-style:none;
+    /* === LISTA DE PREÇOS === */
+    .prices {
+      list-style: none;
       padding: 0;
       margin: 0;
-      border-top: 1px solid rgba(255,255,255,0.10);
+      border-top: 1px solid var(--border);
     }
-    .prices li{
-      display:flex;
+
+    .prices li {
+      display: flex;
       justify-content: space-between;
       gap: 12px;
-      padding: 12px 2px;
-      border-bottom: 1px solid rgba(255,255,255,0.10);
-      font-weight: 900;
-      font-size: 14px;
-    }
-    .prices .name{
-      color: rgba(232,238,246,0.86);
+      padding: 14px 2px;
+      border-bottom: 1px solid var(--border);
       font-weight: 800;
+      font-size: 15px;
     }
-    .prices .val{
+
+    .prices .name {
+      color: rgba(232,238,246,0.9);
+    }
+
+    .prices .val {
       color: var(--accent);
       white-space: nowrap;
       font-weight: 1000;
     }
 
-    /* Footer */
-    .footer{
-      margin-top: 22px;
-      padding: 14px 2px 0;
-      border-top: 1px solid rgba(255,255,255,0.10);
-      display:flex;
+    /* === FOOTER === */
+    .footer {
+      margin-top: 26px;
+      padding: 18px 2px 0;
+      border-top: 1px solid var(--border);
+      display: flex;
       justify-content: space-between;
       align-items: center;
       flex-wrap: wrap;
-      gap: 12px;
-      color: rgba(232,238,246,0.78);
-      font-weight: 700;
+      gap: 16px;
+      color: rgba(232,238,246,0.8);
+      font-weight: 600;
       font-size: 13px;
     }
 
-    /* Responsivo */
-    @media (max-width: 1024px){
-      .hero-inner{ grid-template-columns: 1fr; }
-      .logo-hero{ min-height: 260px; }
-      .services{ grid-template-columns: repeat(3, minmax(0,1fr)); }
-      .hero h2{ font-size: 34px; }
+    .footer .btn {
+      padding: 8px 14px;
+      font-size: 13px;
     }
-    @media (max-width: 560px){
-      .hero h2{ font-size: 28px; }
-      .services{ grid-template-columns: repeat(2, minmax(0,1fr)); }
-      .btn{ padding: 10px 12px; }
-      .svc img{ height: 110px; }
-      .brand-mark{ width: 48px; height: 48px; }
+
+    /* === RESPONSIVIDADE === */
+    @media (max-width: 1024px) {
+      .hero-inner {
+        grid-template-columns: 1fr;
+        text-align: center;
+      }
+      .hero p {
+        margin-left: auto;
+        margin-right: auto;
+      }
+      .hero-ctas {
+        justify-content: center;
+      }
+      .logo-hero {
+        min-height: 260px;
+      }
+      .services {
+        grid-template-columns: repeat(3, 1fr);
+      }
+      .hero h2 {
+        font-size: 36px;
+      }
+    }
+
+    @media (max-width: 720px) {
+      .services {
+        grid-template-columns: repeat(2, 1fr);
+      }
+      .topbar {
+        flex-direction: column;
+        align-items: stretch;
+      }
+      .brand {
+        justify-content: center;
+      }
+      .nav-actions {
+        justify-content: center;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .hero h2 {
+        font-size: 28px;
+      }
+      .services {
+        grid-template-columns: 1fr;
+      }
+      .svc img {
+        height: 160px;
+      }
+      .brand-mark {
+        width: 48px;
+        height: 48px;
+      }
+      .btn {
+        padding: 8px 12px;
+        font-size: 13px;
+      }
+      .footer {
+        flex-direction: column;
+        text-align: center;
+      }
     }
   </style>
 </head>
@@ -379,22 +466,22 @@
     <!-- TOPBAR -->
     <header class="topbar">
       <div class="brand">
-        <img src="{% static 'imagens/logo.png' %}" alt="Logo Barbearia RD" class="brand-mark" />
+        <img src="{% static 'imagens/logo.png' %}" alt="Logo Barbearia RD" class="brand-mark" loading="lazy" />
         <div>
           <h1>Barbearia RD</h1>
-          <p>Estilo, precisão e atendimento de qualidade.</p>
+          <p>Estilo, precisão e qualidade</p>
         </div>
       </div>
 
       <nav class="nav-actions">
-        <a class="btn" href="https://maps.app.goo.gl/VoDQMjCG7vgZorPX7" target="_blank" rel="noopener noreferrer">
+        <a class="btn" href="https://maps.app.goo.gl/VoDQMjCG7vgZorPX7" target="_blank" rel="noopener noreferrer" aria-label="Localização">
           📍 Localização
         </a>
-        <a class="btn btn-accent" href="{% url 'agendamentos:calendario' %}">
+        <a class="btn btn-accent" href="{% url 'agendamentos:calendario' %}" aria-label="Agendar horário">
           ✂️ Agendar horário
         </a>
         <a class="btn" href="https://wa.me/5548998082832?text=Oi%20Barbearia%20RD!%20Quero%20agendar%20um%20hor%C3%A1rio."
-           target="_blank" rel="noopener noreferrer">
+           target="_blank" rel="noopener noreferrer" aria-label="WhatsApp">
           💬 WhatsApp
         </a>
       </nav>
@@ -407,7 +494,7 @@
           <h2>Agende seu horário<br>em poucos cliques.</h2>
           <p>
             Cortes, barba, sobrancelha e muito mais — com um ambiente acolhedor e profissionais experientes.
-            Clique em <b>Agendar horário</b> e escolha o melhor horário pra você.
+            Clique em <strong>Agendar horário</strong> e escolha o melhor momento para você.
           </p>
 
           <div class="hero-ctas">
@@ -416,13 +503,13 @@
           </div>
 
           <div class="meta">
-            <div>📍 <b>Endereço:</b> Rua João Francisco Barcelos Júnior, 214 <span class="muted">(referência: dentro do CTG)</span></div>
-            <div>⏰ <b>Horário:</b> Seg–Sáb, 9h – 20h</div>
+            <div>📍 <b>Endereço:</b> Rua João Francisco Barcelos Júnior, 214 <span class="muted">(dentro do CTG)</span></div>
+            <div>⏰ <b>Horário:</b> Segunda a Sábado, 9h – 20h</div>
           </div>
         </div>
 
         <div class="logo-hero" aria-hidden="true">
-          <img src="{% static 'imagens/logo.png' %}" alt="Logo Barbearia RD" class="logo-big" />
+          <img src="{% static 'imagens/logo.png' %}" alt="Logo Barbearia RD" class="logo-big" loading="lazy" />
         </div>
       </div>
     </section>
@@ -437,7 +524,7 @@
       <div class="section-body">
         <div class="services">
           <article class="svc">
-            <img src="{% static 'imagens/cortes.jpg' %}" alt="Cortes de cabelo" />
+            <img src="{% static 'imagens/cortes.jpg' %}" alt="Cortes de cabelo" loading="lazy" />
             <div class="t">
               <h4>Cortes</h4>
               <p>Social, Degradê, Navalhado.</p>
@@ -445,7 +532,7 @@
           </article>
 
           <article class="svc">
-            <img src="{% static 'imagens/sobrancelha.jpeg' %}" alt="Sobrancelha" />
+            <img src="{% static 'imagens/sobrancelha.jpeg' %}" alt="Sobrancelha" loading="lazy" />
             <div class="t">
               <h4>Sobrancelha</h4>
               <p>Design e modelagem profissional.</p>
@@ -453,7 +540,7 @@
           </article>
 
           <article class="svc">
-            <img src="{% static 'imagens/pigmentação.jpeg' %}" alt="Pigmentação" />
+            <img src="{% static 'imagens/pigmentação.jpeg' %}" alt="Pigmentação" loading="lazy" />
             <div class="t">
               <h4>Pigmentação</h4>
               <p>Cobertura de brancos ou mudança de cor.</p>
@@ -461,7 +548,7 @@
           </article>
 
           <article class="svc">
-            <img src="{% static 'imagens/barba.jpeg' %}" alt="Barba" />
+            <img src="{% static 'imagens/barba.jpeg' %}" alt="Barba" loading="lazy" />
             <div class="t">
               <h4>Barba</h4>
               <p>Tratamento e design exclusivo.</p>
@@ -469,7 +556,7 @@
           </article>
 
           <article class="svc">
-            <img src="{% static 'imagens/nevou.jpg' %}" alt="Descoloração" />
+            <img src="{% static 'imagens/nevou.jpg' %}" alt="Descoloração" loading="lazy" />
             <div class="t">
               <h4>Descoloração</h4>
               <p>Transformação completa pro seu estilo.</p>
@@ -522,13 +609,12 @@
     <!-- FOOTER -->
     <footer class="footer">
       <div>
-        Barbearia RD — Rua João Francisco Barcelos Júnior, 214
-        <span style="color:var(--muted)">(referência: dentro do CTG)</span><br />
+        Barbearia RD — Rua João Francisco Barcelos Júnior, 214 <span class="muted">(dentro do CTG)</span><br />
         ⏰ Seg–Sáb: 9h – 20h
       </div>
 
-      <div style="display:flex; gap:10px; flex-wrap:wrap;">
-        <a class="btn" href="https://www.instagram.com/barbearia.rd7" target="_blank" rel="noopener noreferrer">
+      <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+        <a class="btn" href="https://www.instagram.com/barbearia.rd7" target="_blank" rel="noopener noreferrer" aria-label="Instagram">
           <i class="fab fa-instagram"></i> Instagram
         </a>
       </div>
