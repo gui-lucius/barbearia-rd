@@ -126,10 +126,7 @@ def criar_agendamento(request):
                 status="pendente",
             )
 
-            # ✅ Enviar email só depois do commit (síncrono, mas pós-commit)
-            transaction.on_commit(
-                lambda: _send_agendamento_email(nome_cliente, email_cliente, data_horario_reserva)
-            )
+            _send_agendamento_email(nome_cliente, email_cliente, data_horario_reserva)
 
     except IntegrityError:
         return Response({"erro": "Esse horário já foi reservado. Escolha outro."}, status=409)
