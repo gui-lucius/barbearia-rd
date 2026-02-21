@@ -6,7 +6,6 @@ import logging
 from dateutil import parser
 from django.conf import settings
 from django.core.exceptions import ValidationError
-from django.core.mail import send_mail
 from django.core.validators import validate_email
 from django.db import IntegrityError, transaction
 from django.shortcuts import render
@@ -16,6 +15,7 @@ from rest_framework.decorators import api_view
 from rest_framework.response import Response
 
 from .models import Agendamento, HorarioBloqueado
+from .email_service import send_resend_email, get_barbeiro_email
 
 
 logger = logging.getLogger(__name__)
@@ -49,15 +49,17 @@ def _parse_datetime(dt_str: str):
 def _send_agendamento_email(nome_cliente: str, email_cliente: str, data_horario_reserva):
     """
     Envia email pro BARBEIRO/ADMIN avisando que tem agendamento pendente.
-    Agora é síncrono (para logar erro com clareza no Railway).
+    Agora via RESEND (API), evitando SMTP no Railway.
     """
-    destino = (getattr(settings, "BARBEARIA_EMAIL", "") or "").strip()
+    destino = (get_barbeiro_email() or "").strip()
     if not destino:
         logger.warning("BARBEARIA_EMAIL vazio: email de notificação não será enviado.")
         return
 
     subject = "Novo Agendamento Pendente"
-    message = (
+
+    # Texto simples (backup)
+    text = (
         "Nova solicitação de agendamento:\n\n"
         f"Cliente: {nome_cliente}\n"
         f"E-mail: {email_cliente}\n"
@@ -65,19 +67,29 @@ def _send_agendamento_email(nome_cliente: str, email_cliente: str, data_horario_
         "Verifique o painel administrativo."
     )
 
-    from_email = getattr(settings, "DEFAULT_FROM_EMAIL", "no-reply@barbearia-rd.com.br")
+    # HTML (bonitinho e legível no email)
+    html = f"""
+    <div style="font-family: Arial, sans-serif; line-height: 1.4;">
+      <h2>Novo Agendamento Pendente</h2>
+      <p><strong>Cliente:</strong> {nome_cliente}</p>
+      <p><strong>E-mail:</strong> {email_cliente}</p>
+      <p><strong>Horário:</strong> {data_horario_reserva}</p>
+      <hr/>
+      <p>Verifique o painel administrativo para aceitar ou recusar.</p>
+    </div>
+    """
 
     try:
-        send_mail(
-            subject,
-            message,
-            from_email,
-            [destino],
-            fail_silently=False,
+        send_resend_email(
+            to_email=destino,
+            subject=subject,
+            html=html,
+            text=text,
         )
-        logger.info("Email de agendamento enviado com sucesso para %s.", destino)
+        logger.info("Email de agendamento enviado com sucesso (Resend) para %s.", destino)
     except Exception:
-        logger.exception("Erro ao enviar email de agendamento.")
+        # já tem logger.exception no email_service, mas mantém aqui também
+        logger.exception("Erro ao enviar email de agendamento (Resend).")
 
 
 @api_view(["POST"])
@@ -114,7 +126,7 @@ def criar_agendamento(request):
                 status="pendente",
             )
 
-            # ✅ Enviar email só depois do commit (AGORA SÍNCRONO)
+            # ✅ Enviar email só depois do commit (síncrono, mas pós-commit)
             transaction.on_commit(
                 lambda: _send_agendamento_email(nome_cliente, email_cliente, data_horario_reserva)
             )

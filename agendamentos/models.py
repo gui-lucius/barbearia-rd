@@ -3,11 +3,11 @@
 from datetime import timedelta
 import logging
 
-from django.conf import settings
 from django.core.exceptions import ValidationError
-from django.core.mail import send_mail
 from django.db import models
 from django.utils import timezone
+
+from .email_service import send_resend_email
 
 logger = logging.getLogger(__name__)
 
@@ -110,9 +110,7 @@ class Agendamento(models.Model):
         ordering = ["-data_horario_reserva"]
 
     def clean(self):
-        if HorarioBloqueado.objects.filter(
-            data_horario=self.data_horario_reserva
-        ).exists():
+        if HorarioBloqueado.objects.filter(data_horario=self.data_horario_reserva).exists():
             raise ValidationError("Esse horário está bloqueado.")
 
     def save(self, *args, **kwargs):
@@ -124,7 +122,8 @@ class Agendamento(models.Model):
                 .first()
             )
 
-        # regra de disponibilidade
+        # regra de disponibilidade:
+        # se foi aceito, deixa indisponível (ocupado)
         self.disponivel = self.status != self.STATUS_ACEITO
 
         super().save(*args, **kwargs)
@@ -136,7 +135,7 @@ class Agendamento(models.Model):
     def enviar_email_status(self):
         """
         Envia email para o CLIENTE quando o barbeiro aceita/recusa.
-        Agora NÃO engole erro: loga no Railway.
+        Agora via RESEND (API) para funcionar no Railway sem SMTP.
         """
         if not self.email_cliente:
             return
@@ -145,48 +144,69 @@ class Agendamento(models.Model):
         if timezone.is_aware(dt):
             dt = timezone.localtime(dt)
 
+        dt_str = dt.strftime("%d/%m/%Y %H:%M")
+
         if self.status == self.STATUS_ACEITO:
             assunto = "✅ Agendamento Confirmado - Barbearia RD"
-            mensagem = (
+            text = (
                 f"Olá {self.nome_cliente},\n\n"
                 "Seu agendamento foi CONFIRMADO! Estamos ansiosos para recebê-lo.\n\n"
-                f"📅 Data e Hora: {dt.strftime('%d/%m/%Y %H:%M')}\n"
+                f"📅 Data e Hora: {dt_str}\n"
                 "📍 Local: Barbearia RD\n\n"
                 "Caso precise remarcar, entre em contato conosco.\n\n"
                 "Atenciosamente,\n"
                 "Equipe Barbearia RD"
             )
+            html = f"""
+            <div style="font-family: Arial, sans-serif; line-height: 1.5;">
+              <h2>✅ Agendamento Confirmado</h2>
+              <p>Olá <strong>{self.nome_cliente}</strong>,</p>
+              <p>Seu agendamento foi <strong>CONFIRMADO</strong>! Estamos ansiosos para recebê-lo.</p>
+              <p><strong>📅 Data e Hora:</strong> {dt_str}<br/>
+                 <strong>📍 Local:</strong> Barbearia RD</p>
+              <hr/>
+              <p>Caso precise remarcar, entre em contato conosco.</p>
+              <p>Atenciosamente,<br/>Equipe Barbearia RD</p>
+            </div>
+            """
         elif self.status == self.STATUS_RECUSADO:
             assunto = "❌ Agendamento Recusado - Barbearia RD"
-            mensagem = (
+            text = (
                 f"Olá {self.nome_cliente},\n\n"
                 "Infelizmente, não conseguimos confirmar seu agendamento.\n\n"
                 "Sugerimos que tente outro horário disponível em nosso calendário.\n\n"
                 "Atenciosamente,\n"
                 "Equipe Barbearia RD"
             )
+            html = f"""
+            <div style="font-family: Arial, sans-serif; line-height: 1.5;">
+              <h2>❌ Agendamento Recusado</h2>
+              <p>Olá <strong>{self.nome_cliente}</strong>,</p>
+              <p>Infelizmente, não conseguimos confirmar seu agendamento.</p>
+              <p>Sugerimos que tente outro horário disponível em nosso calendário.</p>
+              <hr/>
+              <p>Atenciosamente,<br/>Equipe Barbearia RD</p>
+            </div>
+            """
         else:
             return
 
-        from_email = getattr(settings, "DEFAULT_FROM_EMAIL", "no-reply@barbearia-rd.com.br")
-
         try:
-            send_mail(
-                assunto,
-                mensagem,
-                from_email,
-                [self.email_cliente],
-                fail_silently=False,  # ✅ importante
+            send_resend_email(
+                to_email=self.email_cliente,
+                subject=assunto,
+                html=html,
+                text=text,
             )
             logger.info(
-                "Email de status (%s) enviado para cliente=%s agendamento_id=%s",
+                "Email de status (%s) enviado (Resend) para cliente=%s agendamento_id=%s",
                 self.status,
                 self.email_cliente,
                 self.pk,
             )
         except Exception:
             logger.exception(
-                "Falha ao enviar email de status (%s) para cliente=%s agendamento_id=%s",
+                "Falha ao enviar email de status (%s) (Resend) para cliente=%s agendamento_id=%s",
                 self.status,
                 self.email_cliente,
                 self.pk,
