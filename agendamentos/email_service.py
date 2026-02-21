@@ -8,12 +8,12 @@ import resend
 logger = logging.getLogger(__name__)
 
 
-def send_resend_email(*, to_email: str, subject: str, html: str, text: str = "") -> None:
+def send_resend_email(*, to_email: str, subject: str, html: str = "", text: str = "") -> None:
     """
     Envia e-mail via Resend (API).
     Requer:
       - RESEND_API_KEY
-      - DEFAULT_FROM_EMAIL (ex: 'Barbearia RD <onboarding@resend.dev>')
+      - DEFAULT_FROM_EMAIL (ex: 'Barbearia RD <no-reply@barbearia-rd.com.br>')
     """
     api_key = os.getenv("RESEND_API_KEY", "").strip()
     from_email = os.getenv("DEFAULT_FROM_EMAIL", "").strip()
@@ -29,22 +29,22 @@ def send_resend_email(*, to_email: str, subject: str, html: str, text: str = "")
     if not html and not text:
         raise ValueError("É necessário informar html ou text.")
 
-    # Resend precisa de texto ou html; se text vier vazio, manda um placeholder
-    if not text:
-        text = " "
-
     resend.api_key = api_key
 
+    payload = {
+        "from": from_email,
+        "to": [to_email],
+        "subject": subject,
+    }
+
+    # manda html se tiver; senão manda text
+    if html:
+        payload["html"] = html
+    if text:
+        payload["text"] = text
+
     try:
-        resend.Emails.send(
-            {
-                "from": from_email,
-                "to": [to_email],
-                "subject": subject,
-                "html": html or f"<pre>{text}</pre>",
-                "text": text,
-            }
-        )
+        resend.Emails.send(payload)
         logger.info("✅ Resend: e-mail enviado para=%s assunto=%s", to_email, subject)
     except Exception:
         logger.exception("❌ Resend: falha ao enviar e-mail para=%s assunto=%s", to_email, subject)
