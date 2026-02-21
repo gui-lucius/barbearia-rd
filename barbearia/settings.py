@@ -5,14 +5,13 @@ from datetime import timedelta
 import os
 
 import dj_database_url
-from decouple import config  # <-- adicionado
+from decouple import config
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 # ------------------------------------------------------------------------------
 # Environment (dev vs prod)
 # ------------------------------------------------------------------------------
-# Agora usando config() com fallback
 DJANGO_ENV = config("DJANGO_ENV", default="development").lower().strip()
 IS_PROD = DJANGO_ENV in ("production", "prod")
 
@@ -20,7 +19,6 @@ IS_PROD = DJANGO_ENV in ("production", "prod")
 # Core
 # ------------------------------------------------------------------------------
 SECRET_KEY = config("DJANGO_SECRET_KEY", default="chave-de-desenvolvimento")
-
 DEBUG = not IS_PROD
 
 ALLOWED_HOSTS = [
@@ -41,7 +39,7 @@ CSRF_TRUSTED_ORIGINS = [
 ]
 
 # ------------------------------------------------------------------------------
-# Proxy / HTTPS headers (SOMENTE produção)
+# Proxy / HTTPS headers (produção)
 # ------------------------------------------------------------------------------
 if IS_PROD:
     SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
@@ -60,9 +58,7 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
-
     "agendamentos",
-
     "corsheaders",
     "rest_framework",
     "rest_framework_simplejwt",
@@ -74,7 +70,6 @@ INSTALLED_APPS = [
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
     "whitenoise.middleware.WhiteNoiseMiddleware",
-
     "django.contrib.sessions.middleware.SessionMiddleware",
     "corsheaders.middleware.CorsMiddleware",
     "django.middleware.common.CommonMiddleware",
@@ -107,24 +102,25 @@ WSGI_APPLICATION = "barbearia.wsgi.application"
 # ------------------------------------------------------------------------------
 # Database
 # ------------------------------------------------------------------------------
-DATABASES = {}
-
 DATABASE_URL = os.getenv("DATABASE_URL") or os.getenv("DATABASE_PUBLIC_URL")
 
 if DATABASE_URL:
-    ssl_required = True
-    if "railway.internal" in DATABASE_URL:
-        ssl_required = False
+    # Se for host interno do Railway, geralmente não exige SSL
+    ssl_required = "railway.internal" not in DATABASE_URL
 
-    DATABASES["default"] = dj_database_url.config(
-        default=DATABASE_URL,
-        conn_max_age=600,
-        ssl_require=ssl_required,
-    )
+    DATABASES = {
+        "default": dj_database_url.config(
+            default=DATABASE_URL,
+            conn_max_age=600,
+            ssl_require=ssl_required,
+        )
+    }
 else:
-    DATABASES["default"] = {
-        "ENGINE": "django.db.backends.sqlite3",
-        "NAME": BASE_DIR / "db.sqlite3",
+    DATABASES = {
+        "default": {
+            "ENGINE": "django.db.backends.sqlite3",
+            "NAME": BASE_DIR / "db.sqlite3",
+        }
     }
 
 # ------------------------------------------------------------------------------
@@ -152,7 +148,6 @@ STATIC_URL = "/static/"
 STATICFILES_DIRS = [os.path.join(BASE_DIR, "static")]
 STATIC_ROOT = os.path.join(BASE_DIR, "staticfiles")
 STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
-
 WHITENOISE_MAX_AGE = 31536000 if IS_PROD else 0
 
 # ------------------------------------------------------------------------------
@@ -161,14 +156,27 @@ WHITENOISE_MAX_AGE = 31536000 if IS_PROD else 0
 CORS_ALLOWED_ORIGINS = [
     "https://www.barbearia-rd.com.br",
     "https://barbearia-rd.com.br",
-    "https://web-production-3f791.up.railway.app",
+    # Deixe seu domínio Railway (se mudar, atualiza aqui)
+    "https://web-production-24d65.up.railway.app",
 ]
 
 # ------------------------------------------------------------------------------
-# Email (SMTP - Gmail) usando python-decouple
+# Email (Resend em produção / SMTP em dev)
 # ------------------------------------------------------------------------------
-EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
+EMAIL_PROVIDER = config("EMAIL_PROVIDER", default="smtp").lower().strip()
 
+# Remetente e destinatário principal (barbeiro)
+DEFAULT_FROM_EMAIL = config(
+    "DEFAULT_FROM_EMAIL",
+    default="Barbearia RD <onboarding@resend.dev>",
+)
+SERVER_EMAIL = DEFAULT_FROM_EMAIL
+
+# Email que recebe notificações de novos agendamentos
+# (no Railway você tem BARBEARIA_EMAIL, mantemos o nome)
+BARBEARIA_EMAIL = config("BARBEARIA_EMAIL", default=config("BARBEARIA_EMAIL", default=""))
+
+# Config SMTP (usado só quando EMAIL_PROVIDER == "smtp")
 EMAIL_HOST = config("EMAIL_HOST", default="smtp.gmail.com")
 EMAIL_PORT = config("EMAIL_PORT", default=587, cast=int)
 EMAIL_HOST_USER = config("EMAIL_HOST_USER", default="")
@@ -176,15 +184,16 @@ EMAIL_HOST_PASSWORD = config("EMAIL_HOST_PASSWORD", default="")
 EMAIL_USE_TLS = config("EMAIL_USE_TLS", default=True, cast=bool)
 EMAIL_TIMEOUT = config("EMAIL_TIMEOUT", default=10, cast=int)
 
-DEFAULT_FROM_EMAIL = config(
-    "DEFAULT_FROM_EMAIL",
-    default=f"Barbearia RD <{EMAIL_HOST_USER}>" if EMAIL_HOST_USER else "Barbearia RD <no-reply@barbearia-rd.com.br>",
-)
-SERVER_EMAIL = DEFAULT_FROM_EMAIL
+# Se estiver usando Resend, não use SMTP backend (evita erro de rede no Railway)
+if EMAIL_PROVIDER == "smtp":
+    EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
+else:
+    # Resend envia via API no código (agendamentos/email_service.py)
+    # backend console evita qualquer tentativa acidental de SMTP
+    EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
 
-BARBEARIA_EMAIL = config("BARBEARIA_EMAIL", default="")
-
-EMAIL_FAIL_SILENTLY = False  # não é usado pelo Django diretamente, mas mantido
+# Chave Resend (usada pelo email_service.py)
+RESEND_API_KEY = config("RESEND_API_KEY", default="")
 
 # ------------------------------------------------------------------------------
 # DRF / JWT
@@ -224,4 +233,3 @@ else:
     SECURE_HSTS_SECONDS = 0
     SECURE_HSTS_INCLUDE_SUBDOMAINS = False
     SECURE_HSTS_PRELOAD = False
-
